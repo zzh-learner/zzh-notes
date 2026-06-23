@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Hexo build output
+public/
+
+# Hexo database & cache
+db.json
+.deploy_git/
+.cache/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
