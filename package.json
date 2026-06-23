@@ -13,10 +13,19 @@
     "version": "7.3.0"
   },
   "dependencies": {
+    "@adobe/css-tools": "^4.5.0",
+    "@next-theme/plugins": "^8.27.0",
+    "css": "^3.0.0",
     "hexo": "^7.3.0",
     "hexo-cli": "^4.3.1",
-    "hexo-theme-next": "^8.21.0",
+    "hexo-generator-archive": "^2.0.0",
+    "hexo-generator-category": "^2.0.0",
+    "hexo-generator-feed": "^3.0.0",
+    "hexo-generator-index": "^4.0.0",
     "hexo-generator-searchdb": "^1.4.1",
-    "hexo-generator-feed": "^3.0.0"
+    "hexo-generator-tag": "^2.0.0",
+    "hexo-renderer-marked": "^7.0.1",
+    "hexo-renderer-stylus": "^3.0.0",
+    "hexo-theme-next": "^8.21.0"
   }
 }
