@@ -1,0 +1,56 @@
+# NexT 主题覆盖配置
+## https://theme-next.js.org/docs/
+
+# 主题方案：Gemini（文字优先，素雅）
+scheme: Gemini
+
+# 暗黑模式
+darkmode: true
+
+# 菜单
+menu:
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+  # RSS 链接（feed 插件生成 atom.xml）
+  sitemap: /atom.xml || fa fa-rss
+
+# 侧边栏
+sidebar:
+  position: left
+  display: post
+
+# 头像（暂留空，后续可加）
+# avatar: /images/avatar.png
+
+# 社交链接（暂留空）
+# social:
+
+# 文章
+post_meta:
+  item_text: true
+  created_at: true
+  updated_at:
+    enable: true
+    another_day: true
+  categories: true
+
+# 标签图标
+tag_icon: true
+
+# 本地搜索（依赖 hexo-generator-searchdb + _config.yml 的 search 配置）
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 1
+  unescape: false
+  preload: false
+
+# 评论：关闭（非目标）
+comments:
+  enable: false
+
+# 统计：关闭（非目标）
+busuanzi_count:
+  enable: false
