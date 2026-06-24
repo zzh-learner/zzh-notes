@@ -14,6 +14,13 @@
 
 - 新随笔放 `source/_posts/`，文件名用中文便于本地浏览。
 - front-matter 必填：`title`（中文）、`date`、`tags`。`categories` 可选。
+- **YAML 冒号后必须有空格**（`key: value`，不是 `key:value`）。写错会导致该文章被解析器静默跳过——CI 仍显示 success，但文章不生成、首页不更新。推荐用 `npx hexo new "标题"` 建文，模板已带正确格式，只在下面填值即可。
+- `tags` 用列表写法（每项前加 `  - `），不要写成 `tags: 专心`：
+  ```yaml
+  tags:
+    - 专心
+    - 读书
+  ```
 - **`permalink` 用英文短 slug**（如 `permalink: some-slug/`），保证分享链接干净；一旦发布**绝不修改**，否则外链失效。
 - 不写评论、不接统计、不做 CMS——这些是明确排除的非目标。
 
@@ -46,6 +53,7 @@ npx hexo clean && npx hexo generate
 
 | 症状 | 第一步 |
 |------|--------|
+| CI 成功但新文章没上线 | 看构建日志有无 `Process failed: _posts/xxx.md`，多为 YAML 冒号后缺空格；本地 `npx hexo generate` 复现 |
 | `Cannot find module 'xxx'` | `grep -rn "require('xxx')" node_modules/hexo-theme-next/` 确认是否 NexT 隐式依赖 |
 | `template not found` | 检查是否误装了 `hexo-renderer-nunjucks`，卸载它 |
 | 无错但缺页面 | `npx hexo generate --debug 2>&1 \| grep "Generator:"` 看缺哪个 generator |
