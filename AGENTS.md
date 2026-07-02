@@ -49,6 +49,29 @@ npx hexo clean && npx hexo generate
 
 `_config.yml` 的 `url: https://zzh-learner.github.io/zzh-notes/` 和 `root`（由 url 推导）决定了所有静态资源路径。改错会导致 CSS/JS 全部 404，页面裸奔。
 
+### 5. `hexo-renderer-marked` 的图片配置键是 **camelCase**
+
+开启文章资源夹图片（`post_asset_folder: true`）时，`marked` 段必须用 **camelCase** 键名：
+```yaml
+marked:
+  prependRoot: true   # ✅ 正确
+  postAsset: true     # ✅ 正确
+```
+**不要**写成下划线版（`prepend_root` / `asset_image_slug`）——那两个名字在 7.x 渲染器里不存在（`renderer.js` 读的是 `prependRoot` / `postAsset`），YAML 解析不报错，但选项被静默忽略。后果：图片 `src` 回退解析到站点根目录（如 `/zzh-notes/xxx.jpg` 而非 `/zzh-notes/<permalink>/xxx.jpg`），**线上 404，且构建无任何 ERROR**。
+
+验证方法：生成后 `grep -o '<img[^>]*src="[^"]*"' public/<permalink>/index.html`，确认路径含 permalink 段。
+
+### 6. 带图随笔的图片放在文章同名文件夹
+
+`post_asset_folder: true` 已开启。每篇带图随笔的结构：
+```
+source/_posts/
+  ├─ 标题.md
+  └─ 标题/              ← 与 .md 同名的文件夹（手动建，或 hexo new 自动生成）
+      └─ xxx.jpg
+```
+正文用相对文件名引用：`![描述](xxx.jpg)`，渲染器会自动补全路径到该文章的资源夹。点击放大由 `_config.next.yml` 的 `fancybox: true` 提供（NexT 自动从 CDN 加载，无需装 npm 包）。
+
 ## 排查速查（按症状）
 
 | 症状 | 第一步 |
@@ -59,6 +82,7 @@ npx hexo clean && npx hexo generate
 | 无错但缺页面 | `npx hexo generate --debug 2>&1 \| grep "Generator:"` 看缺哪个 generator |
 | CI `startup_failure` 无日志 | 仓库 Pages 未启用，先 `gh api -X POST repos/zzh-learner/zzh-notes/pages -f build_type=workflow -f source[branch]=main` |
 | 资源 404 / 页面裸奔 | 检查 `_config.yml` 的 `url` 是否仍是 `.../zzh-notes/` |
+| 文章图片 404（路径指向站点根） | `marked` 段配置键用了下划线版（`prepend_root`），改成 camelCase（`prependRoot` / `postAsset`），见红线 5 |
 
 ## 参考文档
 
