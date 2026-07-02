@@ -47,6 +47,9 @@ local_search:
   unescape: false
   preload: false
 
+# 点击图片放大（NexT 自带开关，自动从 CDN 加载 fancybox CSS/JS，无需装 npm 包）
+fancybox: true
+
 # 评论：关闭（非目标）
 comments:
   enable: false

@@ -39,10 +39,18 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 syntax_highlighter: highlight.js
+
+# Markdown 渲染器配置（hexo-renderer-marked）
+# 注意：键名是 camelCase（renderer.js 内部读 prependRoot / postAsset，下划线版会被忽略）
+# prependRoot: 把文章里相对路径的图片/链接自动解析到该文章的资源文件夹
+# postAsset:   开启文章资源夹查找（配合 post_asset_folder: true）
+marked:
+  prependRoot: true
+  postAsset: true
 
 # Home page setting
 index_generator:
