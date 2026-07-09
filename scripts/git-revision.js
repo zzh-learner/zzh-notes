@@ -9,8 +9,8 @@ const { execSync } = require('child_process');
 const path = require('path');
 const Diff = require('diff');
 
-// 模块级缓存：post.full_source → revisionHtml
-// before_generate 填充，template_locals 读取
+// 惰性缓存：post.full_source → revisionHtml
+// 在 template_locals（每页渲染时）首次访问才计算，避开 before_generate 时机问题
 const revisionCache = new Map();
 
 // ASCII unit separator，不会出现在 commit message 里
@@ -116,42 +116,39 @@ function renderRevisions(commits, currentContent, relPath, cwd) {
   return html;
 }
 
-// before_generate：遍历所有文章，算 diff 存缓存
-// 优先级 10，确保在 NexT 的 before_generate(0) 之后跑
-hexo.extend.filter.register('before_generate', () => {
-  const posts = hexo.locals.get('posts');
-  if (!posts || !posts.length) return;
-
-  const baseDir = hexo.base_dir;
-  let processed = 0;
-
-  posts.forEach(post => {
-    if (!post.full_source) return;
-    try {
-      const relPath = path.relative(baseDir, post.full_source).replace(/\\/g, '/');
-      const commits = getFileCommits(relPath, baseDir);
-      if (commits.length === 0) return; // 新文件未提交，静默跳过
-
-      const html = renderRevisions(commits, post.raw || '', relPath, baseDir);
-      if (html) {
-        revisionCache.set(post.full_source, html);
-        processed++;
-      }
-    } catch (e) {
-      hexo.log.warn(`git-revision: 跳过 ${post.path} - ${e.message}`);
-    }
-  });
-
-  if (processed > 0) {
-    hexo.log.info(`git-revision: 为 ${processed} 篇文章生成修订历史`);
+// 为单篇文章计算修订历史 HTML（惰性，带缓存）
+function computeRevision(post) {
+  if (!post || !post.full_source) return '';
+  if (revisionCache.has(post.full_source)) {
+    return revisionCache.get(post.full_source);
   }
-}, 10);
 
-// template_locals：把 revisionHtml 暴露到 page 供模板渲染
+  let html = '';
+  try {
+    const baseDir = hexo.base_dir;
+    const relPath = path.relative(baseDir, post.full_source).replace(/\\/g, '/');
+    const commits = getFileCommits(relPath, baseDir);
+    if (commits.length === 0) return ''; // 新文件未提交，静默跳过
+    html = renderRevisions(commits, post.raw || '', relPath, baseDir);
+  } catch (e) {
+    hexo.log.warn(`git-revision: 跳过 ${post.path} - ${e.message}`);
+    return '';
+  }
+
+  revisionCache.set(post.full_source, html);
+  if (html) {
+    hexo.log.info(`git-revision: 生成 ${post.path} 的修订历史`);
+  }
+  return html;
+}
+
+// template_locals：每页渲染时触发，此时 page 数据完整
+// 只对文章详情页（layout === 'post'）计算，惰性求值
 hexo.extend.filter.register('template_locals', locals => {
   const page = locals.page;
-  if (page && page.full_source && revisionCache.has(page.full_source)) {
-    page.revisionHtml = revisionCache.get(page.full_source);
+  if (page && page.layout === 'post' && page.full_source) {
+    const html = computeRevision(page);
+    if (html) page.revisionHtml = html;
   }
   return locals;
 });
