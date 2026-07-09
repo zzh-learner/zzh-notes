@@ -1,0 +1,89 @@
+{# 修订历史 diff —— 由 scripts/git-revision.js 在构建时生成 page.revisionHtml #}
+{# 只在文章详情页（page.is_post）且有多于1个提交时才有内容 #}
+{% if page.revisionHtml %}
+<style>
+  .post-revisions {
+    margin-top: 2em;
+    padding-top: 1em;
+    border-top: 1px solid var(--border-color, #eee);
+  }
+  .post-revisions > h3 {
+    font-size: 1em;
+    color: var(--text-color, #555);
+    margin: 0 0 0.8em;
+  }
+  .post-revisions .rev-item {
+    margin: 0.3em 0;
+    font-size: 0.9em;
+  }
+  .post-revisions .rev-item > summary {
+    cursor: pointer;
+    color: var(--text-color, #555);
+    list-style: none;
+    padding: 0.2em 0;
+  }
+  .post-revisions .rev-item > summary::-webkit-details-marker { display: none; }
+  .post-revisions .rev-item > summary::before {
+    content: '▸';
+    display: inline-block;
+    width: 1em;
+    color: #999;
+    transition: transform 0.15s;
+  }
+  .post-revisions .rev-item[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  .post-revisions .rev-date {
+    color: #999;
+    font-family: monospace;
+    margin-right: 0.6em;
+  }
+  .post-revisions .rev-msg {
+    color: var(--text-color, #555);
+  }
+  .post-revisions .rev-diff {
+    margin: 0.5em 0 1em 1.5em;
+    padding: 0.6em 0.8em;
+    background: var(--code-background, #f6f8fa);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85em;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .post-revisions .rev-diff del {
+    display: block;
+    background: rgba(255, 0, 0, 0.08);
+    color: #b31d28;
+    text-decoration: line-through;
+    padding: 0 0.3em;
+    margin: 0 -0.3em;
+  }
+  .post-revisions .rev-diff ins {
+    display: block;
+    background: rgba(0, 200, 0, 0.08);
+    color: #176f2c;
+    text-decoration: none;
+    padding: 0 0.3em;
+    margin: 0 -0.3em;
+  }
+  .post-revisions .rev-ctx {
+    display: block;
+    color: #999;
+    font-style: italic;
+    padding: 0.2em 0.3em;
+  }
+  .post-revisions .rev-same,
+  .post-revisions .rev-err {
+    margin-left: 1.5em;
+    color: #999;
+    font-size: 0.85em;
+    font-style: italic;
+  }
+</style>
+<div class="post-revisions">
+  <h3>修订历史</h3>
+  {{ page.revisionHtml | safe }}
+</div>
+{% endif %}

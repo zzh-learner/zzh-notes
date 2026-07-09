@@ -57,3 +57,7 @@ comments:
 # 统计：关闭（非目标）
 busuanzi_count:
   enable: false
+
+# 修订历史注入（构建时生成 diff，见 scripts/git-revision.js）
+custom_file_path:
+  postBodyEnd: source/_data/post-body-end.njk

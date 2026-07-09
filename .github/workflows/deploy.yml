@@ -10,6 +10,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy.yml'
+      - 'scripts/**'
+      - 'source/_data/**'
   workflow_dispatch:
 
 permissions:
@@ -28,6 +30,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0  # 拉全量历史，供构建时生成修订 diff
 
       - name: Setup Node
         uses: actions/setup-node@v6
