@@ -1,0 +1,42 @@
+- generic [active] [ref=f1e1]:
+  - main [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - generic [ref=f1e5]:
+        - button "切换导航栏" [ref=f1e7]
+        - generic [ref=f1e11]:
+          - link "ZZH 的随笔" [ref=f1e12] [cursor=pointer]:
+            - /url: /zzh-notes/
+            - paragraph [ref=f1e13]: ZZH 的随笔
+          - paragraph [ref=f1e14]: 记录日常灵感与随想
+        - button "搜索" [ref=f1e16]
+      - complementary [ref=f1e18]:
+        - generic [ref=f1e21]:
+          - paragraph [ref=f1e23]: ZZH
+          - navigation [ref=f1e25]:
+            - link "18 日志" [ref=f1e27] [cursor=pointer]:
+              - /url: /zzh-notes/archives/
+              - generic [ref=f1e28]: "18"
+              - text: 日志
+            - link "1 分类" [ref=f1e30] [cursor=pointer]:
+              - /url: /zzh-notes/categories/
+              - generic [ref=f1e31]: "1"
+              - text: 分类
+            - link "28 标签" [ref=f1e33] [cursor=pointer]:
+              - /url: /zzh-notes/tags/
+              - generic [ref=f1e34]: "28"
+              - text: 标签
+  - contentinfo [ref=f1e36]:
+    - generic [ref=f1e37]:
+      - generic [ref=f1e38]:
+        - text: © 2026
+        - text: ZZH
+      - generic [ref=f1e41]:
+        - text: 由
+        - link "Hexo" [ref=f1e42] [cursor=pointer]:
+          - /url: https://hexo.io/
+        - text: "&"
+        - link "NexT.Gemini" [ref=f1e43] [cursor=pointer]:
+          - /url: https://theme-next.js.org/
+        - text: 强力驱动
+  - button [ref=f1e44] [cursor=pointer]
+  - button "返回顶部" [ref=f1e48] [cursor=pointer]
