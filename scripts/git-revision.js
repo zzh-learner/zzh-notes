@@ -104,7 +104,7 @@ function renderRevisions(commits, currentContent, relPath, cwd) {
     }
 
     const dateShort = commit.date.slice(0, 10); // YYYY-MM-DD
-    html += `<details class="rev-item">
+    html += `<details class="rev-item" open>
   <summary>
     <span class="rev-date">${escapeHtml(dateShort)}</span>
     <span class="rev-msg">${escapeHtml(commit.message)}</span>
