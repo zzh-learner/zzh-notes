@@ -58,6 +58,9 @@ comments:
 busuanzi_count:
   enable: false
 
-# 修订历史注入（构建时生成 diff，见 scripts/git-revision.js）
+# 自定义文件注入
 custom_file_path:
+  # 修订历史（构建时生成 diff，见 scripts/git-revision.js）
   postBodyEnd: source/_data/post-body-end.njk
+  # 自定义样式：全站背景图（见 source/_data/styles.styl）
+  style: source/_data/styles.styl
