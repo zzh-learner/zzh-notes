@@ -41,7 +41,7 @@ window.addEventListener('load', function () {
   }
 
   // === 动效 2：首页文章卡片 stagger fade-up ===
-  var cards = document.querySelectorAll('.posts-list .post-block');
+  var cards = document.querySelectorAll('.posts-expand .post-block');
   if (cards.length) {
     cards.forEach(function (c) { c.classList.add('fade-up'); });
     gsap.to(cards, {
@@ -51,7 +51,7 @@ window.addEventListener('load', function () {
       stagger: 0.08,
       ease: 'power2.out',
       scrollTrigger: {
-        trigger: '.posts-list',
+        trigger: '.posts-expand',
         start: 'top 85%'
       }
     });
