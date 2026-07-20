@@ -54,96 +54,124 @@ window.addEventListener('load', function () {
     return;
   }
 
+  // 工程兜底 3（新增）：恢复函数。任何动效代码抛异常时调用，
+  // 把所有 fade-up 元素的 opacity 强制设回 1，保证内容可见。
+  // 这是对 gsap-ready gate 的补充——原 gate 只防"GSAP 加载失败"，
+  // 但"GSAP 加载成功后我的代码崩了"会导致内容永久 opacity:0，需要额外兜底。
+  function revealAllFadeUp() {
+    document.querySelectorAll('.fade-up').forEach(function (el) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    document.querySelectorAll('.post-body img').forEach(function (img) {
+      img.style.opacity = '1';
+    });
+  }
+
   gsap.registerPlugin(ScrollTrigger);
 
-  // 工程兜底 3：加 gsap-ready 类，激活 .fade-up 的初始 opacity:0
-  // 这一步在 GSAP 确认可用后才做，保证失败时内容不消失
+  // 工程兜底 4：加 gsap-ready 类，激活 .fade-up 的初始 opacity:0
+  // 这一步在 GSAP 确认可用后才做，保证加载失败时内容不消失
   document.documentElement.classList.add('gsap-ready');
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 整个动效逻辑包进 try/catch：任何一段崩了都不能让内容永久隐藏
+  try {
 
-  // === 动效 1：阅读进度条 ===
-  var bar = document.querySelector('.reading-progress-bar');
-  if (bar) {
-    ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: function (self) {
-        bar.style.width = (self.progress * 100) + '%';
-      }
-    });
-  }
-
-  // === 动效 2：首页文章卡片 stagger fade-up ===
-  var cards = document.querySelectorAll('.posts-expand .post-block');
-  if (cards.length) {
-    cards.forEach(function (c) { c.classList.add('fade-up'); });
-    gsap.to(cards, {
-      opacity: 1,
-      y: 0,
-      duration: 0.5,
-      stagger: 0.08,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: '.posts-expand',
-        start: 'top 85%'
-      }
-    });
-  }
-
-  // === 动效 3：文章页 H2/H3 fade-up ===
-  var headings = document.querySelectorAll('.post-body h2, .post-body h3');
-  if (headings.length) {
-    headings.forEach(function (h) { h.classList.add('fade-up'); });
-    gsap.to(headings, {
-      opacity: 1,
-      y: 0,
-      duration: 0.4,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: h => h,
-        start: 'top 90%'
-      }
-    });
-  }
-
-  // === 动效 4：文章图片 lazyload fade-in ===
-  var images = document.querySelectorAll('.post-body img');
-  images.forEach(function (img) {
-    if (img.complete) {
-      img.style.opacity = 1;
-    } else {
-      img.style.opacity = 0;
-      img.style.transition = 'opacity 0.3s ease';
-      img.addEventListener('load', function () { img.style.opacity = 1; });
+    // === 动效 1：阅读进度条 ===
+    var bar = document.querySelector('.reading-progress-bar');
+    if (bar) {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: function (self) {
+          bar.style.width = (self.progress * 100) + '%';
+        }
+      });
     }
-  });
 
-  // === 动效 5：背景图 parallax ===
-  // body::before 是遮罩，body 本身的 background-attachment:fixed 已经固定了背景
-  // 这里改为让 body::before 随滚动轻微 yPercent 位移制造视差
-  // 注意：为避免 CLS，仅位移 5% 以内
-  gsap.to('body', {
-    backgroundPositionY: '+=5%',
-    ease: 'none',
-    scrollTrigger: {
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: true
+    // === 动效 2：首页文章卡片 stagger fade-up ===
+    var cards = document.querySelectorAll('.posts-expand .post-block');
+    if (cards.length) {
+      cards.forEach(function (c) { c.classList.add('fade-up'); });
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.posts-expand',
+          start: 'top 85%'
+        }
+      });
     }
-  });
 
-  // === header 滚动收缩 ===
-  var header = document.querySelector('.custom-header');
-  if (header) {
-    ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top -80',
-      end: 99999,
-      toggleClass: { targets: header, className: 'scrolled' }
+    // === 动效 3：文章页 H2/H3 fade-up ===
+    // 注意：批量 gsap.to 不能用 trigger 函数（之前 bug：trigger: h => h
+    // 会让 ScrollTrigger 调用 h.getBoundingClientRect()，但函数没有该方法，
+    // 抛 TypeError 让整个动效链条中断，导致卡片永远 opacity:0）。
+    // 正确做法：forEach 每个 heading 单独 gsap.to，trigger 直接传元素本身。
+    var headings = document.querySelectorAll('.post-body h2, .post-body h3');
+    if (headings.length) {
+      headings.forEach(function (h) {
+        h.classList.add('fade-up');
+        gsap.to(h, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: h,
+            start: 'top 90%'
+          }
+        });
+      });
+    }
+
+    // === 动效 4：文章图片 lazyload fade-in ===
+    // 这段不走 GSAP，纯 JS 设 inline style。初始 opacity:0 由 inline style 控制，
+    // 不依赖 gsap-ready class，所以 try/catch 不影响它。
+    // 但加 onError 兜底：图片加载失败也要恢复 opacity，否则永久不可见。
+    var images = document.querySelectorAll('.post-body img');
+    images.forEach(function (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        img.style.opacity = 1;
+      } else {
+        img.style.opacity = 0;
+        img.style.transition = 'opacity 0.3s ease';
+        img.addEventListener('load', function () { img.style.opacity = 1; });
+        img.addEventListener('error', function () { img.style.opacity = 1; });
+      }
     });
+
+    // === 动效 5：背景图 parallax ===
+    gsap.to('body', {
+      backgroundPositionY: '+=5%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true
+      }
+    });
+
+    // === header 滚动收缩 ===
+    var header = document.querySelector('.custom-header');
+    if (header) {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top -80',
+        end: 99999,
+        toggleClass: { targets: header, className: 'scrolled' }
+      });
+    }
+
+  } catch (err) {
+    // 兜底：任何动效代码崩了，恢复所有 fade-up 和图片可见
+    console.error('[ZZH] 动效代码异常，已恢复内容可见：', err);
+    revealAllFadeUp();
   }
 });
 </script>
