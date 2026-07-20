@@ -83,12 +83,12 @@ body::before {
 }
 
 // === 桌面宽屏下限制总宽度并居中 ===
-// 原因：Gemini scheme 的 .main-inner width: calc(100% - 252px) 跟随父级 .main
-// 宽度，在 1920px+ 视口下会撑到 1100px+，阅读行宽过长（理想 60-90 字符）。
-// 同时左侧 sidebar 列（.column）也被挤到 x=257 而非贴左。
-// 这里把最外层 .container 限制到 1200px 居中，sidebar 和内容区一起往中间收。
+// 原因：Gemini scheme 的 body > main.main 直接挂在 body 下没有中间容器，
+// .main-inner width: calc(100% - 252px) 跟随 .main 宽度，1920px+ 视口下
+// 内容区会撑到 1100px+，阅读行宽过长（理想 60-90 字符 ≈ 700-900px）。
+// 这里把 .main 限制到 1200px 居中，sidebar 和内容区一起往中间收。
 @media (min-width: 1200px) {
-  .container {
+  .main {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
