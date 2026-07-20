@@ -63,6 +63,10 @@ post_meta:
     another_day: true
   categories: true
 
+# 首页摘要：用 front-matter 的 description 字段作摘要，加"阅读全文"按钮
+excerpt_description: true
+read_more_btn: true
+
 # 标签图标
 tag_icon: true
 
