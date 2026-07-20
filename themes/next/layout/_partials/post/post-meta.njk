@@ -19,7 +19,7 @@
     </span>
   {%- endif %}
 
-  {%- if theme.post_meta.updated_at.enable and (not theme.post_meta.updated_at.another_day or date_diff or not theme.post_meta.created_at) %}
+  {%- if post.updated and theme.post_meta.updated_at.enable and (not theme.post_meta.updated_at.another_day or date_diff or not theme.post_meta.created_at) %}
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
