@@ -165,3 +165,137 @@ html.gsap-ready .post-body img {
 @media (prefers-reduced-motion: reduce) {
   html.gsap-ready .post-body img { opacity: 1 !important; }
 }
+
+// === 合并默认 header 与自定义 header（Important I1 修复） ===
+// 背景：custom_file_path.header 是 append 而非 replace，默认 NexT header（含
+// site-brand-container / site-meta 居中标题 / site-nav）和 .custom-header 同时
+// 渲染并叠在一起。这里把默认 .header 的视觉外壳压扁隐藏，只保留功能性子元素：
+//   - .site-nav-toggle .toggle     移动端侧栏开关（next-boot.js 绑定 click）
+//   - .site-nav-right  .toggle     搜索按钮（.popup-trigger，local-search.js 绑定）
+//   - .search-pop-overlay          搜索弹层（自身 visibility:hidden，激活时可见）
+// 注意：不能用 display:none 整体隐藏 .header，否则上述功能 DOM 也会消失。
+
+// 1) 让默认 header 不占布局、背景透明、去掉 Gemini 的卡片样式
+header.header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  // 高度坍缩：site-meta 被隐藏后，容器不再撑高
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  position: relative;
+  z-index: 90;  // 低于 .custom-header(100)，让自定义 header 视觉在上
+}
+
+// 2) 隐藏 site-brand-container 的视觉（卡片背景 + flex 占位），但保留其内部
+//    的两个 .toggle（功能 DOM）。用 position:absolute 把它们从布局里拎出来。
+.header .site-brand-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  position: static;   // 让 .toggle 的 position:fixed 以视口为参考
+}
+
+// 3) 隐藏默认 header 的 brand 文本与 logo 装饰（自定义 header 已有 brand）
+.header .site-meta,
+.header .site-meta .brand,
+.header .site-meta .site-title,
+.header .site-meta .site-subtitle,
+.header .site-meta .logo-line,
+.header .site-meta .custom-logo-image {
+  display: none !important;
+}
+
+// 4) 两个功能按钮：用 position:fixed 浮在视口角落，叠在 .custom-header 之上，
+//    保证可点击。z-index 高于 .custom-header(100)。
+//    - .site-nav-toggle .toggle（汉堡）：仅移动端可见，桌面端由自定义 header 导航
+//    - .site-nav-right  .toggle（搜索）：所有断点都可见，因为移除 menu.njk 后，
+//      这是唯一的搜索入口（local-search.js / algolia-search.js 通过 .popup-trigger 绑定）
+.header .site-nav-toggle,
+.header .site-nav-right {
+  display: block;   // 覆盖 NexT 默认 display:none（site-nav.styl）
+}
+
+// 桌面端（>= 768px）：隐藏汉堡（自定义 header 提供导航），保留搜索按钮
+@media (min-width: 768px) {
+  .header .site-nav-toggle {
+    display: none !important;
+  }
+  // 搜索按钮浮在自定义 header 右侧
+  .header .site-nav-right .toggle {
+    position: fixed;
+    top: 22px;       // 与 .custom-header-inner 桌面端 padding(24px) 对齐
+    right: 24px;
+    z-index: 110;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color, #09090b);
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// 移动端（<= 767px）：汉堡 + 搜索都 fixed 到视口角落
+@media (max-width: 767px) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    position: fixed;
+    top: 18px;        // 与 .custom-header-inner 移动端 padding(16px) 大致对齐
+    z-index: 110;     // 高于 .custom-header(100)
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color, #09090b);
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header .site-nav-toggle .toggle {
+    left: 20px;
+  }
+  .header .site-nav-right .toggle {
+    right: 20px;
+  }
+  // 汉堡线条颜色随文本色
+  .header .site-nav-toggle .toggle .toggle-line {
+    background: var(--text-color, #09090b);
+  }
+  // 搜索弹层在移动端满屏（NexT 原生已有，这里仅确保 z-index 高于 header）
+  .search-pop-overlay {
+    z-index: 200;
+  }
+}
+
+// 暗色模式下功能按钮颜色对齐自定义 header 暗色文本
+@media (prefers-color-scheme: dark) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    color: #f4f4f5;
+  }
+  .header .site-nav-toggle .toggle .toggle-line {
+    background: #f4f4f5;
+  }
+}
+
+// 5) 防御性兜底：NexT motion 开启时会把 .site-brand-container .toggle 设为
+//    opacity:0 等 GSAP 动画填充。如果 GSAP 加载失败/被 reduce-motion 关闭，
+//    搜索按钮会永远不可见不可点。这里强制可见，保证功能不依赖 JS。
+.use-motion .header .site-brand-container .toggle {
+  opacity: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    opacity: 1 !important;
+  }
+}
