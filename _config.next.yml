@@ -97,5 +97,7 @@ custom_file_path:
   header: source/_data/header.njk
   # 修订历史（构建时生成 diff，见 scripts/git-revision.js）
   postBodyEnd: source/_data/post-body-end.njk
+  # GSAP 动效 + 阅读进度条（见 source/_data/body-end.njk；注意和 postBodyEnd 不同）
+  bodyEnd: source/_data/body-end.njk
   # 自定义样式：全站背景图（见 source/_data/styles.styl）
   style: source/_data/styles.styl

@@ -156,3 +156,12 @@ html.gsap-ready .fade-up {
     gap: 16px;
   }
 }
+
+// === 图片 lazyload fade 初始态（仅 gsap-ready） ===
+html.gsap-ready .post-body img {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.gsap-ready .post-body img { opacity: 1 !important; }
+}

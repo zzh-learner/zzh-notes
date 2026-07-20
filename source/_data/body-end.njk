@@ -1,0 +1,114 @@
+{# === 阅读进度条 DOM（样式在 styles.styl） === #}
+<div class="reading-progress-bar" aria-hidden="true"></div>
+
+{# === GSAP + ScrollTrigger（CDN，defer 不阻塞首屏） === #}
+{# 国内访问可能慢/失败，但工程兜底保证内容仍可见 === #}
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<script>
+window.addEventListener('load', function () {
+  // 工程兜底 1：尊重 prefers-reduced-motion，直接返回（内容保持可见）
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  // 工程兜底 2：检查 GSAP 是否加载成功
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.warn('[ZZH] GSAP 未加载，动效跳过，内容保持可见');
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 工程兜底 3：加 gsap-ready 类，激活 .fade-up 的初始 opacity:0
+  // 这一步在 GSAP 确认可用后才做，保证失败时内容不消失
+  document.documentElement.classList.add('gsap-ready');
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // === 动效 1：阅读进度条 ===
+  var bar = document.querySelector('.reading-progress-bar');
+  if (bar) {
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: function (self) {
+        bar.style.width = (self.progress * 100) + '%';
+      }
+    });
+  }
+
+  // === 动效 2：首页文章卡片 stagger fade-up ===
+  var cards = document.querySelectorAll('.posts-list .post-block');
+  if (cards.length) {
+    cards.forEach(function (c) { c.classList.add('fade-up'); });
+    gsap.to(cards, {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.08,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.posts-list',
+        start: 'top 85%'
+      }
+    });
+  }
+
+  // === 动效 3：文章页 H2/H3 fade-up ===
+  var headings = document.querySelectorAll('.post-body h2, .post-body h3');
+  if (headings.length) {
+    headings.forEach(function (h) { h.classList.add('fade-up'); });
+    gsap.to(headings, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: h => h,
+        start: 'top 90%'
+      }
+    });
+  }
+
+  // === 动效 4：文章图片 lazyload fade-in ===
+  var images = document.querySelectorAll('.post-body img');
+  images.forEach(function (img) {
+    if (img.complete) {
+      img.style.opacity = 1;
+    } else {
+      img.style.opacity = 0;
+      img.style.transition = 'opacity 0.3s ease';
+      img.addEventListener('load', function () { img.style.opacity = 1; });
+    }
+  });
+
+  // === 动效 5：背景图 parallax ===
+  // body::before 是遮罩，body 本身的 background-attachment:fixed 已经固定了背景
+  // 这里改为让 body::before 随滚动轻微 yPercent 位移制造视差
+  // 注意：为避免 CLS，仅位移 5% 以内
+  gsap.to('body', {
+    backgroundPositionY: '+=5%',
+    ease: 'none',
+    scrollTrigger: {
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true
+    }
+  });
+
+  // === header 滚动收缩 ===
+  var header = document.querySelector('.custom-header');
+  if (header) {
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top -80',
+      end: 99999,
+      toggleClass: { targets: header, className: 'scrolled' }
+    });
+  }
+});
+</script>
