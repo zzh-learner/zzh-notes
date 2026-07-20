@@ -300,46 +300,33 @@ header.header {
   display: none !important;
 }
 
-// 4) 两个功能按钮：用 position:fixed 浮在视口角落，叠在 .custom-header 之上，
-//    保证可点击。z-index 高于 .custom-header(100)。
-//    - .site-nav-toggle .toggle（汉堡）：仅移动端可见，桌面端由自定义 header 导航
-//    - .site-nav-right  .toggle（搜索）：所有断点都可见，因为移除 menu.njk 后，
-//      这是唯一的搜索入口（local-search.js / algolia-search.js 通过 .popup-trigger 绑定）
-.header .site-nav-toggle,
+// 4) 功能按钮处理：
+//    - .site-nav-toggle .toggle（移动端汉堡）：保留 fixed 浮动，仅移动端可见
+//    - .site-nav-right  .toggle（搜索）：已搬进 .custom-header-nav 内（紧挨主题
+//      切换按钮），原位置直接 display:none 隐藏。
+//    之前搜索按钮用 position:fixed 浮在视口右上角，和主题切换按钮位置接近，
+//    会重叠按错。现在两个工具按钮都在 .custom-header-nav 的 flex 流里，
+//    有 24px gap 间隔，物理上不可能重叠。
+.header .site-nav-toggle {
+  display: block;   // 覆盖 NexT 默认 display:none
+}
 .header .site-nav-right {
-  display: block;   // 覆盖 NexT 默认 display:none（site-nav.styl）
+  display: none !important;   // 搜索按钮已搬进自定义 header，原位置隐藏
 }
 
-// 桌面端（>= 768px）：隐藏汉堡（自定义 header 提供导航），保留搜索按钮
+// 桌面端（>= 768px）：隐藏汉堡（自定义 header 提供导航）
 @media (min-width: 768px) {
   .header .site-nav-toggle {
     display: none !important;
   }
-  // 搜索按钮浮在自定义 header 右侧
-  .header .site-nav-right .toggle {
-    position: fixed;
-    top: 22px;       // 与 .custom-header-inner 桌面端 padding(24px) 对齐
-    right: 24px;
-    z-index: 110;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--text-color, #09090b);
-    padding: 8px;
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
-// 移动端（<= 767px）：汉堡 + 搜索都 fixed 到视口角落
+// 移动端（<= 767px）：汉堡 fixed 到视口左上角
 @media (max-width: 767px) {
-  .header .site-nav-toggle .toggle,
-  .header .site-nav-right .toggle {
+  .header .site-nav-toggle .toggle {
     position: fixed;
     top: 18px;        // 与 .custom-header-inner 移动端 padding(16px) 大致对齐
+    left: 20px;
     z-index: 110;     // 高于 .custom-header(100)
     background: transparent;
     border: none;
@@ -352,12 +339,6 @@ header.header {
     align-items: center;
     justify-content: center;
   }
-  .header .site-nav-toggle .toggle {
-    left: 20px;
-  }
-  .header .site-nav-right .toggle {
-    right: 20px;
-  }
   // 汉堡线条颜色随文本色
   .header .site-nav-toggle .toggle .toggle-line {
     background: var(--text-color, #09090b);
@@ -368,10 +349,9 @@ header.header {
   }
 }
 
-// 暗色模式下功能按钮颜色对齐自定义 header 暗色文本
+// 暗色模式下汉堡颜色对齐自定义 header 暗色文本
 // 用 [data-theme] 替代 prefers-color-scheme
-[data-theme="dark"] .header .site-nav-toggle .toggle,
-[data-theme="dark"] .header .site-nav-right .toggle {
+[data-theme="dark"] .header .site-nav-toggle .toggle {
   color: #f4f4f5;
 }
 [data-theme="dark"] .header .site-nav-toggle .toggle .toggle-line {
@@ -380,13 +360,45 @@ header.header {
 
 // 5) 防御性兜底：NexT motion 开启时会把 .site-brand-container .toggle 设为
 //    opacity:0 等 GSAP 动画填充。如果 GSAP 加载失败/被 reduce-motion 关闭，
-//    搜索按钮会永远不可见不可点。这里强制可见，保证功能不依赖 JS。
+//    汉堡按钮会永远不可见不可点。这里强制可见，保证功能不依赖 JS。
 .use-motion .header .site-brand-container .toggle {
   opacity: 1 !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .header .site-nav-toggle .toggle,
-  .header .site-nav-right .toggle {
+  .header .site-nav-toggle .toggle {
     opacity: 1 !important;
   }
+}
+
+// === 自定义 header 里的搜索按钮（从默认 header 搬来） ===
+// 和主题切换按钮共用 .theme-toggle 的样式骨架，保持视觉一致
+.custom-header-search {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color, #09090b);
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+  vertical-align: middle;
+}
+.custom-header-search:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--theme-color);
+}
+[data-theme="dark"] .custom-header-search {
+  color: #f4f4f5;
+}
+[data-theme="dark"] .custom-header-search:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #22d3ee;
+}
+@media (prefers-reduced-motion: reduce) {
+  .custom-header-search { transition: none; }
 }

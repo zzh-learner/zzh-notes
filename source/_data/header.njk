@@ -10,6 +10,17 @@
         {% set menu_path = path.split(' || ')[0] %}
         <a href="{{ url_for(menu_path) }}">{{ __('menu.' + name) }}</a>
       {% endfor %}
+      {# 搜索按钮：从默认 header 搬进自定义 header，紧挨主题切换按钮。
+         保留 .popup-trigger class（local-search.js 通过它绑定 click）。
+         解决原来搜索按钮（position:fixed 视口右上）和主题切换按钮重叠按错的问题。 #}
+      {%- if theme.local_search.enable or theme.algolia_search.enable %}
+      <button type="button"
+              class="custom-header-search popup-trigger"
+              aria-label="{{ __('menu.search') }}"
+              title="{{ __('menu.search') }}">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+      {%- endif %}
       {# 主题切换按钮：两个图标都渲染，CSS 按 data-theme 控制显隐，避免 JS 加载前错位 #}
       <button type="button"
               class="theme-toggle"
