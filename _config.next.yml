@@ -7,6 +7,11 @@ scheme: Gemini
 # 暗黑模式
 darkmode: true
 
+# 主题色（配合 $theme-color CSS 变量，影响 headband、链接 hover、进度条等）
+theme_color:
+  light: "#0891b2"   # 深青
+  dark: "#22d3ee"    # 暗色模式下提亮一档
+
 # 菜单
 menu:
   home: / || fa fa-home
