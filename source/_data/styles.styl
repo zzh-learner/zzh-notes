@@ -1,69 +1,301 @@
-// 自定义样式：全站背景图（全透方案）
+// 自定义样式：低调现代版
 // 配合 _config.next.yml 的 custom_file_path.style 注入
-// 设计目标：背景图大面积可见，内容区透明，用文字阴影保证可读性
+// 设计目标：背景图压到若隐若现，内容区回到干净白/暗底，文字当主角
 
-// === 背景图铺底 ===
+// === 背景图 + 强遮罩（亮色 92%） ===
 body {
   background-image: url('/zzh-notes/images/background.webp');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  position: relative;
+  min-height: 100vh;
 }
 
-// === 内容区全部透明，让背景图透出 ===
-// 清掉我之前加的遮罩底，也清掉 NexT 自带的不透明卡片底
-.header,
-.main,
-.sidebar,
-.footer,
-.header-inner,
-.main-inner,
-.sidebar-inner,
-.post-block,
-.posts-list {
-  background: transparent !important;
+// 用 ::before 做半透明遮罩，让背景图变成肌理
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(250, 250, 250, 0.92);
+  z-index: -1;
+  pointer-events: none;
 }
 
-// 去掉内容区的 box-shadow（透明卡片上的阴影会很脏）
-.main,
-.sidebar {
-  box-shadow: none !important;
+// === 内容区不透明白/暗底（覆盖 Task 2 之外的细节） ===
+// NexT 默认就是白底，这里只做微调
+.main-inner {
+  background: transparent;  // Gemini scheme 透明，让 $content-bg-color 在 .post-block 上生效
 }
 
-// === 文字可读性兜底 ===
-// 背景图透出后，正文直接压在照片上。用半透明文字阴影保证任何底色上都读得清。
-// 阴影用接近底色的浅色，避免黑边看起来脏。
-body {
-  color: #1a1a1a;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85),
-               0 0 8px rgba(255, 255, 255, 0.6);
-}
-
-// 标题、链接加强一档
-h1, h2, h3, h4, h5, h6 {
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9),
-               0 0 10px rgba(255, 255, 255, 0.7);
-}
-
-a {
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
-}
-
-// === 暗黑模式适配 ===
+// === 暗色模式遮罩（深 88%） ===
 @media (prefers-color-scheme: dark) {
-  body {
-    color: #f0f0f0;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95),
-                 0 0 8px rgba(0, 0, 0, 0.8);
+  body::before {
+    background: rgba(15, 15, 17, 0.88);
   }
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95),
-                 0 0 12px rgba(0, 0, 0, 0.85);
+// === 阅读进度条（GSAP 控制 width，这里只定样式） ===
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: var(--theme-color);
+  z-index: 1000;
+  transition: width 0.1s linear;
+}
+
+// === 动效元素初始态（仅 gsap-ready 时启用，防 JS 失败内容不可见） ===
+// 见 Task 7 的工程兜底说明
+html.gsap-ready .fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+// 首页文章卡片 hover 边框变深青
+.posts-expand .post-block {
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  border: 1px solid var(--border-color, #e4e4e7);
+  border-radius: 8px;
+}
+.posts-expand .post-block:hover {
+  border-color: var(--theme-color);
+}
+
+// 标题宋体已通过 _config.next.yml 的 font 段应用，这里不重复
+
+// === prefers-reduced-motion 跳过所有动效 ===
+@media (prefers-reduced-motion: reduce) {
+  html.gsap-ready .fade-up {
+    opacity: 1 !important;
+    transform: none !important;
   }
+  .reading-progress-bar {
+    display: none;
+  }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
-  a {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+// === 自定义 header（覆盖 NexT 默认 header 视觉） ===
+.custom-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color, #e4e4e7);
+  transition: height 0.25s ease, padding 0.25s ease;
+}
+
+.custom-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: padding 0.25s ease;
+}
+
+// 滚动收缩状态（GSAP 加 .scrolled 类，见 Task 7）
+.custom-header.scrolled .custom-header-inner {
+  padding: 14px 40px;
+}
+
+.custom-header-brand {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-weight: 600;
+  font-size: 1.125em;
+  color: var(--text-color, #09090b);
+  text-decoration: none;
+}
+
+.custom-header-nav {
+  display: flex;
+  gap: 24px;
+  font-family: 'Public Sans', 'Noto Sans SC', sans-serif;
+  font-size: 0.875em;
+}
+
+.custom-header-nav a {
+  color: var(--text-color, #09090b);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.custom-header-nav a:hover {
+  color: var(--theme-color);
+}
+
+// 暗色模式 header
+@media (prefers-color-scheme: dark) {
+  .custom-header {
+    background: rgba(24, 24, 27, 0.8);
+    border-bottom-color: #27272a;
+  }
+  .custom-header-brand,
+  .custom-header-nav a {
+    color: #f4f4f5;
+  }
+}
+
+@media (max-width: 767px) {
+  .custom-header-inner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px;
+  }
+  .custom-header-nav {
+    gap: 16px;
+  }
+}
+
+// === 图片 lazyload fade 初始态（仅 gsap-ready） ===
+html.gsap-ready .post-body img {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.gsap-ready .post-body img { opacity: 1 !important; }
+}
+
+// === 合并默认 header 与自定义 header（Important I1 修复） ===
+// 背景：custom_file_path.header 是 append 而非 replace，默认 NexT header（含
+// site-brand-container / site-meta 居中标题 / site-nav）和 .custom-header 同时
+// 渲染并叠在一起。这里把默认 .header 的视觉外壳压扁隐藏，只保留功能性子元素：
+//   - .site-nav-toggle .toggle     移动端侧栏开关（next-boot.js 绑定 click）
+//   - .site-nav-right  .toggle     搜索按钮（.popup-trigger，local-search.js 绑定）
+//   - .search-pop-overlay          搜索弹层（自身 visibility:hidden，激活时可见）
+// 注意：不能用 display:none 整体隐藏 .header，否则上述功能 DOM 也会消失。
+
+// 1) 让默认 header 不占布局、背景透明、去掉 Gemini 的卡片样式
+header.header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  // 高度坍缩：site-meta 被隐藏后，容器不再撑高
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  position: relative;
+  z-index: 90;  // 低于 .custom-header(100)，让自定义 header 视觉在上
+}
+
+// 2) 隐藏 site-brand-container 的视觉（卡片背景 + flex 占位），但保留其内部
+//    的两个 .toggle（功能 DOM）。用 position:absolute 把它们从布局里拎出来。
+.header .site-brand-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  position: static;   // 让 .toggle 的 position:fixed 以视口为参考
+}
+
+// 3) 隐藏默认 header 的 brand 文本与 logo 装饰（自定义 header 已有 brand）
+.header .site-meta,
+.header .site-meta .brand,
+.header .site-meta .site-title,
+.header .site-meta .site-subtitle,
+.header .site-meta .logo-line,
+.header .site-meta .custom-logo-image {
+  display: none !important;
+}
+
+// 4) 两个功能按钮：用 position:fixed 浮在视口角落，叠在 .custom-header 之上，
+//    保证可点击。z-index 高于 .custom-header(100)。
+//    - .site-nav-toggle .toggle（汉堡）：仅移动端可见，桌面端由自定义 header 导航
+//    - .site-nav-right  .toggle（搜索）：所有断点都可见，因为移除 menu.njk 后，
+//      这是唯一的搜索入口（local-search.js / algolia-search.js 通过 .popup-trigger 绑定）
+.header .site-nav-toggle,
+.header .site-nav-right {
+  display: block;   // 覆盖 NexT 默认 display:none（site-nav.styl）
+}
+
+// 桌面端（>= 768px）：隐藏汉堡（自定义 header 提供导航），保留搜索按钮
+@media (min-width: 768px) {
+  .header .site-nav-toggle {
+    display: none !important;
+  }
+  // 搜索按钮浮在自定义 header 右侧
+  .header .site-nav-right .toggle {
+    position: fixed;
+    top: 22px;       // 与 .custom-header-inner 桌面端 padding(24px) 对齐
+    right: 24px;
+    z-index: 110;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color, #09090b);
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// 移动端（<= 767px）：汉堡 + 搜索都 fixed 到视口角落
+@media (max-width: 767px) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    position: fixed;
+    top: 18px;        // 与 .custom-header-inner 移动端 padding(16px) 大致对齐
+    z-index: 110;     // 高于 .custom-header(100)
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color, #09090b);
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header .site-nav-toggle .toggle {
+    left: 20px;
+  }
+  .header .site-nav-right .toggle {
+    right: 20px;
+  }
+  // 汉堡线条颜色随文本色
+  .header .site-nav-toggle .toggle .toggle-line {
+    background: var(--text-color, #09090b);
+  }
+  // 搜索弹层在移动端满屏（NexT 原生已有，这里仅确保 z-index 高于 header）
+  .search-pop-overlay {
+    z-index: 200;
+  }
+}
+
+// 暗色模式下功能按钮颜色对齐自定义 header 暗色文本
+@media (prefers-color-scheme: dark) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    color: #f4f4f5;
+  }
+  .header .site-nav-toggle .toggle .toggle-line {
+    background: #f4f4f5;
+  }
+}
+
+// 5) 防御性兜底：NexT motion 开启时会把 .site-brand-container .toggle 设为
+//    opacity:0 等 GSAP 动画填充。如果 GSAP 加载失败/被 reduce-motion 关闭，
+//    搜索按钮会永远不可见不可点。这里强制可见，保证功能不依赖 JS。
+.use-motion .header .site-brand-container .toggle {
+  opacity: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .header .site-nav-toggle .toggle,
+  .header .site-nav-right .toggle {
+    opacity: 1 !important;
   }
 }

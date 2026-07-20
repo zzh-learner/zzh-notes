@@ -1,0 +1,15 @@
+{# 自定义 header：左对齐 logo + 右对齐导航 + 细分隔线 #}
+{# 滚动收缩 + backdrop-filter 由 styles.styl + Task 7 GSAP 处理 #}
+<header class="custom-header">
+  <div class="custom-header-inner">
+    <a href="{{ url_for('/') }}" class="custom-header-brand">
+      {{ config.title }}
+    </a>
+    <nav class="custom-header-nav">
+      {% for name, path in theme.menu %}
+        {% set menu_path = path.split(' || ')[0] %}
+        <a href="{{ url_for(menu_path) }}">{{ __('menu.' + name) }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+</header>

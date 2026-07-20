@@ -7,6 +7,33 @@ scheme: Gemini
 # 暗黑模式
 darkmode: true
 
+# 主题色（配合 $theme-color CSS 变量，影响 headband、链接 hover、进度条等）
+theme_color:
+  light: "#0891b2"   # 深青
+  dark: "#22d3ee"    # 暗色模式下提亮一档
+
+# 字体（配合 source/_data/head.njk 的 Google Fonts link）
+# 注：external 必须为 false。NexT 的 font.js 在 external=true 时会拼接
+# Google Fonts URL 并按 ',' 拆分 family，把 'sans-serif'/'serif' 也当成
+# 字体名请求；我们已在 head.njk 自己注入了正确的 link，这里关掉避免重复。
+font:
+  enable: true
+  global:
+    external: false
+    family: Public Sans, Noto Sans SC, sans-serif
+  title:
+    external: false
+    family: Playfair Display, Noto Serif SC, serif
+  headings:
+    external: false
+    family: Playfair Display, Noto Serif SC, serif
+  posts:
+    external: false
+    family: Public Sans, Noto Sans SC, sans-serif
+  codes:
+    external: false
+    family: JetBrains Mono, monospace
+
 # 菜单
 menu:
   home: / || fa fa-home
@@ -36,6 +63,10 @@ post_meta:
     another_day: true
   categories: true
 
+# 首页摘要：用 front-matter 的 description 字段作摘要，加"阅读全文"按钮
+excerpt_description: true
+read_more_btn: true
+
 # 标签图标
 tag_icon: true
 
@@ -60,7 +91,13 @@ busuanzi_count:
 
 # 自定义文件注入
 custom_file_path:
+  # Google Fonts link 注入到 <head>
+  head: source/_data/head.njk
+  # 自定义 header：左对齐 logo + 右对齐导航 + backdrop-filter（见 source/_data/header.njk）
+  header: source/_data/header.njk
   # 修订历史（构建时生成 diff，见 scripts/git-revision.js）
   postBodyEnd: source/_data/post-body-end.njk
+  # GSAP 动效 + 阅读进度条（见 source/_data/body-end.njk；注意和 postBodyEnd 不同）
+  bodyEnd: source/_data/body-end.njk
   # 自定义样式：全站背景图（见 source/_data/styles.styl）
   style: source/_data/styles.styl
