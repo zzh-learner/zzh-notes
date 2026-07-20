@@ -81,3 +81,78 @@ html.gsap-ready .fade-up {
     transition: none !important;
   }
 }
+
+// === 自定义 header（覆盖 NexT 默认 header 视觉） ===
+.custom-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color, #e4e4e7);
+  transition: height 0.25s ease, padding 0.25s ease;
+}
+
+.custom-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: padding 0.25s ease;
+}
+
+// 滚动收缩状态（GSAP 加 .scrolled 类，见 Task 7）
+.custom-header.scrolled .custom-header-inner {
+  padding: 14px 40px;
+}
+
+.custom-header-brand {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-weight: 600;
+  font-size: 1.125em;
+  color: var(--text-color, #09090b);
+  text-decoration: none;
+}
+
+.custom-header-nav {
+  display: flex;
+  gap: 24px;
+  font-family: 'Public Sans', 'Noto Sans SC', sans-serif;
+  font-size: 0.875em;
+}
+
+.custom-header-nav a {
+  color: var(--text-color, #09090b);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.custom-header-nav a:hover {
+  color: var(--theme-color);
+}
+
+// 暗色模式 header
+@media (prefers-color-scheme: dark) {
+  .custom-header {
+    background: rgba(24, 24, 27, 0.8);
+    border-bottom-color: #27272a;
+  }
+  .custom-header-brand,
+  .custom-header-nav a {
+    color: #f4f4f5;
+  }
+}
+
+@media (max-width: 767px) {
+  .custom-header-inner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px;
+  }
+  .custom-header-nav {
+    gap: 16px;
+  }
+}

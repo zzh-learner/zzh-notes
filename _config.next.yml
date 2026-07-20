@@ -93,6 +93,8 @@ busuanzi_count:
 custom_file_path:
   # Google Fonts link 注入到 <head>
   head: source/_data/head.njk
+  # 自定义 header：左对齐 logo + 右对齐导航 + backdrop-filter（见 source/_data/header.njk）
+  header: source/_data/header.njk
   # 修订历史（构建时生成 diff，见 scripts/git-revision.js）
   postBodyEnd: source/_data/post-body-end.njk
   # 自定义样式：全站背景图（见 source/_data/styles.styl）
