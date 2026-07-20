@@ -1,6 +1,41 @@
 {# === 阅读进度条 DOM（样式在 styles.styl） === #}
 <div class="reading-progress-bar" aria-hidden="true"></div>
 
+{# === 主题切换逻辑（独立 IIFE，不依赖 GSAP，保证 GSAP 失败时切换仍可用） === #}
+{# head.njk 已在 CSS 应用前同步设好 data-theme，这里只处理点击切换 + 持久化 #}
+<script>
+(function () {
+  function getTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (e) {}
+    // 更新按钮 aria-label
+    var btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.setAttribute('aria-label', theme === 'dark' ? '切换到浅色' : '切换到深色');
+    }
+  }
+  // 等 DOM 就绪后绑定点击（脚本在 body 末尾，DOM 已就绪）
+  var btn = document.getElementById('theme-toggle');
+  if (btn) {
+    // 初始化 aria-label
+    btn.setAttribute('aria-label', getTheme() === 'dark' ? '切换到浅色' : '切换到深色');
+    btn.addEventListener('click', function () {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+  }
+  // 键盘快捷键：Ctrl/Cmd + Shift + L 切换主题（可选，无障碍辅助）
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+      e.preventDefault();
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    }
+  });
+})();
+</script>
+
 {# === GSAP + ScrollTrigger（CDN，defer 不阻塞首屏） === #}
 {# 国内访问可能慢/失败，但工程兜底保证内容仍可见 === #}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
