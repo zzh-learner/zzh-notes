@@ -12,6 +12,28 @@ theme_color:
   light: "#0891b2"   # 深青
   dark: "#22d3ee"    # 暗色模式下提亮一档
 
+# 字体（配合 source/_data/head.njk 的 Google Fonts link）
+# 注：external 必须为 false。NexT 的 font.js 在 external=true 时会拼接
+# Google Fonts URL 并按 ',' 拆分 family，把 'sans-serif'/'serif' 也当成
+# 字体名请求；我们已在 head.njk 自己注入了正确的 link，这里关掉避免重复。
+font:
+  enable: true
+  global:
+    external: false
+    family: Public Sans, Noto Sans SC, sans-serif
+  title:
+    external: false
+    family: Playfair Display, Noto Serif SC, serif
+  headings:
+    external: false
+    family: Playfair Display, Noto Serif SC, serif
+  posts:
+    external: false
+    family: Public Sans, Noto Sans SC, sans-serif
+  codes:
+    external: false
+    family: JetBrains Mono, monospace
+
 # 菜单
 menu:
   home: / || fa fa-home
@@ -65,6 +87,8 @@ busuanzi_count:
 
 # 自定义文件注入
 custom_file_path:
+  # Google Fonts link 注入到 <head>
+  head: source/_data/head.njk
   # 修订历史（构建时生成 diff，见 scripts/git-revision.js）
   postBodyEnd: source/_data/post-body-end.njk
   # 自定义样式：全站背景图（见 source/_data/styles.styl）
