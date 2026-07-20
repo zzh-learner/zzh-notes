@@ -69,7 +69,10 @@ meta_generator: true
 # Date / Time format
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
-updated_option: 'mtime'
+# 'empty' = 文章 front-matter 里没手写 updated: 就不显示更新时间。
+# 原因：mtime 会随 git clone/checkout/pull 全部刷新成"今天"，导致旧文章也显示"更新于今天"。
+# 真要给某篇标注更新时间，就在那篇 front-matter 里手动加 updated: 即可。
+updated_option: 'empty'
 
 # Pagination
 per_page: 10

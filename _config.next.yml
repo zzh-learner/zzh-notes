@@ -58,8 +58,14 @@ sidebar:
 post_meta:
   item_text: true
   created_at: true
+  # 关掉"更新于"显示。原因：配合 _config.yml 的 updated_option: 'empty'，
+  # Hexo 数据层已经没有 updated 字段；但 NexT 模板（post-meta.njk 第 22 行）
+  # 只判断 enable 开关，不判断 post.updated 是否为空，结果会把 undefined
+  # 当当前时间渲染，导致每篇文章都显示"更新于今天"。
+  # 如果将来某篇确需标注更新时间，给 front-matter 写 updated: 即可，
+  # 然后可临时把这里改回 true。
   updated_at:
-    enable: true
+    enable: false
     another_day: true
   categories: true
 
