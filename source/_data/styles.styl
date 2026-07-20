@@ -82,6 +82,19 @@ body::before {
   background: transparent;  // Gemini scheme 透明，让 $content-bg-color 在 .post-block 上生效
 }
 
+// === 桌面宽屏下限制总宽度并居中 ===
+// 原因：Gemini scheme 的 .main-inner width: calc(100% - 252px) 跟随父级 .main
+// 宽度，在 1920px+ 视口下会撑到 1100px+，阅读行宽过长（理想 60-90 字符）。
+// 同时左侧 sidebar 列（.column）也被挤到 x=257 而非贴左。
+// 这里把最外层 .container 限制到 1200px 居中，sidebar 和内容区一起往中间收。
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 // === 暗色模式遮罩（深 88%） ===
 // 用 [data-theme="dark"] 替代原 prefers-color-scheme，让手动按钮生效
 [data-theme="dark"] body::before {
@@ -135,15 +148,32 @@ html.gsap-ready .fade-up {
 }
 
 // === 自定义 header（覆盖 NexT 默认 header 视觉） ===
+// 重要：NexT Gemini 的 <header class="header"> 不是页面顶部 banner，而是
+// 位于左侧 sidebar 列内（.column，桌面端 ~240px 宽）。next_inject('header')
+// 是在该 sidebar 列内部注入，所以 .custom-header 被塞进了一个窄列里，
+// 在桌面宽屏下会被压缩到 240px。
+// 解决：用 position: fixed 突破 sidebar 列约束，浮到视口顶部全宽显示。
 .custom-header {
-  position: sticky;
+  position: fixed !important;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-color, #e4e4e7);
   transition: height 0.25s ease, padding 0.25s ease;
+}
+
+// 给 fixed header 让位，避免内容被遮（header 高度约 70-80px，padding 24px）
+// 用 body padding-top 而不是 margin，避免背景图偏移
+body {
+  padding-top: 72px;
+}
+@media (max-width: 767px) {
+  body { padding-top: 100px; }  // 移动端 header 纵向堆叠，更高
 }
 
 .custom-header-inner {
