@@ -1,4 +1,4 @@
-{# 自定义 header：左对齐 logo + 右对齐导航 + 细分隔线 #}
+{# 自定义 header：左对齐 logo + 右对齐导航 + 主题切换按钮 #}
 {# 滚动收缩 + backdrop-filter 由 styles.styl + Task 7 GSAP 处理 #}
 <header class="custom-header">
   <div class="custom-header-inner">
@@ -10,6 +10,15 @@
         {% set menu_path = path.split(' || ')[0] %}
         <a href="{{ url_for(menu_path) }}">{{ __('menu.' + name) }}</a>
       {% endfor %}
+      {# 主题切换按钮：两个图标都渲染，CSS 按 data-theme 控制显隐，避免 JS 加载前错位 #}
+      <button type="button"
+              class="theme-toggle"
+              id="theme-toggle"
+              aria-label="切换深浅色主题"
+              title="切换深浅色">
+        <i class="theme-toggle-icon theme-toggle-sun fa fa-sun" aria-hidden="true"></i>
+        <i class="theme-toggle-icon theme-toggle-moon fa fa-moon" aria-hidden="true"></i>
+      </button>
     </nav>
   </div>
 </header>
