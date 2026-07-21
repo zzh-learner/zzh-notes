@@ -10,6 +10,20 @@
 - **线上地址**：<https://zzh-learner.github.io/zzh-notes/>
 - **写作流程**：本地写 Markdown → `git push` → GitHub Actions 自动构建发布。
 
+## 构建命令与自定义脚本
+
+- 需要 **Node.js 20 LTS**（见 `README.md`）。
+- 常用命令（也可直接 `npx hexo ...`）：
+  | 命令 | 作用 |
+  |------|------|
+  | `npm run build` / `npx hexo generate` | 生成静态文件到 `public/` |
+  | `npm run server` / `npx hexo server` | 本地预览 http://localhost:4000/zzh-notes/ |
+  | `npm run clean` / `npx hexo clean` | 清理缓存与 `public/` |
+- **`scripts/git-revision.js`**：自定义 Hexo 插件，构建时读 git 历史为每篇文章生成行级修订 diff，注入到 NexT 文章页末尾（`postBodyEnd`）。两条连带约束：
+  - 它依赖 `diff` 包（红线 2 的"不要精简"清单之一），删了会构建报错。
+  - 它在构建期 `execSync('git log ...')`，所以 **CI/构建必须在含完整 git 历史的检出里跑**（Actions 默认如此）——浅克隆或无 `.git` 会让修订区静默不渲染。
+  - 任何 git 错误都被捕获并 `warn` 跳过，**不会阻断构建**；若某篇修订区缺失，先查是否未提交或刚重命名。
+
 ## 写作发布规范
 
 - 新随笔放 `source/_posts/`，文件名用中文便于本地浏览。
