@@ -67,11 +67,14 @@ body {
 }
 
 // 用 ::before 做半透明遮罩，让背景图变成肌理
+// 透明度由 --bg-overlay-opacity 控制（滑块 JS 写入，默认 0.5 = 半隐半现）
+// 注意：rgba() 内嵌 var() 时，Stylus 会把 rgba 当 builtin 解析报错，
+// 用 unquote() 让它原样输出 CSS 字符串。
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(250, 250, 250, 0.92);
+  background: unquote("rgba(250, 250, 250, var(--bg-overlay-opacity, 0.5))");
   z-index: -1;
   pointer-events: none;
 }
@@ -95,10 +98,11 @@ body::before {
   }
 }
 
-// === 暗色模式遮罩（深 88%） ===
-// 用 [data-theme="dark"] 替代原 prefers-color-scheme，让手动按钮生效
+// === 暗色模式遮罩（颜色切暗，透明度仍由滑块控制） ===
+// 颜色换暗色，但 --bg-overlay-opacity 与亮色共用同一个值（滑块管可见度，主题管颜色）
+// rgba 内嵌 var() 用 unquote() 让 Stylus 原样输出（否则报 alpha 非 unit）
 [data-theme="dark"] body::before {
-  background: rgba(15, 15, 17, 0.88);
+  background: unquote("rgba(15, 15, 17, var(--bg-overlay-opacity, 0.5))");
 }
 
 // === 阅读进度条（GSAP 控制 width，这里只定样式） ===
@@ -118,6 +122,15 @@ body::before {
 html.gsap-ready .fade-up {
   opacity: 0;
   transform: translateY(24px);
+}
+
+// === 文章卡片改透明（配合背景明暗滑块） ===
+// 决策依据：用户在 brainstorming §3 明确选"文章区也透明，文字直接叠在背景图上"。
+// 滑块拉到最右时，背景图完全可见，正文直接压在图上。
+// 风险：某些复杂背景图会让正文难辨（用户已接受，见 spec §9）。
+.posts-expand .post-block,
+.post-block {
+  background: transparent !important;
 }
 
 // 首页文章卡片 hover 边框变深青
@@ -431,4 +444,123 @@ header.header {
 }
 @media (prefers-reduced-motion: reduce) {
   .custom-header-search { transition: none; }
+}
+
+// === 背景明暗调节按钮（复用 .theme-toggle / .custom-header-search 骨架） ===
+.custom-header-bg {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color, #09090b);
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+  vertical-align: middle;
+}
+.custom-header-bg:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--theme-color);
+}
+// popover 打开时按钮高亮，给"正在操作"反馈
+.custom-header-bg[aria-expanded="true"] {
+  background: rgba(8, 145, 178, 0.1);
+  color: var(--theme-color);
+}
+[data-theme="dark"] .custom-header-bg { color: #f4f4f5; }
+[data-theme="dark"] .custom-header-bg:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #22d3ee;
+}
+@media (prefers-reduced-motion: reduce) {
+  .custom-header-bg { transition: none; }
+}
+
+// === 背景明暗 popover ===
+.bg-popover {
+  position: fixed;
+  top: 72px;              // 桌面端 header 高度（body padding-top: 72px）
+  right: 24px;
+  z-index: 110;           // 高于 .custom-header(100)
+  min-width: 220px;
+  padding: 16px 20px;
+  background: var(--content-bg-color, #ffffff);
+  border: 1px solid var(--border-color, #e4e4e7);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-family: 'Public Sans', 'Noto Sans SC', sans-serif;
+  font-size: 0.875em;
+}
+[data-theme="dark"] .bg-popover {
+  background: var(--content-bg-color, #18181b);
+  border-color: #27272a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+// hidden 属性兜底（防被其他 display 规则覆盖）
+.bg-popover[hidden] { display: none; }
+
+.bg-popover-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: var(--text-color, #09090b);
+}
+.bg-popover-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bg-popover-min, .bg-popover-max {
+  flex-shrink: 0;
+  color: var(--blockquote-color, #52525b);
+  font-size: 0.85em;
+}
+
+// === 滑块（跨浏览器统一外观） ===
+.bg-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border-color, #e4e4e7);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.bg-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--theme-color);
+  border: 2px solid var(--content-bg-color, #ffffff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.bg-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--theme-color);
+  border: 2px solid var(--content-bg-color, #ffffff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.bg-slider:focus-visible {
+  // 聚焦时轨道淡光晕，辅助键盘定位
+  box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.2);
+}
+
+// === 移动端 popover 满宽 ===
+@media (max-width: 767px) {
+  .bg-popover {
+    top: 100px;            // 移动端 header 纵向堆叠更高（body padding-top: 100px）
+    right: 12px;
+    left: 12px;
+    min-width: 0;
+  }
 }
