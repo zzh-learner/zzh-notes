@@ -48,8 +48,12 @@ sidebar:
   position: left
   display: post
 
-# 头像（暂留空，后续可加）
-# avatar: /images/avatar.png
+# 头像（GIF 动图，浏览器 <img> 原生支持，自动播放）
+avatar:
+  url: /images/avatar.gif
+  rounded: true   # 圆形裁剪（CSS border-radius，不影响 GIF 动画）
+  opacity: 1
+  rotated: false  # 勿开：hover 旋转叠 GIF 动画视觉很乱
 
 # 社交链接（暂留空）
 # social:
