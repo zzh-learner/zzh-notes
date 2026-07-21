@@ -4,7 +4,7 @@
 
 **Goal:** 让 Hexo 构建期读每篇文章的 git commit 历史，commit 数 ≥2 时自动填 `post.updated`（显示"更新于"），否则不填（不显示）。
 
-**Architecture:** 新增 `scripts/git-updated.js` 插件，挂 `before_generate` filter，对每篇 Post 跑 `git log --follow --no-merges --pretty=format:%ci`，按 commit 数决定是否填 updated。同时给 NexT 模板 `post-meta.njk` 第 22 行加 `post.updated and` 空值判断（修 NexT 既有 bug），并把 `_config.next.yml` 的 `updated_at.enable` 从 `false` 改回 `true`。
+**Architecture:** 新增 `scripts/git-updated.js` 插件，挂 `template_locals` filter（执行期修正：原计划 `before_generate` 不可行——warehouse 的 Post Document 不允许 updated 字段被外部修改，updateById 也不生效；改用 `template_locals` 直接改 `locals.page.updated`，跟 `scripts/git-revision.js` 同款模式），对每篇 post 详情页跑 `git log --follow --no-merges --pretty=format:%ci`，按 commit 数决定是否填 updated。同时给 NexT 模板 `post-meta.njk` 第 22 行加 `post.updated and` 空值判断（修 NexT 既有 bug），并把 `_config.next.yml` 的 `updated_at.enable` 从 `false` 改回 `true`。
 
 **Tech Stack:** Hexo 7.3.0 filter API、Node.js 原生 `child_process.execSync` + `Date`（零新依赖）、NexT 8 模板（Nunjucks）。
 
@@ -34,30 +34,33 @@
 
 ---
 
-## Task 1: 新增 git-updated 插件（核心）
+## Task 1: 新增 git-updated 插件（核心）✅ 已执行（commit `cab85dd`）
+
+> **执行期修正**：原计划挂 `before_generate` + 改 `post.updated`，实测不可行（warehouse 的 Post Document 不允许 updated 字段被外部修改，`Post.updateById` 也不生效，已用 probe 脚本独立验证）。改用 `template_locals` 直接改 `locals.page.updated`（跟 `scripts/git-revision.js` 同款）。下方代码块已更新为实际实现。
 
 **Files:**
 - Create: `scripts/git-updated.js`
 
 **Interfaces:**
-- Consumes: `hexo.database.model('Post')`、`hexo.base_dir`、`hexo.config.timezone`、`hexo.log`
-- Produces: 副作用——修改 `Post` 集合里每个文档的 `updated` 字段（仅对 commit 数 ≥2 的文章赋值）
+- Consumes: `hexo.base_dir`、`hexo.log`、`locals.page`（template_locals 注入）
+- Produces: 副作用——对 commit 数 ≥2 的 post 详情页，给 `page.updated` 赋 Date 值
 
 **设计说明：**
 
-对齐 `scripts/git-revision.js` 的成熟模式（execSync + base_dir + 相对路径 + 错误静默）。核心算法：
+对齐 `scripts/git-revision.js` 的成熟模式（execSync + base_dir + 相对路径 + 错误静默 + `template_locals`）。核心算法：
 
 ```
-对每篇 post：
-  relPath = path.relative(hexo.base_dir, post.full_source) 转 posix
+template_locals 触发时（每页渲染前）：
+  if page.layout != 'post' or !page.full_source: return
+  relPath = path.relative(hexo.base_dir, page.full_source) 转 posix
   out = execSync('git log --follow --no-merges --pretty=format:%ci -- "<relPath>"')
   commits = out.trim().split('\n').filter(Boolean)
   if commits.length >= 2:
-    post.updated = new Date(commits[0])   // 最新 commit 的 %ci
+    page.updated = new Date(commits[0])   // 最新 commit 的 %ci
   // 否则不动（保持 undefined）
 ```
 
-- [ ] **Step 1: 写插件文件**
+- [x] **Step 1: 写插件文件**
 
 创建 `scripts/git-updated.js`，完整内容如下（对齐 `git-revision.js` 的注释密度与风格）：
 
@@ -65,10 +68,16 @@
 /* global hexo */
 'use strict';
 
-// 文章更新时间 —— 构建时读 git 历史，按 commit 数决定是否填 post.updated
+// 文章更新时间 —— 构建时读 git 历史，按 commit 数决定是否填 page.updated
 // 规则：commit 数 0（未提交）或 1（只发布过）→ 不填；≥2（改过）→ 填最新 commit 的 %ci
-// 挂在 before_generate，覆盖 Hexo 默认 updated_option（当前配置为 'empty'）
+// 挂在 template_locals，渲染期为每篇 post 详情页计算（覆盖 Hexo 默认 updated_option: 'empty'）
 // 任何 git 错误均静默跳过（仅 warn），绝不阻断构建
+//
+// 设计说明：跟 scripts/git-revision.js 同款用 template_locals 而非 before_generate。
+// 原因：warehouse 的 Post.forEach / Post.toArray() 每次 query 都返回新的 Document 实例
+// （p1 !== p2 !== p3 已实测），在 before_generate 里改 post.updated 只动到临时对象，
+// _runGenerators 阶段重新 query 时读不到，page.updated 还是 undefined。
+// template_locals 收到的 locals.page 正是渲染器要用的对象，直接赋值即可生效。
 
 const { execSync } = require('child_process');
 const path = require('path');
@@ -88,47 +97,52 @@ function getCommitDates(relPath, cwd) {
   return out.split('\n').filter(Boolean);
 }
 
-hexo.extend.filter.register('before_generate', () => {
-  const Post = hexo.database.model('Post');
-  const baseDir = hexo.base_dir;
+// template_locals：每页渲染时触发，locals.page 即将被送进渲染器
+// 只对文章详情页（layout === 'post'）计算，惰性求值
+hexo.extend.filter.register('template_locals', locals => {
+  const page = locals.page;
+  if (!page || page.layout !== 'post' || !page.full_source) {
+    return locals;
+  }
 
-  Post.forEach(post => {
-    if (!post.full_source) return;
-
-    let commits;
-    try {
-      const relPath = path.relative(baseDir, post.full_source).replace(/\\/g, '/');
-      commits = getCommitDates(relPath, baseDir);
-    } catch (e) {
-      hexo.log.warn(`git-updated: 跳过 ${post.path} - ${e.message}`);
-      return;
-    }
+  try {
+    const baseDir = hexo.base_dir;
+    const relPath = path.relative(baseDir, page.full_source).replace(/\\/g, '/');
+    const commits = getCommitDates(relPath, baseDir);
 
     if (commits.length >= 2) {
       // 最新 commit 的 %ci 解析成 Date（带时区，new Date 能正确解析）
       const updated = new Date(commits[0]);
       if (!isNaN(updated.getTime())) {
-        post.updated = updated;
+        page.updated = updated;
       }
     }
-    // commits.length < 2 时不赋值，post.updated 保持 undefined
-  });
+    // commits.length < 2 时不赋值，page.updated 保持原值（undefined）
+  } catch (e) {
+    hexo.log.warn(`git-updated: 跳过 ${page.path} - ${e.message}`);
+  }
+
+  return locals;
 });
 ```
 
-- [ ] **Step 2: 本地验证插件无构建错误**
+- [x] **Step 2: 本地验证插件无构建错误**
 
 Run: `npx hexo clean && npx hexo generate 2>&1 | tail -10`
 
 Expected: 输出 `417 files generated in ...`，无 ERROR，无 `git-updated: 跳过` 的 warn（除非真有未提交文件）。
 
-- [ ] **Step 3: 验证插件确实填了 updated（找一篇改过的文章）**
+**实测**：417 files generated，无 plugin 相关 ERROR/WARN（预存在的 `_data/header.njk` ERROR 与本插件无关，已对照验证）。
 
-先找一篇 git 历史里 commit 数 ≥2 的文章：
+- [x] **Step 3: 验证插件确实填了 updated（找一篇改过的文章）**
 
-Run: `git log --follow --no-merges --pretty=format:%ci -- "source/_posts/hello-essays.md" | wc -l`
+> **执行期修正**：brief 原推荐 `hello-essays.md`，实际只 1 commit（不是"多次修改"）。全仓 commit≥2 的只有 3 篇：长风破浪 / 别碰那段投递脚本 / 关于专注力。改用这 3 篇验证。
 
-Expected: 数字 ≥2（hello-essays 是开篇，多次修改过）。
+Run: `git log --follow --no-merges --pretty=format:%H%n -- "source/_posts/关于专注力.md" | wc -l`
+
+Expected: 数字 ≥2（关于专注力有 2 个 commit：发布 + YAML 修正）。
+
+然后用 dump 脚本确认 Hexo 数据层 `page.updated` 已被填上（注意：必须用 `hexo.generate()` 触发完整 pipeline 才能让 template_locals 跑到，单纯 `hexo.load()` 不行）：
 
 然后用 dump 脚本确认 Hexo 数据层 `post.updated` 已被填上：
 
@@ -152,11 +166,11 @@ Run: `node _verify-updated.js 2>&1 | grep -v "^INFO\|^WARN"`
 
 Expected: 输出里 `updated="..."` 不再是 `undefined`，而是一个 Date（如 `updated="Mon Jul 20 2026 ..."`）。
 
-- [ ] **Step 4: 清理临时验证脚本**
+- [x] **Step 4: 清理临时验证脚本**
 
 Run: `rm -f _verify-updated.js`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**（实际 commit `cab85dd`，commit 信息追加了 before_generate → template_locals 的根因说明）
 
 ```bash
 git add scripts/git-updated.js
