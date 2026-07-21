@@ -10,6 +10,37 @@
         {% set menu_path = path.split(' || ')[0] %}
         <a href="{{ url_for(menu_path) }}">{{ __('menu.' + name) }}</a>
       {% endfor %}
+      {# 背景明暗调节：点按钮弹 popover，内含 range slider。
+         滑块 JS 在 body-end.njk，控制 --bg-overlay-opacity CSS 变量。
+         样式在 styles.styl 的 .custom-header-bg / .bg-popover 段。 #}
+      <button type="button"
+              class="custom-header-bg popover-trigger"
+              id="bg-toggle"
+              aria-label="调节背景明暗"
+              title="背景明暗"
+              aria-haspopup="true"
+              aria-expanded="false">
+        <i class="fa fa-image" aria-hidden="true"></i>
+      </button>
+      <div class="bg-popover"
+           id="bg-popover"
+           role="dialog"
+           aria-label="背景明暗调节"
+           hidden>
+        <span class="bg-popover-label">背景明暗</span>
+        <div class="bg-popover-row">
+          <span class="bg-popover-min">隐</span>
+          <input type="range"
+                 min="0"
+                 max="100"
+                 value="50"
+                 step="1"
+                 class="bg-slider"
+                 id="bg-slider"
+                 aria-label="背景可见度">
+          <span class="bg-popover-max">显</span>
+        </div>
+      </div>
       {# 搜索按钮：从默认 header 搬进自定义 header，紧挨主题切换按钮。
          保留 .popup-trigger class（local-search.js 通过它绑定 click）。
          解决原来搜索按钮（position:fixed 视口右上）和主题切换按钮重叠按错的问题。 #}
