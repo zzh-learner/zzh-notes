@@ -36,6 +36,77 @@
 })();
 </script>
 
+{# === 背景明暗滑块逻辑（独立 IIFE，不依赖 GSAP） === #}
+{# 读 localStorage → 设 CSS 变量 → 滑块 input 更新 → popover 开关 #}
+{# 工程兜底：localStorage 用 try/catch 防隐私模式抛错；DOM 缺失则 return #}
+<script>
+(function () {
+  var STORAGE_KEY = 'bg-opacity';
+  var DEFAULT = 50;   // 0=完全隐藏背景图，100=完全可见
+
+  // 滑块值（0-100）→ 遮罩 opacity（1-0）：值越大，遮罩越透明，背景图越清晰
+  function applyOpacity(sliderVal) {
+    var overlayOpacity = 1 - sliderVal / 100;
+    document.documentElement.style.setProperty('--bg-overlay-opacity', overlayOpacity);
+  }
+
+  // Layer 1: 初始化（首次读 localStorage）
+  var stored = null;
+  try { stored = parseInt(localStorage.getItem(STORAGE_KEY), 10); } catch (e) {}
+  var initial = (isNaN(stored) || stored < 0 || stored > 100) ? DEFAULT : stored;
+
+  var slider = document.getElementById('bg-slider');
+  var toggleBtn = document.getElementById('bg-toggle');
+  var popover = document.getElementById('bg-popover');
+  // 任一 DOM 缺失则静默退出，不阻塞其他脚本
+  if (!slider || !toggleBtn || !popover) return;
+
+  slider.value = initial;
+  applyOpacity(initial);
+
+  // Layer 2: 滑块拖动（实时更新 CSS 变量 + debounce 写 localStorage）
+  var saveTimer = null;
+  slider.addEventListener('input', function () {
+    var v = parseInt(slider.value, 10);
+    applyOpacity(v);
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try { localStorage.setItem(STORAGE_KEY, String(v)); } catch (e) {}
+    }, 200);
+  });
+
+  // Layer 3: popover 开关
+  function open() {
+    popover.hidden = false;
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    slider.focus();
+  }
+  function close() {
+    popover.hidden = true;
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  }
+  function isOpen() { return !popover.hidden; }
+
+  // 点按钮 toggle（stopPropagation 防触发下面的"点外部关闭"）
+  toggleBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (isOpen()) { close(); } else { open(); }
+  });
+  // 点 popover 外部关闭
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) return;
+    if (!popover.contains(e.target) && e.target !== toggleBtn) close();
+  });
+  // Esc 关闭，焦点回按钮
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) {
+      close();
+      toggleBtn.focus();
+    }
+  });
+})();
+</script>
+
 {# === GSAP + ScrollTrigger（CDN，defer 不阻塞首屏） === #}
 {# 国内访问可能慢/失败，但工程兜底保证内容仍可见 === #}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
