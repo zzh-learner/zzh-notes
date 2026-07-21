@@ -130,7 +130,7 @@ html.gsap-ready .fade-up {
 // 风险：某些复杂背景图会让正文难辨（用户已接受，见 spec §9）。
 .posts-expand .post-block,
 .post-block {
-  background: transparent !important;
+  background: transparent;
 }
 
 // 首页文章卡片 hover 边框变深青
@@ -482,11 +482,16 @@ header.header {
 }
 
 // === 背景明暗 popover ===
+// popover 在 <body> 根级（header.njk 中 </header> 之后），不在 .custom-header 内。
+// 这样它处于根 stacking context，z-index:110 直接与 .custom-header 的 z-index:100
+// 在同一上下文比较，110 > 100 正确把 popover 叠在 header 上方。
+// 若仍在 .custom-header 内，backdrop-filter 会为 fixed 后代建包含块，且 110 无法
+// 超出 header 自身 stacking context（100），会被 header 遮挡/锚定错位。
 .bg-popover {
   position: fixed;
   top: 72px;              // 桌面端 header 高度（body padding-top: 72px）
   right: 24px;
-  z-index: 110;           // 高于 .custom-header(100)
+  z-index: 110;           // popover 在 body 根级，z-index 110 > header 100（同根 stacking context）
   min-width: 220px;
   padding: 16px 20px;
   background: var(--content-bg-color, #ffffff);

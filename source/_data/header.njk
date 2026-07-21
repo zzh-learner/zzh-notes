@@ -22,25 +22,6 @@
               aria-expanded="false">
         <i class="fa fa-image" aria-hidden="true"></i>
       </button>
-      <div class="bg-popover"
-           id="bg-popover"
-           role="dialog"
-           aria-label="背景明暗调节"
-           hidden>
-        <span class="bg-popover-label">背景明暗</span>
-        <div class="bg-popover-row">
-          <span class="bg-popover-min">隐</span>
-          <input type="range"
-                 min="0"
-                 max="100"
-                 value="50"
-                 step="1"
-                 class="bg-slider"
-                 id="bg-slider"
-                 aria-label="背景可见度">
-          <span class="bg-popover-max">显</span>
-        </div>
-      </div>
       {# 搜索按钮：从默认 header 搬进自定义 header，紧挨主题切换按钮。
          保留 .popup-trigger class（local-search.js 通过它绑定 click）。
          解决原来搜索按钮（position:fixed 视口右上）和主题切换按钮重叠按错的问题。 #}
@@ -64,3 +45,28 @@
     </nav>
   </div>
 </header>
+{# 背景明暗 popover：放在 <body> 直接子级（</header> 之后），而非
+   .custom-header 内部。原因：.custom-header 有 position:fixed + z-index:100 +
+   backdrop-filter:blur(8px)，backdrop-filter 会为 fixed 后代创建包含块，
+   z-index:110 也无法真正超过 header 的 stacking context。提到 body 根级后，
+   z-index:110 在根 stacking context 中 > header 的 100，正确叠在上层。
+   JS 用 getElementById('bg-popover') 定位，与 DOM 层级无关，搬动不影响。 #}
+<div class="bg-popover"
+     id="bg-popover"
+     role="dialog"
+     aria-label="背景明暗调节"
+     hidden>
+  <span class="bg-popover-label">背景明暗</span>
+  <div class="bg-popover-row">
+    <span class="bg-popover-min">隐</span>
+    <input type="range"
+           min="0"
+           max="100"
+           value="50"
+           step="1"
+           class="bg-slider"
+           id="bg-slider"
+           aria-label="背景可见度">
+    <span class="bg-popover-max">显</span>
+  </div>
+</div>
