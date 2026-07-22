@@ -216,18 +216,6 @@ window.addEventListener('load', function () {
       }
     });
 
-    // === 动效 5：背景图 parallax ===
-    gsap.to('body', {
-      backgroundPositionY: '+=5%',
-      ease: 'none',
-      scrollTrigger: {
-        trigger: document.body,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true
-      }
-    });
-
     // === header 滚动收缩 ===
     var header = document.querySelector('.custom-header');
     if (header) {
