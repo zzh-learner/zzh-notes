@@ -224,7 +224,7 @@
       var nebulaColors = ['#2a1a4a', '#0a3a4a', '#3a1a1a', '#1a2a4a'];
       var nebulaCount = 3 + Math.floor(Math.random() * 2);  // 3 或 4 团
 
-      // 生成径向渐变纹理（64x64，中心透明→边缘透明，中圈有色）
+      // 生成径向渐变纹理（128x128，中心有色→边缘渐变透明）
       function makeNebulaTexture(hexColor) {
         var size = 128;
         var c = document.createElement('canvas');
@@ -370,6 +370,7 @@
       function start() {
         if (running) return;
         running = true;
+        lastFrameTime = null;  // 重置 dt 基准，避免长暂停后首帧 dt 过大导致流星跳变
         animate();
       }
       function stop() {
@@ -391,7 +392,7 @@
       document.addEventListener('visibilitychange', function () {
         if (document.hidden) {
           stop();
-        } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && currentThemeIsDark()) {
           start();
         }
       });

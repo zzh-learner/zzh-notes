@@ -59,7 +59,7 @@
 // body 底色是兜底：canvas 未注入或降级时，暗色显 #0f0f11 黑底。
 // 三层结构：body 兜底底色 → #starfield canvas（z-index:-2）→ 内容区（z-index≥0）
 body {
-  background-color: #0f0f11;
+  background-color: var(--body-bg-color, #0f0f11);
   position: relative;
   min-height: 100vh;
 }
