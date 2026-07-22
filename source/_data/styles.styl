@@ -55,28 +55,31 @@
 [data-theme="dark"] img:hover { opacity: 0.9; }
 [data-theme="light"] img { opacity: 1; }
 
-// === 背景图 + 强遮罩（亮色 92%） ===
+// === 背景：Three.js 星空 canvas（暗色）/ 纯色兜底（亮色或 JS 失败） ===
+// body 底色是兜底：canvas 未注入或降级时，暗色显 #0f0f11 黑底。
+// 三层结构：body 兜底底色 → #starfield canvas（z-index:-2）→ 内容区（z-index≥0）
 body {
-  background-image: url('/zzh-notes/images/background.webp');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: #0f0f11;
   position: relative;
   min-height: 100vh;
 }
 
-// 用 ::before 做半透明遮罩，让背景图变成肌理
-// 透明度由 --bg-overlay-opacity 控制（滑块 JS 写入，默认 0.5 = 半隐半现）
-// 注意：rgba() 内嵌 var() 时，Stylus 会把 rgba 当 builtin 解析报错，
-// 用 unquote() 让它原样输出 CSS 字符串。
-body::before {
-  content: '';
+// 星空 canvas：JS 动态创建（body-end.njk Task 3），失败则无此元素。
+// opacity 绑 --bg-overlay-opacity（滑块 IIFE 写入 <html>）。
+// 现有 IIFE 语义：overlayOpacity = 1 - sliderVal/100，值越大遮罩越透（照片越清晰）。
+// 对 canvas 再反一次（1 - var）还原成"值越大星空越清晰"：
+//   滑块 100 → --bg-overlay-opacity=0 → canvas opacity=1（全亮）
+//   滑块 0   → --bg-overlay-opacity=1 → canvas opacity=0（隐藏）
+#starfield {
   position: fixed;
-  inset: 0;
-  background: unquote("rgba(250, 250, 250, var(--bg-overlay-opacity, 0.5))");
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
   pointer-events: none;
+  opacity: calc(1 - var(--bg-overlay-opacity, 0.5));
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 // === 内容区不透明白/暗底（覆盖 Task 2 之外的细节） ===
@@ -98,11 +101,9 @@ body::before {
   }
 }
 
-// === 暗色模式遮罩（颜色切暗，透明度仍由滑块控制） ===
-// 颜色换暗色，但 --bg-overlay-opacity 与亮色共用同一个值（滑块管可见度，主题管颜色）
-// rgba 内嵌 var() 用 unquote() 让 Stylus 原样输出（否则报 alpha 非 unit）
-[data-theme="dark"] body::before {
-  background: unquote("rgba(15, 15, 17, var(--bg-overlay-opacity, 0.5))");
+// === 暗色模式 body 底色（canvas 降级时的兜底黑） ===
+[data-theme="dark"] body {
+  background-color: #0f0f11;
 }
 
 // === 阅读进度条（GSAP 控制 width，这里只定样式） ===
@@ -568,4 +569,17 @@ header.header {
     left: 12px;
     min-width: 0;
   }
+}
+
+// === 亮色模式：星空隐藏（白底上看不见星），滑块禁用 ===
+// canvas 用 opacity+visibility 而非 display:none，实现切换时淡出过渡。
+[data-theme="light"] #starfield {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+// 亮色下滑块按钮变灰禁用（星空仅暗色可见）
+[data-theme="light"] .custom-header-bg {
+  opacity: 0.4;
+  pointer-events: none;
 }
