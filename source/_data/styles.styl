@@ -29,7 +29,7 @@
 [data-theme="dark"] img { opacity: 0.75; }
 [data-theme="dark"] img:hover { opacity: 0.9; }
 
-// === 背景：Three.js 星空 canvas（暗色）/ 纯色兜底（亮色或 JS 失败） ===
+// === 背景：Three.js 星空 canvas / 纯色兜底（JS 失败时） ===
 // body 底色是兜底：canvas 未注入或降级时，暗色显 #0f0f11 黑底。
 // 三层结构：body 兜底底色 → #starfield canvas（z-index:-2）→ 内容区（z-index≥0）
 body {
@@ -278,11 +278,10 @@ header.header {
 
 // 4) 功能按钮处理：
 //    - .site-nav-toggle .toggle（移动端汉堡）：保留 fixed 浮动，仅移动端可见
-//    - .site-nav-right  .toggle（搜索）：已搬进 .custom-header-nav 内（紧挨主题
-//      切换按钮），原位置直接 display:none 隐藏。
-//    之前搜索按钮用 position:fixed 浮在视口右上角，和主题切换按钮位置接近，
-//    会重叠按错。现在两个工具按钮都在 .custom-header-nav 的 flex 流里，
-//    有 24px gap 间隔，物理上不可能重叠。
+//    - .site-nav-right  .toggle（搜索）：已搬进 .custom-header-nav 内（紧挨背景
+//      明暗按钮），原位置直接 display:none 隐藏。
+//    两个工具按钮都在 .custom-header-nav 的 flex 流里，有 24px gap 间隔，
+//    物理上不可能重叠。
 .header .site-nav-toggle {
   display: block;   // 覆盖 NexT 默认 display:none
 }

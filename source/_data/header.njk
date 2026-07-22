@@ -1,4 +1,4 @@
-{# 自定义 header：左对齐 logo + 右对齐导航 + 主题切换按钮 #}
+{# 自定义 header：左对齐 logo + 右对齐导航 + 背景明暗/搜索按钮 #}
 {# 滚动收缩 + backdrop-filter 由 styles.styl + Task 7 GSAP 处理 #}
 <header class="custom-header">
   <div class="custom-header-inner">
@@ -22,9 +22,8 @@
               aria-expanded="false">
         <i class="fa fa-image" aria-hidden="true"></i>
       </button>
-      {# 搜索按钮：从默认 header 搬进自定义 header，紧挨主题切换按钮。
-         保留 .popup-trigger class（local-search.js 通过它绑定 click）。
-         解决原来搜索按钮（position:fixed 视口右上）和主题切换按钮重叠按错的问题。 #}
+      {# 搜索按钮：从默认 header 搬进自定义 header，紧挨背景明暗按钮。
+         保留 .popup-trigger class（local-search.js 通过它绑定 click）。 #}
       {%- if theme.local_search.enable or theme.algolia_search.enable %}
       <button type="button"
               class="custom-header-search popup-trigger"
