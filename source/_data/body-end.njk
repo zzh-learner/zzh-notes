@@ -107,6 +107,185 @@
 })();
 </script>
 
+{# === 星空背景（Three.js，ES module，动态 import + 全链路兜底） === #}
+{# 降级链：CDN 失败/WebGL 不支持/运行异常 → 静默降级为纯色底，内容照常可读 #}
+<script type="module">
+  (async function () {
+    var THREE;
+    // ① CDN 加载兜底
+    try {
+      THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+    } catch (e) {
+      console.warn('[ZZH] Three.js 加载失败，星空降级为纯色底');
+      return;
+    }
+
+    // ② WebGL 支持检测
+    var testCtx = document.createElement('canvas').getContext('webgl2') ||
+                 document.createElement('canvas').getContext('webgl');
+    if (!testCtx) {
+      console.warn('[ZZH] WebGL 不支持，星空降级为纯色底');
+      return;
+    }
+
+    try {
+      // === 创建 canvas 注入 body 首子节点（失败则无残留） ===
+      var canvas = document.createElement('canvas');
+      canvas.id = 'starfield';
+      document.body.insertBefore(canvas, document.body.firstChild);
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 1;
+
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // root Group：Task 4 的整体漂移挂这里
+      var group = new THREE.Group();
+      scene.add(group);
+
+      // === Layer 1：星点（球面随机分布 + 逐星闪烁） ===
+      var STAR_COUNT = 1000;
+      var positions = new Float32Array(STAR_COUNT * 3);
+      var scales = new Float32Array(STAR_COUNT);
+      var phases = new Float32Array(STAR_COUNT);
+      var colors = new Float32Array(STAR_COUNT * 3);
+
+      var warmColor = new THREE.Color('#fff5e6');
+      var blueColor = new THREE.Color('#cce8ff');
+
+      for (var i = 0; i < STAR_COUNT; i++) {
+        // 球面均匀分布：半径 5-50
+        var r = 5 + Math.random() * 45;
+        var theta = Math.random() * Math.PI * 2;
+        var phi = Math.acos(2 * Math.random() - 1);
+        positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+
+        scales[i] = 0.5 + Math.random() * 1.5;
+        phases[i] = Math.random() * Math.PI * 2;
+
+        var c = Math.random() < 0.1 ? blueColor : warmColor;
+        colors[i * 3]     = c.r;
+        colors[i * 3 + 1] = c.g;
+        colors[i * 3 + 2] = c.b;
+      }
+
+      var starGeo = new THREE.BufferGeometry();
+      starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      starGeo.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
+      starGeo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+      starGeo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
+
+      var starMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }
+        },
+        vertexShader: [
+          'attribute float aScale;',
+          'attribute float aPhase;',
+          'attribute vec3 aColor;',
+          'varying vec3 vColor;',
+          'varying float vTwinkle;',
+          'uniform float uTime;',
+          'uniform float uPixelRatio;',
+          'void main() {',
+          '  vColor = aColor;',
+          '  vTwinkle = 0.6 + 0.4 * sin(uTime * 2.0 + aPhase);',  // ~3s 周期闪烁
+          '  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
+          '  gl_PointSize = aScale * 2.0 * uPixelRatio * (50.0 / -mvPosition.z);',
+          '  gl_Position = projectionMatrix * mvPosition;',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'varying vec3 vColor;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec2 uv = gl_PointCoord - vec2(0.5);',
+          '  float d = length(uv);',
+          '  if (d > 0.5) discard;',                  // 软边圆，非硬方块
+          '  float alpha = (1.0 - d * 2.0) * vTwinkle;',
+          '  gl_FragColor = vec4(vColor, alpha);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      var stars = new THREE.Points(starGeo, starMat);
+      group.add(stars);
+
+      // === RAF 循环（Task 3 只做星点；Task 4 加星云/流星/漂移） ===
+      var rafId = null;
+      var running = false;
+      var clock = new THREE.Clock();
+      var lastFrameTime = null;  // Task 4 手动算 dt 用（避免 getDelta/getElapsedTime 冲突）
+
+      function animate() {
+        rafId = requestAnimationFrame(animate);
+        var t = clock.getElapsedTime();
+        starMat.uniforms.uTime.value = t;
+        // group.rotation.y 在 Task 4 加（漂移），此处暂留星点静态
+        renderer.render(scene, camera);
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        animate();
+      }
+      function stop() {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      // === reduced-motion：渲染一帧静态星空后停 ===
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        starMat.uniforms.uTime.value = 0;
+        renderer.render(scene, camera);
+        console.warn('[ZZH] prefers-reduced-motion，星空渲染静态一帧后停止动画');
+      } else {
+        start();
+      }
+
+      // === tab 可见性：隐藏时停 RAF 省电 ===
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          stop();
+        } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          start();
+        }
+      });
+
+      // === resize：debounce 150ms ===
+      var resizeTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }, 150);
+      });
+
+      // 暴露给 Task 4 的主题联动（MutationObserver 在 Task 4 加，此处先占位）
+      window.__zzhStarfield = { start: start, stop: stop, scene: scene, camera: camera, renderer: renderer, group: group, THREE: THREE };
+
+    } catch (err) {
+      console.warn('[ZZH] 星空场景初始化异常，降级为纯色底：', err);
+      // 移除可能半创建的 canvas，零残留
+      var bad = document.getElementById('starfield');
+      if (bad) bad.remove();
+    }
+  })();
+</script>
+
 {# === GSAP + ScrollTrigger（CDN，defer 不阻塞首屏） === #}
 {# 国内访问可能慢/失败，但工程兜底保证内容仍可见 === #}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
