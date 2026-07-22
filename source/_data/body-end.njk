@@ -220,6 +220,95 @@
       var stars = new THREE.Points(starGeo, starMat);
       group.add(stars);
 
+      // === Layer 2：星云（3-4 团软光晕，Canvas 程序生成径向渐变纹理） ===
+      var nebulaColors = ['#2a1a4a', '#0a3a4a', '#3a1a1a', '#1a2a4a'];
+      var nebulaCount = 3 + Math.floor(Math.random() * 2);  // 3 或 4 团
+
+      // 生成径向渐变纹理（64x64，中心透明→边缘透明，中圈有色）
+      function makeNebulaTexture(hexColor) {
+        var size = 128;
+        var c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        var ctx = c.getContext('2d');
+        var grad = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+        grad.addColorStop(0, hexColor);
+        grad.addColorStop(0.5, hexColor);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, size, size);
+        var tex = new THREE.CanvasTexture(c);
+        return tex;
+      }
+
+      var nebulaGroup = new THREE.Group();
+      group.add(nebulaGroup);  // 挂在 group 下，随漂移一起转
+
+      for (var n = 0; n < nebulaCount; n++) {
+        var r = 10 + Math.random() * 30;
+        var theta = Math.random() * Math.PI * 2;
+        var phi = Math.acos(2 * Math.random() - 1);
+        var geo = new THREE.PlaneGeometry(8 + Math.random() * 7, 8 + Math.random() * 7);
+        var mat = new THREE.MeshBasicMaterial({
+          map: makeNebulaTexture(nebulaColors[n % nebulaColors.length]),
+          transparent: true,
+          opacity: 0.15 + Math.random() * 0.10,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+          r * Math.sin(phi) * Math.cos(theta),
+          r * Math.sin(phi) * Math.sin(theta),
+          r * Math.cos(phi)
+        );
+        mesh.userData.spinSpeed = (0.02 + Math.random() * 0.03) * (Math.random() < 0.5 ? -1 : 1);
+        nebulaGroup.add(mesh);
+      }
+
+      // === Layer 3：流星（偶发，JS 管生命周期） ===
+      var meteors = [];
+      var nextMeteorTime = 3 + Math.random() * 5;  // 首颗 3-8s 后
+
+      function spawnMeteor() {
+        // 屏幕外随机起点（NDC ±1.5），随机方向
+        var startX = (Math.random() - 0.5) * 3;
+        var startY = (Math.random() - 0.5) * 3;
+        var startZ = -0.5;
+        var pts = [
+          new THREE.Vector3(startX, startY, startZ),
+          new THREE.Vector3(startX, startY, startZ)  // 尾部初始同点
+        ];
+        var geo = new THREE.BufferGeometry().setFromPoints(pts);
+        // 顶点颜色 alpha 渐变（头部亮，尾部透明）
+        var vertColors = new Float32Array([
+          1.0, 1.0, 1.0,  // 头部白
+          1.0, 1.0, 1.0   // 尾部白（alpha 由 LineBasicMaterial.transparent 管，此处用 opacity 整体）
+        ]);
+        geo.setAttribute('color', new THREE.BufferAttribute(vertColors, 3));
+        var mat = new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.9,
+          blending: THREE.AdditiveBlending
+        });
+        var line = new THREE.Line(geo, mat);
+        // 投影到星空球面（半径 8，在星点层前方）
+        var dir = new THREE.Vector3(
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          0
+        ).normalize();
+        line.userData = {
+          dir: dir,
+          speed: 0.08 + Math.random() * 0.05,
+          life: 0,
+          maxLife: 0.8 + Math.random() * 0.7,  // 0.8-1.5s
+          startWorld: new THREE.Vector3(startX * 8, startY * 8, startZ * 8)
+        };
+        group.add(line);
+        meteors.push(line);
+      }
+
       // === RAF 循环（Task 3 只做星点；Task 4 加星云/流星/漂移） ===
       var rafId = null;
       var running = false;
@@ -230,7 +319,51 @@
         rafId = requestAnimationFrame(animate);
         var t = clock.getElapsedTime();
         starMat.uniforms.uTime.value = t;
-        // group.rotation.y 在 Task 4 加（漂移），此处暂留星点静态
+        // Layer 4：整体漂移（约 80s 一圈，2π/0.0013 ≈ 4833 帧 ÷ 60fps ≈ 80s）
+        group.rotation.y += 0.0013;
+        // 星云缓慢自转（每团方向随机）+ 每帧重新朝相机（spec §6.4：
+        // 星云挂 group 随漂移，但每帧 lookAt(camera.position) 保证始终正面）
+        for (var ni = 0; ni < nebulaGroup.children.length; ni++) {
+          nebulaGroup.children[ni].rotation.z += nebulaGroup.children[ni].userData.spinSpeed * 0.01;
+          nebulaGroup.children[ni].lookAt(camera.position);
+        }
+
+        // 流星推进 + 生命周期回收
+        // 注意：不能混用 clock.getElapsedTime() 和 clock.getDelta()——
+        // getElapsedTime() 内部已更新 oldTime，同帧再调 getDelta() 会返回 ~0，
+        // 导致流星 dt 归零、不动也不消失。用手动算 dt：
+        var dt = lastFrameTime === null ? 0.016 : (t - lastFrameTime);
+        lastFrameTime = t;
+        if (t >= nextMeteorTime) {
+          spawnMeteor();
+          nextMeteorTime = t + 3 + Math.random() * 5;  // 下一颗 3-8s 后
+        }
+        for (var mi = meteors.length - 1; mi >= 0; mi--) {
+          var m = meteors[mi];
+          m.userData.life += dt;
+          if (m.userData.life >= m.userData.maxLife) {
+            group.remove(m);
+            m.geometry.dispose();
+            m.material.dispose();
+            meteors.splice(mi, 1);
+          } else {
+            // 头部沿 dir 移动，尾部跟随（拖尾长度随速度）
+            var head = m.userData.startWorld.clone().add(
+              m.userData.dir.clone().multiplyScalar(m.userData.speed * m.userData.life * 60)
+            );
+            var tail = head.clone().sub(
+              m.userData.dir.clone().multiplyScalar(2.5)  // 拖尾长度
+            );
+            var posAttr = m.geometry.attributes.position;
+            posAttr.setXYZ(0, head.x, head.y, head.z);
+            posAttr.setXYZ(1, tail.x, tail.y, tail.z);
+            posAttr.needsUpdate = true;
+            // 淡出：生命后半 alpha 衰减
+            m.material.opacity = m.userData.life > m.userData.maxLife * 0.6
+              ? 0.9 * (1 - (m.userData.life - m.userData.maxLife * 0.6) / (m.userData.maxLife * 0.4))
+              : 0.9;
+          }
+        }
         renderer.render(scene, camera);
       }
 
@@ -276,6 +409,33 @@
 
       // 暴露给 Task 4 的主题联动（MutationObserver 在 Task 4 加，此处先占位）
       window.__zzhStarfield = { start: start, stop: stop, scene: scene, camera: camera, renderer: renderer, group: group, THREE: THREE };
+
+      // === 主题联动：亮色停 RAF + canvas 淡出，暗色启 RAF + 淡入 ===
+      // 用 MutationObserver 监听 <html data-theme>，不侵入现有主题切换按钮代码。
+      function currentThemeIsDark() {
+        return document.documentElement.getAttribute('data-theme') === 'dark';
+      }
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function syncTheme() {
+        if (currentThemeIsDark()) {
+          if (!reducedMotion) start();
+        } else {
+          stop();
+        }
+      }
+      // 初始同步（页面加载时已是亮色则停）
+      syncTheme();
+
+      var themeObserver = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          if (mutations[i].attributeName === 'data-theme') {
+            syncTheme();
+            break;
+          }
+        }
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     } catch (err) {
       console.warn('[ZZH] 星空场景初始化异常，降级为纯色底：', err);
