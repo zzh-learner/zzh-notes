@@ -39,9 +39,6 @@ menu:
   home: / || fa fa-home
   archives: /archives/ || fa fa-archive
   tags: /tags/ || fa fa-tags
-  categories: /categories/ || fa fa-th
-  # RSS 链接（feed 插件生成 atom.xml）
-  sitemap: /atom.xml || fa fa-rss
 
 # 侧边栏
 sidebar:
