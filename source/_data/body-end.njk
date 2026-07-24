@@ -602,7 +602,7 @@ window.addEventListener('load', function () {
     return {
       list: list,
       fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
-      fontWeight: function (w) { return w >= 8 ? '600' : '400'; },
+      fontWeight: function (w) { return w >= 7 ? '600' : '400'; },
       color: function () {
         return PALETTE[Math.floor(Math.random() * PALETTE.length)];
       },
@@ -610,7 +610,9 @@ window.addEventListener('load', function () {
       rotateRatio: 0.3,
       minRotation: -Math.PI / 6,
       maxRotation: Math.PI / 6,
-      weightFactor: function (w) { return Math.max(14, w * 6); },
+      // 权重 w 范围 1-10。用 sqrt 压缩让低权重词不至于太小：
+      // w=10 → 68px（最大词，醒目），w=5 → 48px，w=1 → 22px（下限，保证可读）
+      weightFactor: function (w) { return Math.max(22, Math.sqrt(w / 10) * 68); },
       click: function (item) {
         if (!item) return;
         var hit = null;
@@ -622,6 +624,18 @@ window.addEventListener('load', function () {
     };
   }
 
+  // HiDPI 抗锯齿：把缓冲区按 devicePixelRatio 放大，再用 ctx.scale 校回 CSS 坐标系
+  // 这样 wordcloud2.js 拿到的仍是 CSS 像素尺寸，字号不会被 CSS 二次缩水
+  function setupCanvas(canvas, cssW, cssH) {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
   loadScript('https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js')
     .then(function () {
       if (typeof window.WordCloud !== 'function') {
@@ -631,8 +645,10 @@ window.addEventListener('load', function () {
 
       var canvas = document.createElement('canvas');
       canvas.className = 'wordcloud-canvas';
-      canvas.width = parent.clientWidth * 2;   // ×2 抗锯齿
-      canvas.height = Math.max(360, Math.min(560, tags.length * 26));
+      // CSS 显示宽 = 父容器宽；高度按标签数给足，至少 480px，最多 720px
+      var cssW = parent.clientWidth;
+      var cssH = Math.max(480, Math.min(720, tags.length * 22));
+      setupCanvas(canvas, cssW, cssH);
       parent.insertBefore(canvas, oldBox);
       oldBox.hidden = true;   // 隐藏原云，保留 DOM 作降级 fallback
 
@@ -647,7 +663,7 @@ window.addEventListener('load', function () {
         window.addEventListener('resize', function () {
           clearTimeout(rt);
           rt = setTimeout(function () {
-            canvas.width = parent.clientWidth * 2;
+            setupCanvas(canvas, parent.clientWidth, cssH);
             window.WordCloud(canvas, buildOptions(canvas));
           }, 150);
         });
