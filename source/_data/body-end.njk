@@ -557,3 +557,108 @@ window.addEventListener('load', function () {
   }
 });
 </script>
+
+{# === 标签页词云（wordcloud2.js，仅在 /tags/ 生效） === #}
+{# 数据由 scripts/tag-weights.js 在构建期注入到 tagWeights locals #}
+{# 工程兜底：CDN 失败 / 无 canvas / 初始化异常 → 静默降级，原标签云可见 #}
+<script>
+(function () {
+  // ① 仅在标签页执行（避免污染全站）
+  var path = window.location.pathname.replace(/\/+$/, '');
+  if (!path.endsWith('/tags')) return;
+
+  // ② 读取构建期注入的标签数据（Nunjucks 渲染期内联成 JS 数组字面量）
+  var tags = {{ tagWeights | dump | safe }};
+  if (!tags || !tags.length) return;
+
+  // ③ 原 NexT 标签云容器（作为降级 fallback，JS 成功后隐藏）
+  var oldBox = document.querySelector('.tag-cloud-tags');
+  var parent = oldBox ? oldBox.parentElement : null;
+  if (!parent) return;
+
+  // ④ 能力检测：canvas 2d 上下文（不支持则静默降级）
+  var testCanvas = document.createElement('canvas');
+  if (!testCanvas.getContext || !testCanvas.getContext('2d')) return;
+
+  // ⑤ 动态加载 wordcloud2.js（UMD，挂到 window.WordCloud）
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('script load failed: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  // ⑥ 渲染配置（闭包内复用，供 resize 重绘）
+  var PALETTE = ['#7ee787', '#79c0ff', '#d2a8ff', '#ffa657', '#ff7b72', '#56d4dd'];
+  var maxC = Math.max.apply(null, tags.map(function (t) { return t.count; }));
+  var list = tags.map(function (t) {
+    return [t.name, Math.max(1, Math.round(t.count / maxC * 10))];
+  });
+
+  function buildOptions(canvas) {
+    return {
+      list: list,
+      fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+      fontWeight: function (w) { return w >= 8 ? '600' : '400'; },
+      color: function () {
+        return PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      },
+      backgroundColor: 'transparent',
+      rotateRatio: 0.3,
+      minRotation: -Math.PI / 6,
+      maxRotation: Math.PI / 6,
+      weightFactor: function (w) { return Math.max(14, w * 6); },
+      click: function (item) {
+        if (!item) return;
+        var hit = null;
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].name === item[0]) { hit = tags[i]; break; }
+        }
+        if (hit) window.location.href = '{{ config.root }}' + hit.path;
+      }
+    };
+  }
+
+  loadScript('https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js')
+    .then(function () {
+      if (typeof window.WordCloud !== 'function') {
+        console.warn('[ZZH] wordcloud2.js 未正确加载，标签云降级为默认样式');
+        return;
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.className = 'wordcloud-canvas';
+      canvas.width = parent.clientWidth * 2;   // ×2 抗锯齿
+      canvas.height = Math.max(360, Math.min(560, tags.length * 26));
+      parent.insertBefore(canvas, oldBox);
+      oldBox.hidden = true;   // 隐藏原云，保留 DOM 作降级 fallback
+
+      try {
+        window.WordCloud(canvas, buildOptions(canvas));
+
+        // 暴露调试句柄（与 window.__zzhStarfield 风格一致）
+        window.__zzhWordcloud = { canvas: canvas, tags: tags };
+
+        // resize 重绘（debounce 150ms）
+        var rt;
+        window.addEventListener('resize', function () {
+          clearTimeout(rt);
+          rt = setTimeout(function () {
+            canvas.width = parent.clientWidth * 2;
+            window.WordCloud(canvas, buildOptions(canvas));
+          }, 150);
+        });
+      } catch (err) {
+        console.warn('[ZZH] 词云初始化异常，降级为默认标签云：', err);
+        if (canvas.parentNode) canvas.remove();
+        oldBox.hidden = false;   // 恢复原云
+      }
+    })
+    .catch(function () {
+      console.warn('[ZZH] wordcloud2.js 加载失败，标签云降级为默认样式');
+    });
+})();
+</script>

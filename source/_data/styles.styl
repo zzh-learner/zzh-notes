@@ -501,3 +501,20 @@ header.header {
     min-width: 0;
   }
 }
+
+// === 标签页词云（wordcloud2.js canvas 容器） ===
+// canvas 由 source/_data/body-end.njk 动态注入到 .tag-cloud 内
+.wordcloud-canvas {
+  display: block;
+  width: 100%;
+  max-width: 820px;
+  margin: 20px auto 40px;
+  cursor: pointer;          // 提示可点击跳转
+}
+
+// 尊重「减少动态效果」偏好：词云本身无强动效，hover 高亮交给库处理
+@media (prefers-reduced-motion: reduce) {
+  .wordcloud-canvas {
+    cursor: default;
+  }
+}
