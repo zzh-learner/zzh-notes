@@ -45,12 +45,12 @@ sidebar:
   position: left
   display: post
 
-# 头像（GIF 动图，浏览器 <img> 原生支持，自动播放）
+# 头像（SVG 矢量图，<img> 原生支持，无损缩放）
 avatar:
-  url: /images/avatar.gif
-  rounded: true   # 圆形裁剪（CSS border-radius，不影响 GIF 动画）
+  url: /images/avatar.svg
+  rounded: true   # 圆形裁剪（CSS border-radius）
   opacity: 1
-  rotated: false  # 勿开：hover 旋转叠 GIF 动画视觉很乱
+  rotated: false
 
 # 社交链接（暂留空）
 # social:
