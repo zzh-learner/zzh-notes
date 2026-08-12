@@ -1,0 +1,27 @@
+{# === 实时时间卡片（sidebar 注入；刷新逻辑在 body-end.njk，样式在 styles.styl） === #}
+{# 默认占位值会被 clock-card.js 立即替换为当前北京时间 #}
+<div class="zzh-clock-card" id="zzh-clock-card" aria-label="实时当地时间">
+  <div class="zzh-clock-info">
+    <div class="zzh-clock-time" data-clock-time>00:00</div>
+    <div class="zzh-clock-location" data-clock-location>Shanghai, China</div>
+    <div class="zzh-clock-date" data-clock-date>Today</div>
+  </div>
+  <div class="zzh-analog-clock" aria-hidden="true">
+    <div class="zzh-clock-number zzh-n12">12</div>
+    <div class="zzh-clock-number zzh-n1">1</div>
+    <div class="zzh-clock-number zzh-n2">2</div>
+    <div class="zzh-clock-number zzh-n3">3</div>
+    <div class="zzh-clock-number zzh-n4">4</div>
+    <div class="zzh-clock-number zzh-n5">5</div>
+    <div class="zzh-clock-number zzh-n6">6</div>
+    <div class="zzh-clock-number zzh-n7">7</div>
+    <div class="zzh-clock-number zzh-n8">8</div>
+    <div class="zzh-clock-number zzh-n9">9</div>
+    <div class="zzh-clock-number zzh-n10">10</div>
+    <div class="zzh-clock-number zzh-n11">11</div>
+    <div class="zzh-clock-hand zzh-hour-hand" data-hour-hand></div>
+    <div class="zzh-clock-hand zzh-minute-hand" data-minute-hand></div>
+    <div class="zzh-clock-hand zzh-second-hand" data-second-hand></div>
+    <div class="zzh-clock-center"></div>
+  </div>
+</div>

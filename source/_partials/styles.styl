@@ -517,3 +517,153 @@ header.header {
     cursor: default;
   }
 }
+
+// === 实时时间卡片（结构 clock-card.njk，逻辑 body-end.njk） ===
+// 深色圆角卡片：左侧数字时间 + 地点 + 日期，右侧带指针的模拟时钟
+#zzh-clock-card,
+.zzh-clock-card
+  --zzh-bg: rgba(24, 24, 24, 0.94)
+  --zzh-border: rgba(255, 255, 255, 0.16)
+  --zzh-text: #f5f5f5
+  --zzh-muted: rgba(255, 255, 255, 0.72)
+  --zzh-number: rgba(255, 255, 255, 0.92)
+  position: relative
+  display: flex
+  align-items: center
+  justify-content: space-between
+  box-sizing: border-box
+  width: 100%
+  min-height: 142px
+  margin: 0 0 18px
+  padding: 18px 18px 16px 20px
+  overflow: hidden
+  border: 1px solid var(--zzh-border)
+  border-radius: 20px
+  background: var(--zzh-bg)
+  color: var(--zzh-text)
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16)
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+
+  .zzh-clock-info
+    min-width: 0
+    padding-right: 10px
+  .zzh-clock-time
+    margin: 0 0 10px
+    font-size: 30px
+    line-height: 1
+    font-weight: 700
+    letter-spacing: -0.02em
+    font-variant-numeric: tabular-nums
+  .zzh-clock-location
+    max-width: 160px
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+    font-size: 13px
+    line-height: 1.45
+    color: var(--zzh-muted)
+  .zzh-clock-date
+    margin-top: 2px
+    font-size: 12px
+    line-height: 1.45
+    color: rgba(255, 255, 255, 0.52)
+  .zzh-analog-clock
+    position: relative
+    flex: 0 0 104px
+    width: 104px
+    height: 104px
+  .zzh-clock-number
+    position: absolute
+    z-index: 2
+    font-size: 10px
+    line-height: 1
+    font-weight: 700
+    color: var(--zzh-number)
+    transform: translate(-50%, -50%)
+    user-select: none
+  .zzh-n12
+    left: 50%
+    top: 5%
+  .zzh-n1
+    left: 72%
+    top: 12%
+  .zzh-n2
+    left: 89%
+    top: 29%
+  .zzh-n3
+    left: 96%
+    top: 50%
+  .zzh-n4
+    left: 89%
+    top: 71%
+  .zzh-n5
+    left: 72%
+    top: 88%
+  .zzh-n6
+    left: 50%
+    top: 95%
+  .zzh-n7
+    left: 28%
+    top: 88%
+  .zzh-n8
+    left: 11%
+    top: 71%
+  .zzh-n9
+    left: 4%
+    top: 50%
+  .zzh-n10
+    left: 11%
+    top: 29%
+  .zzh-n11
+    left: 28%
+    top: 12%
+  .zzh-clock-hand
+    position: absolute
+    z-index: 3
+    left: 50%
+    bottom: 50%
+    transform-origin: 50% 100%
+    border-radius: 999px
+    transform: translateX(-50%) rotate(0deg)
+    pointer-events: none
+  .zzh-hour-hand
+    width: 4px
+    height: 28px
+    background: rgba(255, 255, 255, 0.92)
+  .zzh-minute-hand
+    width: 3px
+    height: 38px
+    background: rgba(255, 255, 255, 0.9)
+  .zzh-second-hand
+    width: 1px
+    height: 41px
+    background: #ff6b9d
+  .zzh-clock-center
+    position: absolute
+    z-index: 4
+    left: 50%
+    top: 50%
+    width: 7px
+    height: 7px
+    border-radius: 50%
+    background: #ffffff
+    transform: translate(-50%, -50%)
+
+// 移动端：卡片更紧凑，模拟时钟缩小
+@media (max-width: 767px)
+  #zzh-clock-card,
+  .zzh-clock-card
+    min-height: 128px
+    padding: 16px
+    border-radius: 18px
+    .zzh-clock-time
+      font-size: 26px
+    .zzh-clock-location
+      max-width: 145px
+      font-size: 12px
+    .zzh-clock-date
+      font-size: 11px
+    .zzh-analog-clock
+      flex-basis: 92px
+      width: 92px
+      height: 92px

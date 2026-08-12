@@ -678,3 +678,113 @@ window.addEventListener('load', function () {
     });
 })();
 </script>
+
+{# === 实时时间卡片（结构在 clock-card.njk，样式在 styles.styl） === #}
+{# 原生 JS + Intl.DateTimeFormat，固定 Asia/Shanghai。setInterval 每秒刷新。 #}
+{# 不依赖任何外部库；pjax:complete 兜底用于 PJAX 开启时重新绑定（当前未开 PJAX，无害）。 #}
+<script>
+(() => {
+  'use strict';
+  const CONFIG = {
+    TIME_ZONE: 'Asia/Shanghai',
+    LOCALE: 'zh-CN',
+    LOCATION_TEXT: 'Shanghai, China'
+  };
+  let timerId = null;
+
+  function pad2(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  // 用 Intl 按指定时区拆出 year/month/day/hour/minute/second，避免本地时区干扰
+  function getParts(date) {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: CONFIG.TIME_ZONE,
+      hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(date);
+    const result = {};
+    for (const item of parts) {
+      if (item.type !== 'literal') {
+        result[item.type] = Number(item.value);
+      }
+    }
+    return result;
+  }
+
+  function getDateText(date) {
+    return new Intl.DateTimeFormat(CONFIG.LOCALE, {
+      timeZone: CONFIG.TIME_ZONE,
+      weekday: 'short', month: 'short', day: 'numeric'
+    }).format(date);
+  }
+
+  // 取 UTC 偏移文本（如 UTC+08:00），用 longOffset 再把 GMT 换成 UTC
+  function getUtcOffset(date) {
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: CONFIG.TIME_ZONE,
+      timeZoneName: 'longOffset',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    const part = dtf.formatToParts(date).find(item => item.type === 'timeZoneName');
+    return part ? part.value.replace('GMT', 'UTC') : 'UTC';
+  }
+
+  function updateCard() {
+    const card = document.getElementById('zzh-clock-card');
+    if (!card) return;   // 卡片未注入（如未配置 sidebar）则静默退出
+    const now = new Date();
+    const parts = getParts(now);
+    // en-GB hour12:false 在午夜可能返回 hour=24，规整为 0
+    const hour = parts.hour === 24 ? 0 : parts.hour;
+    const minute = parts.minute;
+    const second = parts.second;
+
+    const timeEl = card.querySelector('[data-clock-time]');
+    const locationEl = card.querySelector('[data-clock-location]');
+    const dateEl = card.querySelector('[data-clock-date]');
+    const hourHand = card.querySelector('[data-hour-hand]');
+    const minuteHand = card.querySelector('[data-minute-hand]');
+    const secondHand = card.querySelector('[data-second-hand]');
+
+    if (timeEl) timeEl.textContent = pad2(hour) + ':' + pad2(minute);
+    if (locationEl) locationEl.textContent = CONFIG.LOCATION_TEXT;
+    if (dateEl) dateEl.textContent = getDateText(now) + ' · ' + getUtcOffset(now);
+
+    // 模拟时钟指针角度：时针随分秒平滑、分针随秒平滑、秒针跳秒
+    if (hourHand) {
+      const angle = (hour % 12) * 30 + minute * 0.5 + second / 120;
+      hourHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+    if (minuteHand) {
+      const angle = minute * 6 + second * 0.1;
+      minuteHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+    if (secondHand) {
+      const angle = second * 6;
+      secondHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+  }
+
+  function initClockCard() {
+    // 防重复：多次调用先清旧定时器
+    if (timerId !== null) {
+      window.clearInterval(timerId);
+      timerId = null;
+    }
+    updateCard();
+    timerId = window.setInterval(updateCard, 1000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initClockCard, { once: true });
+  } else {
+    initClockCard();
+  }
+
+  // NexT 开启 PJAX 时，页面主体可能被替换，因此重新初始化组件
+  document.addEventListener('pjax:complete', initClockCard);
+})();
+</script>
