@@ -667,3 +667,42 @@ header.header {
       flex-basis: 92px
       width: 92px
       height: 92px
+
+// === 修复：sidebar 让位于 fixed custom-header（诊断见会话） ===
+// 根因：.custom-header 是 fixed top:0 全宽浮顶（z-index 100），而 NexT 的 sidebar
+//   - 桌面(≥992px)：sticky top:12px（themes/.../Pisces/_sidebar.styl）
+//   - 平板/手机(≤991px)：fixed 抽屉 top:0（themes/.../outline/sidebar/index.styl）
+// 两种模式都从视口顶部开始，顶部一段被 header 覆盖。body padding-top(72/100px)
+// 只能推开文档流内容，推不动 sticky/fixed 的 sidebar。
+// 统一语义：sidebar 的 top = header 高度（对齐 body padding-top）。
+// 不用 !important：custom style 在主题样式之后注入，同特异性下后者胜。
+// 取舍：header 滚动收缩(scrolled)后变矮 ~16px，极端滚动位置开抽屉会有细小亮缝，
+// 但绝大多数交互发生在页面顶部(header 未收缩)，视觉对齐；权衡优于顶部内容被遮。
+
+// 桌面 ≥992px：sticky 模式，粘到 header(72px) 下方
+@media (min-width: 992px) {
+  .sidebar {
+    top: 72px;                        // 覆盖 Pisces 的 top:12px
+  }
+  .sidebar-inner {
+    // 原 margin-top:12px 保留（卡片顶部留白）；max-height 原为 calc(100vh - 24px)，
+    // 现容器下移 60px(72-12)，等量扣减 → calc(100vh - 84px)，再留底部 12px → -96px。
+    max-height: calc(100vh - 96px);
+  }
+}
+
+// 平板 768-991px：抽屉模式，从 header(72px) 下方滑入
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar {
+    top: 72px;                        // 覆盖抽屉 top:0
+    max-height: calc(100vh - 72px);   // 原 max-height:100vh；bottom:0 仍保留
+  }
+}
+
+// 手机 ≤767px：抽屉模式，header 纵向堆叠更高(100px)
+@media (max-width: 767px) {
+  .sidebar {
+    top: 100px;
+    max-height: calc(100vh - 100px);
+  }
+}
