@@ -24,7 +24,7 @@ const pagination = require('hexo-pagination');
 // ⚠ 与 scripts/ai-gallery.js 的 DEFAULT_TAGS 同值副本——hexo 对 scripts/ 是 vm 包装
 // 逐个执行（hexo/dist/hexo/index.js:240-255），跨脚本 require 会二次执行源码，所以
 // 宁可选两份小副本。改任意一份必须同步另一份。
-const DEFAULT_TAGS = ['AI', 'AI观察', '人工智能', '图灵测试', '多模态', '国产卡', '摄影', 'Cosplay'];
+const DEFAULT_TAGS = ['摄影', 'Cosplay'];
 
 // 与 scripts/ai-gallery.js 的 resolveGalleryTags 相同（改动必须同步）：tags 是非空
 // 数组 → 用配置；缺失 / 写错（含写成字符串，防止 indexOf 退化成子串匹配）/ 空数组

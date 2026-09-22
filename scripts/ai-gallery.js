@@ -23,10 +23,12 @@ const MARKER_RE = /<!--zzh-ai-gallery-start-->[\s\S]*?<!--zzh-ai-gallery-end-->/
 const MENU_LABEL = '生图';
 
 // 默认过滤标签：_config.yml 缺 ai_gallery 段时的兜底，值与 _config.yml 保持一致。
-// 注意别把普通随笔在用的标签圈进来（游戏/DeepSeek/推荐/转载 等，见 _config.yml 注释）。
+// 只用生图帖必带的「摄影」（/new-post 规定生图文固定打 AI、摄影，Cosplay 为其子集）；
+// 裸「AI」和 AI观察/人工智能/图灵测试/多模态/国产卡等也打在"聊 AI 的文字随笔"上，
+// 圈进来会把随笔误收进 /ai/（见 _config.yml 口径注释）。
 // ⚠ scripts/index-generator.js 有一份同值副本（hexo 对 scripts/ 是 vm 包装逐个执行，
 // 见 hexo/dist/hexo/index.js:240-255，跨脚本 require 会二次执行源码）——改这里必须同步那份。
-const DEFAULT_TAGS = ['AI', 'AI观察', '人工智能', '图灵测试', '多模态', '国产卡', '摄影', 'Cosplay'];
+const DEFAULT_TAGS = ['摄影', 'Cosplay'];
 
 // 统一的过滤标签解析（index-generator.js 有一份相同实现，改动必须同步）：
 // tags 是非空数组 → 用配置；缺失 / 写错（含写成字符串）/ 空数组 → 退回 DEFAULT_TAGS。
