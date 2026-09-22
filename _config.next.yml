@@ -35,10 +35,13 @@ font:
     family: JetBrains Mono, monospace
 
 # 菜单
+# ai = 生图聚合页（source/ai/，type: ai）。NexT 语言文件没有 menu.ai 词条，
+# 「生图」文案由 scripts/ai-gallery.js 的 template_locals 兜底翻译提供。
 menu:
   home: / || fa fa-home
   archives: /archives/ || fa fa-archive
   tags: /tags/ || fa fa-tags
+  ai: /ai/ || fa fa-magic
 
 # 侧边栏
 sidebar:

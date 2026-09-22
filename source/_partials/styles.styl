@@ -706,3 +706,75 @@ header.header {
     max-height: calc(100vh - 100px);
   }
 }
+
+// === AI 生图聚合页卡片（/ai/，HTML 由 scripts/ai-gallery.js 构建期注入） ===
+// 视觉语言对齐全站 dark 主题：--card-bg-color 底 + 1px 边框 + 8px 圆角，
+// hover 边框转主题色（同 .posts-expand .post-block 的交互）。
+.ai-gallery
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+  gap: 16px
+  margin: 24px 0 8px
+
+.ai-gallery-item
+  display: flex
+  flex-direction: column
+  border: 1px solid var(--border-color, #27272a)
+  border-radius: 8px
+  background: var(--card-bg-color, #27272a)
+  overflow: hidden
+  text-decoration: none
+  color: var(--text-color, #f4f4f5)
+  transition: border-color 0.2s ease, transform 0.2s ease
+
+  &:hover
+    border-color: var(--theme-color, #22d3ee)
+    color: var(--text-color, #f4f4f5)
+    transform: translateY(-2px)
+
+// 封面：人像写真以竖图为主，固定 3:4 裁切保证网格整齐；无图文章用空态占位
+.ai-gallery-cover
+  display: block
+  width: 100%
+  aspect-ratio: 3 / 4
+  object-fit: cover
+  background: var(--body-bg-color, #0f0f11)
+
+.ai-gallery-cover-empty
+  position: relative
+
+  &::after
+    content: '无封面'
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    font-size: 0.8em
+    color: var(--blockquote-color, #a1a1aa)
+
+.ai-gallery-info
+  padding: 10px 12px 12px
+
+.ai-gallery-title
+  font-size: 0.9375em
+  line-height: 1.4
+  overflow: hidden
+  display: -webkit-box
+  -webkit-box-orient: vertical
+  -webkit-line-clamp: 2
+
+.ai-gallery-meta
+  margin-top: 6px
+  font-size: 0.75em
+  color: var(--blockquote-color, #a1a1aa)
+
+// 手机：卡片网格收紧
+@media (max-width: 767px)
+  .ai-gallery
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))
+    gap: 12px
+
+// 尊重「减少动态效果」偏好：hover 位移/过渡关闭（全局 reduce 段已禁 transition，这里补位移）
+@media (prefers-reduced-motion: reduce)
+  .ai-gallery-item
+    transform: none
