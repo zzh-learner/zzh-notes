@@ -59,9 +59,7 @@ git push
 
 **为什么拉图不在 GitHub Actions 上做**：夸克 open API 屏蔽海外 IP（2026-09-27 实测，GitHub runner 全线 ETIMEDOUT、本机同时可通），拉图只能在国内环境执行。因此 `random-image.yml` 是看门狗：每天北京时间 10:00 检查图池新鲜度，停更超 7 天自动建 issue 提醒、恢复后自动关闭。
 
-图池换血有两条路（可并存，按 manifest.updatedAt 谁新谁生效，桥接会自动对齐两边）：
-
-- **本机手动**（随时可用）：
+图池换血目前走**本机手动**（随时可用）：
 
 ```bash
 node tools/random-image-sync.mjs --dry-run   # 只打印选中的文件名，不写入任何文件
@@ -69,14 +67,9 @@ node tools/random-image-sync.mjs             # 每日刷新：最多 4 张新图
 node tools/random-image-sync.mjs --seed 4    # 首轮播种：每个图包 4 张
 ```
 
-  之后提交推送即自动部署（本机直连 GitHub 超时用一次性代理 `git -c http.proxy=http://127.0.0.1:7897 push`）。
+之后提交推送即自动部署（本机直连 GitHub 超时用一次性代理 `git -c http.proxy=http://127.0.0.1:7897 push`）；停更超 7 天看门狗会开 issue 提醒。想彻底免手动，可在本机加 Windows 计划任务每天跑同步脚本。
 
-- **Gitee Go 云端桥接**（电脑关机也能换血，`random-image-gitee-bridge.yml`）：Gitee Go 每天 10:00 在国内构建机拉夸克新图 → 提交到 Gitee 桥接仓库 → GitHub 桥接 workflow 10:33 拉回 main 并显式触发部署 → 镜像回写对齐。首次搭建三步：
-  1. Gitee 建一个公开空仓库（如 `zzh-notes-bridge`）；生成 Gitee 私人令牌（勾选 projects 权限）设为 GitHub repo secret `GITEE_TOKEN`，再配两个 repo variables：`GITEE_BRIDGE_USER`（Gitee 用户名）、`GITEE_BRIDGE_REPO`（如 `yourname/zzh-notes-bridge`）；
-  2. GitHub 上手动运行一次 **Random image Gitee bridge** workflow，完成种子镜像（工具脚本、图池、流水线配置都会推进桥接仓库）；
-  3. Gitee 桥接仓库开通 Gitee Go，编辑流水线（列表里识别到的 `random-image.yml` 即可，配置结构报错忽略，加完任务后由 UI 重新生成）：添加任务选插件**「基于镜像的脚本执行」**（工具类；注意不是需要自有主机的「Shell 脚本执行」），镜像填 `node:20`，构建命令粘贴 `tools/gitee-bridge/pipeline-step.sh` 的内容，触发方式设为定时每天 10:00；再配 4 个流水线通用变量 `QUARK_AUTH_CONFIG` / `GITEE_TOKEN` / `GITEE_USER` / `GITEE_REPO`（其中鉴权 JSON 用 `node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成后打开复制，用完即删）。镜像拉取超时就换 `docker.m.daocloud.io/library/node:20`。
-
-**夸克令牌过期时**（Gitee 流水线变红，或看门狗开 issue）：本机跑 `node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成新 JSON，更新到 Gitee Go 流水线变量 `QUARK_AUTH_CONFIG`。（GitHub secret `QUARK_AUTH_CONFIG` 当前架构不使用，留作备用即可。）
+> 云端自动化记录（2026-09-27）：GitHub Actions 拉不了图（夸克 API 屏蔽海外 IP）；Gitee Go 国内桥接链尝试后搁置（流水线需在其网页 UI 以插件方式配置），脚本留档于 `tools/gitee-bridge/`。夸克鉴权若需在别处复用：`node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成 JSON（用完即删）。
 
 ## 目录约定
 
