@@ -80,6 +80,7 @@ const CLIENT_ID = 'third_party_agent'; // CLI 打包内置公共常量，非用�
 const SIGN_KEY = 'cf134812e2de4032bd1cb7c3727e84b3'; // 同上
 
 const POOL_CAP_DEFAULT = 24; // 池上限
+const FRESH_DEFAULT = 24; // 全换模式每期张数（默认即池上限）
 const DAILY_NEW_DEFAULT = 4; // 每日新图数
 const SEED_PER_FOLDER_DEFAULT = 4; // 种子模式每夹张数
 const LIST_PAGE_SIZE = 50; // 调研实测 size=50 翻页零重叠（API 上限 100）
@@ -591,7 +592,7 @@ export function applyPoolChanges(currentImages, newEntries, cap) {
 
 function parseArgs(argv) {
   const opts = {
-    mode: 'daily', count: DAILY_NEW_DEFAULT, dryRun: false,
+    mode: 'fresh', count: FRESH_DEFAULT, dryRun: false,
     folder: null, limit: 0, authConfig: null, uploadSecret: false, secretToFile: null, help: false,
   };
   const slugs = FOLDERS.map((f) => f.slug);
@@ -602,7 +603,10 @@ function parseArgs(argv) {
       if (v && /^\d+$/.test(v)) { i++; return parseInt(v, 10); }
       return null;
     };
-    if (a === '--daily') {
+    if (a === '--fresh') {
+      opts.mode = 'fresh';
+      const n = intArg(); if (n) opts.count = n;
+    } else if (a === '--daily') {
       opts.mode = 'daily';
       const n = intArg(); if (n) opts.count = n;
     } else if (a === '--seed') {
@@ -638,8 +642,9 @@ function parseArgs(argv) {
   return opts;
 }
 
-const USAGE = `用法：node tools/random-image-sync.mjs [--daily [N]] [--seed [N]] [--dry-run] [--folder xiaoyu|tuanzi|chengzi] [--limit N] [--auth-config <path>] [--upload-secret]
-  默认/--daily：三夹并集均匀随机抽 ≤N（默认 ${DAILY_NEW_DEFAULT}）张新图入池并淘汰超上限最旧图
+const USAGE = `用法：node tools/random-image-sync.mjs [--fresh [N]] [--daily [N]] [--seed [N]] [--dry-run] [--folder xiaoyu|tuanzi|chengzi] [--limit N] [--auth-config <path>] [--upload-secret]
+  默认/--fresh：全换——抽 N（默认 ${FRESH_DEFAULT}）张全新图整体替换现有池（三夹轮流均衡抽选，判重保留，新批全部下载压缩成功后才动旧池）
+  --daily：三夹并集均匀随机抽 ≤N（默认 ${DAILY_NEW_DEFAULT}）张新图入池并淘汰超上限最旧图（增量模式）
   --seed：每夹 N（默认 ${SEED_PER_FOLDER_DEFAULT}）张
   --dry-run：只打印选中文件名，不写任何文件
   --upload-secret：本机鉴权材料经 stdin 上传 GitHub secret ${SECRET_NAME}（gh 走 ${DEFAULT_PROXY}）
@@ -691,7 +696,7 @@ async function runSync(opts) {
     );
   }
 
-  // 2) 抽选（daily=三夹并集均匀随机即数量加权；seed=每夹配额）
+  // 2) 抽选（fresh=三夹轮流各一张凑满 N；daily=并集均匀随机即数量加权；seed=每夹配额）
   let chosen = [];
   if (opts.mode === 'seed') {
     for (const { folder, unseen } of perFolder) {
@@ -699,6 +704,23 @@ async function runSync(opts) {
       log(`[${folder.slug}] 种子抽选 ${picked.length} 张`);
       chosen.push(...picked);
     }
+  } else if (opts.mode === 'fresh') {
+    const rests = perFolder.map((x) => ({ slug: x.folder.slug, unseen: x.unseen.slice() }));
+    while (chosen.length < opts.count) {
+      let progressed = false;
+      for (const r of rests) {
+        if (chosen.length >= opts.count) break;
+        const pick = pickRandom(r.unseen, 1)[0];
+        if (pick) {
+          chosen.push(pick);
+          r.unseen.splice(r.unseen.indexOf(pick), 1);
+          progressed = true;
+        }
+      }
+      if (!progressed) break;
+    }
+    const dist = FOLDERS.map((f) => f.slug + '=' + chosen.filter((c) => c.slug === f.slug).length).join(' ');
+    log(`全换抽选 ${chosen.length} 张（三夹分布：${dist}）`);
   } else {
     const union = perFolder.flatMap((x) => x.unseen);
     chosen = pickRandom(union, opts.count);
@@ -713,8 +735,12 @@ async function runSync(opts) {
       log(`  pool/${img.slug}/${bj.ymd8}-${fidHash8(img.fid)}.jpg  ← ${img.folderName}/${img.display}`);
     }
   }
-  const wouldEvict = Math.max(0, manifest.images.length + chosen.length - cap);
-  if (wouldEvict > 0) log(`将淘汰最旧 ${wouldEvict} 张（池上限 ${cap}）`);
+  if (opts.mode === 'fresh') {
+    log(`全换模式：现有池 ${manifest.images.length} 张将被新批整体替换（被换下的图留在 git 历史）`);
+  } else {
+    const wouldEvict = Math.max(0, manifest.images.length + chosen.length - cap);
+    if (wouldEvict > 0) log(`将淘汰最旧 ${wouldEvict} 张（池上限 ${cap}）`);
+  }
 
   if (opts.dryRun) {
     log('dry-run：未写入任何文件');
@@ -771,8 +797,20 @@ async function runSync(opts) {
   }
 
   // 5) 淘汰 + 落盘（仅在实际入池/淘汰时更新 updatedAt）
+  // 全换原子性：新批一张都没成功时保持现有池原样，绝不清池
+  if (opts.mode === 'fresh' && added.length === 0) {
+    throw new Error('全换模式：新批一张都没成功，现有池保持不变（本判定在清池之前）');
+  }
   const newEntries = added.map(({ fid, ...e }) => e);
-  const { images, evicted } = applyPoolChanges(manifest.images, newEntries, cap);
+  let images;
+  let evicted;
+  if (opts.mode === 'fresh') {
+    images = newEntries;
+    evicted = manifest.images;
+    manifest.poolCap = Math.max(cap, opts.count);
+  } else {
+    ({ images, evicted } = applyPoolChanges(manifest.images, newEntries, cap));
+  }
   for (const e of evicted) {
     try {
       fs.unlinkSync(path.join(RANDOM_DIR, e.src));
@@ -781,6 +819,20 @@ async function runSync(opts) {
     }
   }
   if (added.length > 0 || evicted.length > 0) {
+    // 全换后清扫池目录残留（manifest 未列出的孤儿文件一并移除，保证目录与 manifest 一致）
+    if (opts.mode === 'fresh') {
+      const keep = new Set(images.map((e) => path.join(RANDOM_DIR, e.src)));
+      for (const slug of fs.readdirSync(POOL_DIR)) {
+        const d = path.join(POOL_DIR, slug);
+        if (!fs.statSync(d).isDirectory()) continue;
+        for (const n of fs.readdirSync(d)) {
+          const p = path.join(d, n);
+          if (!keep.has(p)) {
+            try { fs.unlinkSync(p); } catch (err) { warn(`清理残留失败（${path.relative(RANDOM_DIR, p)}）：${err.message}`); }
+          }
+        }
+      }
+    }
     manifest.images = images;
     manifest.updatedAt = bj.iso;
     saveManifest(manifest);

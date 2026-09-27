@@ -55,16 +55,17 @@ git push
 
 页面地址：<https://zzh-learner.github.io/zzh-notes/random/>（导航菜单「随机一图」）。
 
-从夸克网盘的三个图包（小语会员图包 · 团子朋友圈原图 · 橙子的照片）里每天抽新图进入图池（`source/random/pool/`，上限 24 张，满了淘汰最旧的，入过池的图不会重复抽），页面每次访问从随机位置进入图池，「上一张 / 下一张」按 manifest 顺序循环浏览。
+从夸克网盘的三个图包（小语会员图包 · 团子朋友圈原图 · 橙子的照片）抽图入池（`source/random/pool/`）。默认**全换**模式：一次抽 24 张从未入过池的新图（三夹轮流均衡）整体替换现有池，判重状态保留、永不重样，被换下的图留在 git 历史。页面每次访问从随机位置进入图池，「上一张 / 下一张」按 manifest 顺序循环浏览，标题下方显示当前位置计数。
 
 **为什么拉图不在 GitHub Actions 上做**：夸克 open API 屏蔽海外 IP（2026-09-27 实测，GitHub runner 全线 ETIMEDOUT、本机同时可通），拉图只能在国内环境执行。因此 `random-image.yml` 是看门狗：每天北京时间 10:00 检查图池新鲜度，停更超 7 天自动建 issue 提醒、恢复后自动关闭。
 
 图池换血目前走**本机手动**（随时可用）：
 
 ```bash
-node tools/random-image-sync.mjs --dry-run   # 只打印选中的文件名，不写入任何文件
-node tools/random-image-sync.mjs             # 每日刷新：最多 4 张新图入池 + 淘汰
-node tools/random-image-sync.mjs --seed 4    # 首轮播种：每个图包 4 张
+node tools/random-image-sync.mjs --dry-run   # 只打印选中的文件名，不写入任何文件（预览）
+node tools/random-image-sync.mjs             # 全换：24 张全新图整体替换现有池（默认）
+node tools/random-image-sync.mjs --fresh 36  # 全换并指定每期张数
+node tools/random-image-sync.mjs --daily 4   # 增量模式：只加 4 张新图（FIFO 淘汰最旧）
 ```
 
 之后提交推送即自动部署（本机直连 GitHub 超时用一次性代理 `git -c http.proxy=http://127.0.0.1:7897 push`）；停更超 7 天看门狗会开 issue 提醒。想彻底免手动，可在本机加 Windows 计划任务每天跑同步脚本。
