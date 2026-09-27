@@ -6,8 +6,11 @@
  * - 零第三方依赖：仅 node:crypto / node:fs / node:path / node:os / node:child_process + 全局 fetch。
  * - 绝不放 scripts/（hexo 会把 scripts/*.js 当构建插件加载）；本工具不被 hexo 感知。
  * - 运行模式：
- *     （默认 / --daily [N]）每日刷新：三夹并集均匀随机抽 ≤N 张新图入池，淘汰超上限最旧图（CI 用）
- *     --seed [N]           种子模式：每夹 N 张（默认 4，首轮用）
+ *     （默认 / --fresh [N]）     全换：三夹轮流均衡抽 N 张（默认 24）全新图整体替换现有池；
+ *                               图片上传 GitHub Release 资产（tag: pool-*，git 历史零占用），
+ *                               manifest 记绝对 URL；旧期 release 删除＝旧图彻底移除
+ *     --daily [N]               增量：并集随机抽 ≤N 张追加（本地实验用，线上不可见）
+ *     --seed [N]                种子模式：每夹 N 张（默认 4，首轮用）
  *     --dry-run            只打印选中文件名与计划，不写任何文件
  *     --folder <slug>      只处理指定夹：xiaoyu|tuanzi|chengzi（调试用）
  *     --limit <n>          每夹最多枚举 n 张图（调试用，截断枚举，不用于正式跑）
@@ -643,8 +646,8 @@ function parseArgs(argv) {
 }
 
 const USAGE = `用法：node tools/random-image-sync.mjs [--fresh [N]] [--daily [N]] [--seed [N]] [--dry-run] [--folder xiaoyu|tuanzi|chengzi] [--limit N] [--auth-config <path>] [--upload-secret]
-  默认/--fresh：全换——抽 N（默认 ${FRESH_DEFAULT}）张全新图整体替换现有池（三夹轮流均衡抽选，判重保留，新批全部下载压缩成功后才动旧池）
-  --daily：三夹并集均匀随机抽 ≤N（默认 ${DAILY_NEW_DEFAULT}）张新图入池并淘汰超上限最旧图（增量模式）
+  默认/--fresh：全换——抽 N（默认 ${FRESH_DEFAULT}）张全新图整体替换现有池（三夹轮流均衡，判重保留，新批全部成功才动旧池）；图片上传 GitHub Release 资产，git 历史零占用，旧期 release 删除即旧图彻底移除
+  --daily：增量——并集随机抽 ≤N（默认 ${DAILY_NEW_DEFAULT}）张追加（本地实验用：其图片不走 Release，线上不可见）
   --seed：每夹 N（默认 ${SEED_PER_FOLDER_DEFAULT}）张
   --dry-run：只打印选中文件名，不写任何文件
   --upload-secret：本机鉴权材料经 stdin 上传 GitHub secret ${SECRET_NAME}（gh 走 ${DEFAULT_PROXY}）
@@ -801,6 +804,30 @@ async function runSync(opts) {
   if (opts.mode === 'fresh' && added.length === 0) {
     throw new Error('全换模式：新批一张都没成功，现有池保持不变（本判定在清池之前）');
   }
+  // 4.5) 全换：图片上传 GitHub Release 资产（不进 git 历史，仓库零增长），manifest 记绝对 URL
+  if (opts.mode === 'fresh' && added.length > 0) {
+    const tag = 'pool-' + bj.ymd8 + '-' + bj.iso.slice(11, 16).replace(':', '');
+    const gh = resolveGh();
+    const env = { ...process.env };
+    if (!env.HTTPS_PROXY && !env.https_proxy) env.HTTPS_PROXY = DEFAULT_PROXY;
+    const files = added.map((a) => path.join(RANDOM_DIR, a.src));
+    await spawnPiped(gh, [
+      'release', 'create', tag, ...files,
+      '--repo', TARGET_REPO, '--target', 'main',
+      '--title', '随机一图图池 ' + bj.ymd,
+      '--notes', '本期 ' + files.length + ' 张（同步工具自动生成；资产即图池，旧期会被整体删除）',
+    ], env, '');
+    const base = `https://github.com/${TARGET_REPO}/releases/download/${tag}`;
+    for (const a of added) a.src = base + '/' + path.basename(a.src);
+    log(`图片已上传 Release 资产：${tag}（${files.length} 张，git 历史零占用）`);
+    // 只保留最新一期 pool-*：旧期 release（含其全部图片资产）删除＝旧图彻底移除
+    const listOut = await spawnPiped(gh, ['release', 'list', '--repo', TARGET_REPO, '--json', 'tagName', '--jq', '.[].tagName'], env, '');
+    const stale = listOut.split(/\r?\n/).map((s) => s.trim()).filter((s) => /^pool-/.test(s) && s !== tag);
+    for (const t of stale) {
+      await spawnPiped(gh, ['release', 'delete', t, '--repo', TARGET_REPO, '--cleanup-tag', '--yes'], env, '');
+      log(`已删除旧期 release（旧图资产随之彻底移除）：${t}`);
+    }
+  }
   const newEntries = added.map(({ fid, ...e }) => e);
   let images;
   let evicted;
@@ -842,8 +869,8 @@ async function runSync(opts) {
       state.seenKeys[`${a.slug}|${a.fileName}|${a.size}`] = bj.ymd;
     }
     saveState(state);
-    log(`入池 ${added.length} 张${failedCount ? `，失败跳过 ${failedCount} 张` : ''}，淘汰 ${evicted.length} 张；池内现存 ${images.length}/${cap} 张（manifest 与 state 已更新）`);
-    log('发布提示：git add source/random tools/ 后提交并推送（本机 push 自动触发 deploy.yml；直连超时时用一次性代理 git -c http.proxy=http://127.0.0.1:7897 push）');
+    log(`入池 ${added.length} 张${failedCount ? `，失败跳过 ${failedCount} 张` : ''}，淘汰 ${evicted.length} 张；池内现存 ${images.length}/${manifest.poolCap} 张（manifest 与 state 已更新）`);
+    log('发布提示：图片在 Release 资产上（不进 git）；只需提交 source/random/manifest.json 与 tools/random-image-state.json 并推送（git -c http.proxy=http://127.0.0.1:7897 push）');
   } else {
     log(`本次无入池${failedCount ? `（失败跳过 ${failedCount} 张）` : '（无事可做）'}：manifest 与 state 未改动`);
   }

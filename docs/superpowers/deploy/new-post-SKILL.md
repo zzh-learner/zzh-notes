@@ -263,22 +263,22 @@ description: <60-100 字，生图套语：一张 <比例> 竖版照片级 AI 人
 
 # 流程 C：更新随机一图图池（全换）
 
-把随机一图页（https://zzh-learner.github.io/zzh-notes/random/）的图池**整批换新**：从夸克网盘三个图包（小语会员图包 / 团子朋友圈原图 / 橙子的照片）里抽 24 张**从未入过池**的图，整体替换现有池（三夹轮流均衡 8/8/8，被换下的图留在 git 历史；判重状态保留，永不重样）。
+把随机一图页（https://zzh-learner.github.io/zzh-notes/random/）的图池**整批换新**：从夸克网盘三个图包（小语会员图包 / 团子朋友圈原图 / 橙子的照片）里抽 24 张**从未入过池**的图整体替换现有池（三夹轮流均衡，判重状态保留、永不重样）。**图片存 GitHub Release 资产（tag `pool-*`），不进 git 历史**——换期时旧期 release 连同旧图自动删除，仓库体积零增长；git 里只有几 KB 的 manifest。
 
 1. **同步**（工具读本机夸克 CLI 鉴权，无需用户输入；三夹合计约 1.9 万张）：
 
    ```bash
-   node tools/random-image-sync.mjs            # 全换 24 张（默认）
+   node tools/random-image-sync.mjs            # 全换 24 张（默认），自动上传 Release 资产
    ```
 
-   可选参数：`--fresh N` 指定每期张数（如 36）；`--dry-run` 只列选中文件名不写入（预览）；`--daily N` 增量模式（只加 N 张、FIFO 淘汰，不再作为默认）；`--folder xiaoyu|tuanzi|chengzi` 只跑一夹（调试）。
+   可选参数：`--fresh N` 指定每期张数（如 36）；`--dry-run` 只列选中文件名不写入（预览）；`--daily N` 增量模式（本地实验用，线上不可见）；`--folder xiaoyu|tuanzi|chengzi` 只跑一夹（调试）。
 
-2. **成功判据**：退出码 0，输出含「全换抽选 N 张」「入池 N 张，淘汰 M 张；池内现存 X/N 张」。**退出码非 0 → 不提交不推送**，把输出关键行如实报告给用户（全换模式有原子性保护：新批一张没成功时旧池原样保留）。
+2. **成功判据**：退出码 0，输出含「图片已上传 Release 资产」「入池 N 张，淘汰 M 张；池内现存 X/N 张」。**退出码非 0 → 不提交不推送**，把输出关键行如实报告给用户（全换有原子性保护：新批零成功或 Release 上传失败时线上原样保留）。
 3. **无变更**（N=0，三夹候选均已入过池）→ 不提交不推送，直接汇报。
-4. **有变更 → 提交推送**（本机直连 GitHub 超时，push 必须带一次性代理参数，不改全局配置）：
+4. **有变更 → 提交推送**（只提交 manifest 与判重状态；本机直连 GitHub 超时，push 必须带一次性代理参数，不改全局配置）：
 
    ```bash
-   git add source/random tools/random-image-state.json
+   git add source/random/manifest.json tools/random-image-state.json
    git commit -m "chore(random-image): pool fresh batch (N 张全换)"
    git -c http.proxy=http://127.0.0.1:7897 push
    ```

@@ -29,3 +29,6 @@ nul
 
 # 夸克 CLI/技能若在仓库内落盘的探测或配置目录（防误提交鉴权材料）
 .quarkclouddrive/
+
+# 随机一图图池：图片走 GitHub Release 资产（不进 git 历史），本地副本仅供调试
+source/random/pool/
