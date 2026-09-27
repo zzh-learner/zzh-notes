@@ -3,14 +3,11 @@ title: 随机一图
 date: 2026-09-27 10:00:00
 ---
 
-从夸克网盘的三个图包（小语会员图包 · 团子朋友圈原图 · 橙子的照片）里随机抽一张，图池每天上午自动换血。
-
 <div class="zzh-random" id="zzh-random">
 <div class="zzh-random-stage" id="zzh-random-stage">正在抽取…</div>
 <div class="zzh-random-frame" id="zzh-random-frame" hidden>
 <img class="zzh-random-img" id="zzh-random-img" alt="随机一图">
 </div>
-<div class="zzh-random-meta" id="zzh-random-meta" hidden></div>
 <button type="button" class="zzh-random-refresh" id="zzh-random-refresh">换一张</button>
 </div>
 
@@ -38,11 +35,6 @@ date: 2026-09-27 10:00:00
   max-height: 70vh;
   object-fit: contain;
   border-radius: 8px;
-}
-.zzh-random-meta {
-  color: #9aa0a6;
-  font-size: 13px;
-  margin-top: 12px;
 }
 .zzh-random-refresh {
   background: rgba(255, 255, 255, .08);
@@ -73,7 +65,6 @@ date: 2026-09-27 10:00:00
   var stage = document.getElementById('zzh-random-stage');
   var frame = document.getElementById('zzh-random-frame');
   var img = document.getElementById('zzh-random-img');
-  var meta = document.getElementById('zzh-random-meta');
   var btn = document.getElementById('zzh-random-refresh');
 
   var images = [];
@@ -111,15 +102,9 @@ date: 2026-09-27 10:00:00
     return pool[randInt(pool.length)] || null;
   }
 
-  function fmtDate(iso) {
-    var m = /^(\d{4}-\d{2}-\d{2})/.exec(String(iso || ''));
-    return m ? m[1] : '';
-  }
-
   function showItem(item) {
     currentItem = item;
     frame.hidden = true;
-    meta.hidden = true;
     if (item.w > 0 && item.h > 0) {
       img.setAttribute('width', item.w);
       img.setAttribute('height', item.h);
@@ -127,7 +112,6 @@ date: 2026-09-27 10:00:00
       img.removeAttribute('width');
       img.removeAttribute('height');
     }
-    img.alt = '随机一图 - ' + (item.folder || '图池');
     img.src = item.src;
   }
 
@@ -157,11 +141,6 @@ date: 2026-09-27 10:00:00
   img.addEventListener('load', function() {
     clearNotice();
     frame.hidden = false;
-    meta.hidden = false;
-    var parts = ['来自', currentItem.folder || '未知图包'];
-    var d = fmtDate(currentItem.addedAt);
-    if (d) parts.push(d + ' 入池');
-    meta.textContent = parts.join(' · ');
     btn.disabled = false;
     preloadAnother();
   });
