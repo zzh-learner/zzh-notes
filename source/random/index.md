@@ -5,17 +5,21 @@ date: 2026-09-27 10:00:00
 
 <div class="zzh-random" id="zzh-random">
 <div class="zzh-random-stage" id="zzh-random-stage">正在抽取…</div>
-<div class="zzh-random-count" id="zzh-random-count" hidden></div>
+<div class="zzh-random-view">
+<button type="button" class="zzh-random-prev" id="zzh-random-prev" aria-label="上一张">&lt;</button>
 <div class="zzh-random-frame" id="zzh-random-frame" hidden>
 <img class="zzh-random-img" id="zzh-random-img" alt="随机一图">
 </div>
-<div class="zzh-random-nav">
-<button type="button" class="zzh-random-prev" id="zzh-random-prev">上一张</button>
-<button type="button" class="zzh-random-next" id="zzh-random-next">下一张</button>
+<button type="button" class="zzh-random-next" id="zzh-random-next" aria-label="下一张">&gt;</button>
 </div>
+<div class="zzh-random-count" id="zzh-random-count" hidden></div>
 </div>
 
 <style>
+/* 本页隐藏文章标题头（浏览器标签与 SEO 的 title 仍保留） */
+.post-block:has(.zzh-random) .post-header {
+  display: none;
+}
 .zzh-random {
   max-width: 720px;
   margin: 0 auto;
@@ -26,52 +30,76 @@ date: 2026-09-27 10:00:00
   font-size: 15px;
   padding: 40px 0;
 }
-.zzh-random-count {
-  color: #9aa0a6;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-.zzh-random-count[hidden] {
-  display: none;
+.zzh-random-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 .zzh-random-frame {
   display: inline-block;
   background: rgba(255, 255, 255, .03);
   border: 1px solid rgba(255, 255, 255, .08);
   border-radius: 8px;
-  padding: 8px;
+  padding: 6px;
 }
 .zzh-random-img {
   display: block;
   max-width: 100%;
-  max-height: 70vh;
+  max-height: calc(100vh - 150px);
   object-fit: contain;
   border-radius: 8px;
 }
-.zzh-random-nav {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 16px;
+.zzh-random-count {
+  color: #9aa0a6;
+  font-size: 13px;
+  margin-top: 10px;
 }
-.zzh-random-nav button {
+.zzh-random-count[hidden] {
+  display: none;
+}
+.zzh-random-prev,
+.zzh-random-next {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, .08);
   border: 1px solid rgba(255, 255, 255, .18);
   color: #e8e8e8;
-  border-radius: 6px;
-  padding: 6px 18px;
-  font-size: 14px;
+  font-size: 22px;
+  line-height: 1;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.zzh-random-nav button:hover:not(:disabled) {
+.zzh-random-prev:hover:not(:disabled),
+.zzh-random-next:hover:not(:disabled) {
   background: rgba(255, 255, 255, .16);
 }
-.zzh-random-nav button:disabled {
+.zzh-random-prev:disabled,
+.zzh-random-next:disabled {
   opacity: .5;
   cursor: default;
 }
 .zzh-random [hidden] {
-  display: none;
+  display: none !important;
+}
+@media (max-width: 480px) {
+  .zzh-random-view {
+    gap: 8px;
+  }
+  .zzh-random-prev,
+  .zzh-random-next {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+  .zzh-random-img {
+    max-height: calc(100vh - 130px);
+  }
 }
 </style>
 
