@@ -5,6 +5,7 @@ date: 2026-09-27 10:00:00
 
 <div class="zzh-random" id="zzh-random">
 <div class="zzh-random-stage" id="zzh-random-stage">正在抽取…</div>
+<div class="zzh-random-count" id="zzh-random-count" hidden></div>
 <div class="zzh-random-frame" id="zzh-random-frame" hidden>
 <img class="zzh-random-img" id="zzh-random-img" alt="随机一图">
 </div>
@@ -24,6 +25,14 @@ date: 2026-09-27 10:00:00
   color: #9aa0a6;
   font-size: 15px;
   padding: 40px 0;
+}
+.zzh-random-count {
+  color: #9aa0a6;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.zzh-random-count[hidden] {
+  display: none;
 }
 .zzh-random-frame {
   display: inline-block;
@@ -71,6 +80,7 @@ date: 2026-09-27 10:00:00
   'use strict';
 
   var stage = document.getElementById('zzh-random-stage');
+  var count = document.getElementById('zzh-random-count');
   var frame = document.getElementById('zzh-random-frame');
   var img = document.getElementById('zzh-random-img');
   var prevBtn = document.getElementById('zzh-random-prev');
@@ -110,6 +120,8 @@ date: 2026-09-27 10:00:00
     current = i;
     var item = images[i];
     frame.hidden = true;
+    count.hidden = false;
+    count.textContent = (i + 1) + '/' + images.length;
     if (item.w > 0 && item.h > 0) {
       img.setAttribute('width', item.w);
       img.setAttribute('height', item.h);
@@ -128,6 +140,7 @@ date: 2026-09-27 10:00:00
     });
     if (!images.length) {
       notice('图池暂时是空的，明天再来看看');
+      count.hidden = true;
       prevBtn.hidden = true;
       nextBtn.hidden = true;
       setButtons(true);
