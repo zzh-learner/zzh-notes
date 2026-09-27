@@ -11,16 +11,22 @@
 // hexo 已把 _content 渲染成 HTML 写进 page.content（hexo/dist/plugins/filter/
 // before_generate/render_post.js:8-11），所以这里拼接的是最终 HTML，直接追加即可。
 //
-// 顺带负责菜单文案：_config.next.yml 的 menu 加了 ai 键，NexT 语言文件没有 menu.ai
-// 词条，hexo-i18n 缺 key 会原样显示 "menu.ai"（hexo-i18n/dist/i18n.js:56）。这里包一层
-// locals.__ 兜底翻译成「生图」。hexo 核心的 template_locals i18n filter 在 init() 里
+// 顺带负责菜单文案：_config.next.yml 的 menu 加了 ai / random 键，NexT 语言文件没有
+// menu.ai / menu.random 词条，hexo-i18n 缺 key 会原样显示 "menu.ai"（hexo-i18n/dist/
+// i18n.js:56）。这里包一层 locals.__ 查表兜底（ai=生图、random=随机一图）。hexo 核心的
+// template_locals i18n filter 在 init() 里
 // 先注册先执行（hexo/dist/hexo/index.js:189），scripts/ 后加载后执行（load_plugins），
 // 拿到的 locals.__ 一定是核心 filter 刚设好的函数，包一层安全。
 
 const MARKER_START = '<!--zzh-ai-gallery-start-->';
 const MARKER_END = '<!--zzh-ai-gallery-end-->';
 const MARKER_RE = /<!--zzh-ai-gallery-start-->[\s\S]*?<!--zzh-ai-gallery-end-->/;
-const MENU_LABEL = '生图';
+// 菜单 i18n 兜底翻译表：键 = hexo-i18n 的 key（'menu.' + 菜单键），值 = 中文文案。
+// 新增自定义菜单键时在此补一行即可。
+const MENU_LABELS = {
+  'menu.ai': '生图',
+  'menu.random': '随机一图'
+};
 
 // 默认过滤标签：_config.yml 缺 ai_gallery 段时的兜底，值与 _config.yml 保持一致。
 // 只用生图帖必带的「摄影」（/new-post 规定生图文固定打 AI、摄影，Cosplay 为其子集）；
@@ -45,7 +51,8 @@ hexo.extend.filter.register('template_locals', locals => {
     const __ = locals.__;
     if (typeof __ === 'function' && !__._zzhAiMenuWrapped) {
       const wrapped = function(...args) {
-        if (args[0] === 'menu.ai') return MENU_LABEL;
+        const t = MENU_LABELS[args[0]];
+        if (t) return t;
         return __.apply(this, args);
       };
       wrapped._zzhAiMenuWrapped = true;

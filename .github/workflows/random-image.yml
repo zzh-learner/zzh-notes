@@ -1,0 +1,90 @@
+name: Random image pool sync
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # UTC 02:00 = 北京时间 10:00（GitHub cron 常有分钟级抖动）
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 提交入池文件并 push
+  issues: write     # 失败时建提醒 issue
+  actions: write    # gh workflow run deploy.yml 触发发布（最小权限，无 pages/id-token）
+
+concurrency:
+  group: random-image-pool
+  cancel-in-progress: false   # 不抢跑，防两次同步交叉写池
+
+jobs:
+  sync:
+    if: github.repository == 'zzh-learner/zzh-notes'   # 防 fork 空跑
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7        # 浅检出即可，工具不读 git 历史
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Verify ffmpeg
+        run: |
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+
+      - name: Sync pool
+        id: sync
+        env:
+          QUARK_AUTH_CONFIG: ${{ secrets.QUARK_AUTH_CONFIG }}
+        run: |
+          node tools/random-image-sync.mjs || code=$?
+          if [ "${code:-0}" = "42" ]; then echo "authfailed=true" >> "$GITHUB_OUTPUT"; fi
+          exit ${code:-0}
+
+      - name: Commit and push
+        id: pool
+        run: |
+          git config user.name "zzh-random-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A source/random/pool source/random/manifest.json tools/random-image-state.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(random-image): pool refresh $(date -u +'%Y-%m-%d')"
+            git push || (git pull --rebase && git push)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger deploy
+        if: steps.pool.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run deploy.yml --ref main
+
+      - name: Create auth-failure issue (dedup)
+        if: failure() && steps.sync.outputs.authfailed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create quark-auth-expired --force >/dev/null 2>&1 || true
+          n=$(gh issue list --label quark-auth-expired --state open --json number --jq 'length')
+          if [ "$n" = "0" ]; then
+            gh issue create --label quark-auth-expired \
+              --title "随机一图：夸克令牌失效，请更新 QUARK_AUTH_CONFIG" \
+              --body "CI 侧鉴权失败（错误码见 Actions 日志）。恢复（本机，已绑定夸克 CLI）：设 HTTPS_PROXY=http://127.0.0.1:7897 后运行 node tools/random-image-sync.mjs --upload-secret，再手动触发本 workflow 或等次日北京时间 10:00 自动跑。"
+          fi
+
+      - name: Create generic-failure issue (dedup)
+        if: failure() && steps.sync.outputs.authfailed != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create random-image-sync --force >/dev/null 2>&1 || true
+          n=$(gh issue list --label random-image-sync --state open --json number --jq 'length')
+          if [ "$n" = "0" ]; then
+            gh issue create --label random-image-sync \
+              --title "随机一图：每日同步失败（非鉴权）" \
+              --body "查看最新失败 run 的日志定位；恢复后关闭本 issue。"
+          fi

@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-27T18:19:40+08:00",
+  "poolCap": 24,
+  "images": [
+    {
+      "src": "pool/xiaoyu/20260927-0f8ed58b.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 900,
+      "h": 1600
+    },
+    {
+      "src": "pool/xiaoyu/20260927-ecc99265.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 900,
+      "h": 1600
+    },
+    {
+      "src": "pool/xiaoyu/20260927-26a8e707.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 900,
+      "h": 1600
+    },
+    {
+      "src": "pool/xiaoyu/20260927-d4ceabd3.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 900,
+      "h": 1600
+    },
+    {
+      "src": "pool/tuanzi/20260927-5d6fb3e0.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1067,
+      "h": 1600
+    },
+    {
+      "src": "pool/tuanzi/20260927-66c56ec8.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1067,
+      "h": 1600
+    },
+    {
+      "src": "pool/tuanzi/20260927-f1128244.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1067,
+      "h": 1600
+    },
+    {
+      "src": "pool/tuanzi/20260927-78ebd49c.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1600,
+      "h": 1085
+    },
+    {
+      "src": "pool/chengzi/20260927-60a2b378.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1600,
+      "h": 1067
+    },
+    {
+      "src": "pool/chengzi/20260927-3a2cc6a3.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1067,
+      "h": 1600
+    },
+    {
+      "src": "pool/chengzi/20260927-4ec850f9.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1600,
+      "h": 1067
+    },
+    {
+      "src": "pool/chengzi/20260927-6f236e19.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "addedAt": "2026-09-27T18:19:40+08:00",
+      "w": 1067,
+      "h": 1600
+    }
+  ]
+}

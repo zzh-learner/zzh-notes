@@ -51,6 +51,22 @@ git push
 | `npx hexo clean` | 清理缓存与 public |
 | `npx hexo generate` | 生成静态文件到 public |
 
+## 随机一图
+
+页面地址：<https://zzh-learner.github.io/zzh-notes/random/>（导航菜单「随机一图」）。
+
+从夸克网盘的三个图包（小语会员图包 · 团子朋友圈原图 · 橙子的照片）里每天抽新图进入本地图池（`source/random/pool/`，上限 24 张，满了淘汰最旧的），页面每次访问随机展示一张、点击「换一张」重新抽。同步由 GitHub Actions（`.github/workflows/random-image.yml`）每天北京时间 10:00 自动执行，入池后自动触发部署。
+
+本地手动同步（读本机夸克 CLI 的令牌；网络需要代理时先 `set HTTPS_PROXY=http://127.0.0.1:7897`）：
+
+```bash
+node tools/random-image-sync.mjs --dry-run   # 只打印选中的文件名，不写入任何文件
+node tools/random-image-sync.mjs             # 每日刷新：最多 4 张新图入池 + 淘汰
+node tools/random-image-sync.mjs --seed 4    # 首轮播种：每个图包 4 张
+```
+
+**令牌过期时怎么办**：夸克令牌会周期性轮换，CI 侧鉴权失败时会建一个带 `quark-auth-expired` 标签的 issue 提醒。恢复三步：本机设代理 → 运行 `node tools/random-image-sync.mjs --upload-secret` 重传 secret → 手动触发 workflow（或等次日自动跑），然后关闭 issue。
+
 ## 目录约定
 
 - `source/_posts/` — 随笔正文
