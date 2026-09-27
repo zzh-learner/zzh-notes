@@ -1,0 +1,21 @@
+# Gitee Go 流水线配置（best-effort 留档：Gitee 的 .workflow 语法以网页端图形化编排
+# 生成的文件为准；若本文件能被识别则直接可用，否则在网页端新建流水线后把
+# tools/gitee-bridge/pipeline-step.sh 的内容粘进 shell 步骤，并配好 4 个私有变量：
+# QUARK_AUTH_CONFIG / GITEE_TOKEN / GITEE_USER / GITEE_REPO，定时设为每天 10:00。
+name: random-image-pool
+displayName: 随机一图·每日图池同步
+triggers:
+  cron:
+    - '0 10 * * ?'
+stages:
+  - name: sync
+    displayName: 同步图池
+    jobs:
+      - name: sync-pool
+        displayName: 拉夸克新图入池并推送
+        steps:
+          - step: shell
+            name: sync-and-push
+            displayName: 同步并推送
+            commands:
+              - bash tools/gitee-bridge/pipeline-step.sh

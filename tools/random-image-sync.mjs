@@ -592,7 +592,7 @@ export function applyPoolChanges(currentImages, newEntries, cap) {
 function parseArgs(argv) {
   const opts = {
     mode: 'daily', count: DAILY_NEW_DEFAULT, dryRun: false,
-    folder: null, limit: 0, authConfig: null, uploadSecret: false, help: false,
+    folder: null, limit: 0, authConfig: null, uploadSecret: false, secretToFile: null, help: false,
   };
   const slugs = FOLDERS.map((f) => f.slug);
   for (let i = 0; i < argv.length; i++) {
@@ -625,6 +625,10 @@ function parseArgs(argv) {
       i++; opts.authConfig = v;
     } else if (a === '--upload-secret') {
       opts.uploadSecret = true;
+    } else if (a === '--secret-to-file') {
+      const v = argv[i + 1];
+      if (!v || v.startsWith('-')) throw new UsageError('--secret-to-file 需要一个文件路径参数');
+      i++; opts.secretToFile = v;
     } else if (a === '--help' || a === '-h') {
       opts.help = true;
     } else {
@@ -638,7 +642,8 @@ const USAGE = `用法：node tools/random-image-sync.mjs [--daily [N]] [--seed [
   默认/--daily：三夹并集均匀随机抽 ≤N（默认 ${DAILY_NEW_DEFAULT}）张新图入池并淘汰超上限最旧图
   --seed：每夹 N（默认 ${SEED_PER_FOLDER_DEFAULT}）张
   --dry-run：只打印选中文件名，不写任何文件
-  --upload-secret：本机鉴权材料经 stdin 上传 GitHub secret ${SECRET_NAME}（gh 走 ${DEFAULT_PROXY}）`;
+  --upload-secret：本机鉴权材料经 stdin 上传 GitHub secret ${SECRET_NAME}（gh 走 ${DEFAULT_PROXY}）
+  --secret-to-file <path>：同格式鉴权 JSON 写到仓库外的指定文件（供手工粘贴到 Gitee Go 流水线私有变量，用完即删）`;
 
 async function runSync(opts) {
   const auth = loadAuth(opts);
@@ -831,15 +836,19 @@ function spawnPiped(bin, args, env, stdinData) {
   });
 }
 
-async function uploadSecret(opts) {
-  const cfgPath = opts.authConfig || AUTH_CONFIG_DEFAULT;
+/** 与 QUARK_AUTH_CONFIG secret 同格式的鉴权 JSON（供手工粘贴到 Gitee Go 流水线私有变量） */
+function buildSecretPayload(cfgPath) {
   const a = readLocalAuthFile(cfgPath); // 含令牌，绝不打印
-  const payload = JSON.stringify({
+  return JSON.stringify({
     accessToken: a.accessToken,
     refreshToken: a.refreshToken,
     clientToken: a.clientToken,
     deviceId: a.deviceId,
   });
+}
+
+async function uploadSecret(opts) {
+  const payload = buildSecretPayload(opts.authConfig || AUTH_CONFIG_DEFAULT);
   const gh = resolveGh();
   const env = { ...process.env };
   if (!env.HTTPS_PROXY && !env.https_proxy) env.HTTPS_PROXY = DEFAULT_PROXY; // 本机直连 GitHub 超时
@@ -849,6 +858,17 @@ async function uploadSecret(opts) {
   const found = listOut.split(/\r?\n/).some((line) => line.trim().startsWith(SECRET_NAME + '\t') || line.trim() === SECRET_NAME);
   if (!found) throw new Error(`gh secret set 成功但 secret list 未见 ${SECRET_NAME}`);
   log(`已上传 secret ${SECRET_NAME} 到 ${TARGET_REPO} 并确认存在（4 个鉴权字段，值未回显；gh=${gh}）`);
+}
+
+async function secretToFile(opts) {
+  const target = path.resolve(opts.secretToFile);
+  const repoRoot = process.cwd();
+  if (target === repoRoot || target.startsWith(repoRoot + path.sep)) {
+    throw new UsageError('拒绝写入仓库目录内（防鉴权材料误提交）：' + opts.secretToFile);
+  }
+  const payload = buildSecretPayload(opts.authConfig || AUTH_CONFIG_DEFAULT);
+  fs.writeFileSync(target, payload, { encoding: 'utf8', mode: 0o600 });
+  log(`已写入鉴权 JSON（4 个字段，值未回显）：${target} —— 粘贴到 Gitee Go 流水线私有变量 ${SECRET_NAME} 后删除该文件`);
 }
 
 // ===== 入口 =====
@@ -861,6 +881,10 @@ async function main() {
   }
   if (opts.uploadSecret) {
     await uploadSecret(opts);
+    return EXIT_OK;
+  }
+  if (opts.secretToFile) {
+    await secretToFile(opts);
     return EXIT_OK;
   }
   await runSync(opts);
