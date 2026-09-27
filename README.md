@@ -74,7 +74,7 @@ node tools/random-image-sync.mjs --seed 4    # 首轮播种：每个图包 4 张
 - **Gitee Go 云端桥接**（电脑关机也能换血，`random-image-gitee-bridge.yml`）：Gitee Go 每天 10:00 在国内构建机拉夸克新图 → 提交到 Gitee 桥接仓库 → GitHub 桥接 workflow 10:33 拉回 main 并显式触发部署 → 镜像回写对齐。首次搭建三步：
   1. Gitee 建一个公开空仓库（如 `zzh-notes-bridge`）；生成 Gitee 私人令牌（勾选 projects 权限）设为 GitHub repo secret `GITEE_TOKEN`，再配两个 repo variables：`GITEE_BRIDGE_USER`（Gitee 用户名）、`GITEE_BRIDGE_REPO`（如 `yourname/zzh-notes-bridge`）；
   2. GitHub 上手动运行一次 **Random image Gitee bridge** workflow，完成种子镜像（工具脚本、图池、流水线配置都会推进桥接仓库）；
-  3. Gitee 桥接仓库开通 Gitee Go，新建流水线：定时每天 10:00，加一个 shell 步骤粘贴 `tools/gitee-bridge/pipeline-step.sh` 的内容，并配 4 个流水线私有变量 `QUARK_AUTH_CONFIG` / `GITEE_TOKEN` / `GITEE_USER` / `GITEE_REPO`（其中鉴权 JSON 用 `node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成后打开复制，用完即删）。
+  3. Gitee 桥接仓库开通 Gitee Go，编辑流水线（列表里识别到的 `random-image.yml` 即可，配置结构报错忽略，加完任务后由 UI 重新生成）：添加任务选插件**「基于镜像的脚本执行」**（工具类；注意不是需要自有主机的「Shell 脚本执行」），镜像填 `node:20`，构建命令粘贴 `tools/gitee-bridge/pipeline-step.sh` 的内容，触发方式设为定时每天 10:00；再配 4 个流水线通用变量 `QUARK_AUTH_CONFIG` / `GITEE_TOKEN` / `GITEE_USER` / `GITEE_REPO`（其中鉴权 JSON 用 `node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成后打开复制，用完即删）。镜像拉取超时就换 `docker.m.daocloud.io/library/node:20`。
 
 **夸克令牌过期时**（Gitee 流水线变红，或看门狗开 issue）：本机跑 `node tools/random-image-sync.mjs --secret-to-file <仓库外路径>` 生成新 JSON，更新到 Gitee Go 流水线变量 `QUARK_AUTH_CONFIG`。（GitHub secret `QUARK_AUTH_CONFIG` 当前架构不使用，留作备用即可。）
 

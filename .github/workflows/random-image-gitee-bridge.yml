@@ -90,12 +90,12 @@ jobs:
           cd /tmp/gitee
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p source/random tools/gitee-bridge .workflow
+          mkdir -p source/random tools/gitee-bridge
           rsync -a --delete "$GITHUB_WORKSPACE/source/random/" source/random/
           cp "$GITHUB_WORKSPACE/tools/random-image-sync.mjs" tools/
           cp "$GITHUB_WORKSPACE/tools/random-image-state.json" tools/
           cp "$GITHUB_WORKSPACE/tools/gitee-bridge/"* tools/gitee-bridge/
-          cp tools/gitee-bridge/random-image.workflow.yml .workflow/random-image.yml
+          # 注意：不覆盖 .workflow/——Gitee 流水线文件以网页端编辑为准（任务=插件，语法以 UI 生成为准）
           git add -A
           if git diff --cached --quiet; then echo "镜像无变更"; exit 0; fi
           git commit -m "mirror: sync pool state from github main"
