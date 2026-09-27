@@ -1,4 +1,12 @@
-name: Random image pool sync
+name: Random image pool watchdog
+
+# 背景（2026-09-27 实测，run 36314590608）：GitHub 海外 runner 访问夸克 open API
+# （open-api-drive.quark.cn）全部 ETIMEDOUT，本机同时可跑通——夸克 API 对海外 IP 不可达。
+# 因此图池同步改为本机执行：node tools/random-image-sync.mjs → git commit → push
+# （用户凭证的 push 自动触发 deploy.yml，source/** 在 deploy paths 过滤器内）。
+# 本 workflow 只做两件事：①每日检查 source/random/manifest.json 的 updatedAt 新鲜度；
+# ②停更超过 STALE_DAYS 天建提醒 issue（去重），图池恢复新鲜后自动关闭。
+# 密钥不进 CI：本 workflow 不使用任何 secret。
 
 on:
   schedule:
@@ -6,77 +14,60 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # 提交入池文件并 push
-  issues: write     # 失败时建提醒 issue
-  actions: write    # gh workflow run deploy.yml 触发发布（最小权限，无 pages/id-token）
+  contents: read   # 浅检出只读 manifest
+  issues: write    # 停更提醒 issue 的建/关
 
 concurrency:
   group: random-image-pool
-  cancel-in-progress: false   # 不抢跑，防两次同步交叉写池
+  cancel-in-progress: false   # 不抢跑，防交叉
 
 jobs:
-  sync:
+  watchdog:
     if: github.repository == 'zzh-learner/zzh-notes'   # 防 fork 空跑
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
+    env:
+      STALE_DAYS: '7'   # 图池超过 N 天未刷新则提醒（本地同步中断的信号）
     steps:
-      - uses: actions/checkout@v7        # 浅检出即可，工具不读 git 历史
+      - uses: actions/checkout@v7   # 浅检出即可，只读 manifest，不读 git 历史
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-
-      - name: Verify ffmpeg
+      - name: Check pool freshness
+        id: check
         run: |
-          ffmpeg -version | head -n 1
-          ffprobe -version | head -n 1
-
-      - name: Sync pool
-        id: sync
-        env:
-          QUARK_AUTH_CONFIG: ${{ secrets.QUARK_AUTH_CONFIG }}
-        run: |
-          node tools/random-image-sync.mjs || code=$?
-          if [ "${code:-0}" = "42" ]; then echo "authfailed=true" >> "$GITHUB_OUTPUT"; fi
-          exit ${code:-0}
-
-      - name: Commit and push
-        id: pool
-        run: |
-          git config user.name "zzh-random-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A source/random/pool source/random/manifest.json tools/random-image-state.json
-          if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            git commit -m "chore(random-image): pool refresh $(date -u +'%Y-%m-%d')"
-            git push || (git pull --rebase && git push)
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          cat > "$RUNNER_TEMP/check.mjs" <<'EOF'
+          import fs from 'node:fs';
+          const staleDays = parseInt(process.env.STALE_DAYS || '7', 10);
+          let updatedAt = '';
+          try {
+            const m = JSON.parse(fs.readFileSync('source/random/manifest.json', 'utf8'));
+            if (m && typeof m.updatedAt === 'string') updatedAt = m.updatedAt;
+          } catch {}
+          if (!updatedAt) {
+            console.log('manifest 缺失/损坏或无 updatedAt，视为停更');
+            console.log('stale=true');
+            process.exit(0);
+          }
+          const t = Date.parse(updatedAt);
+          if (!Number.isFinite(t)) {
+            console.log('updatedAt 无法解析：' + updatedAt);
+            console.log('stale=true');
+            process.exit(0);
+          }
+          const days = (Date.now() - t) / 86400000;
+          console.log('updatedAt=' + updatedAt + ' age_days=' + days.toFixed(1) + ' 阈值=' + staleDays);
+          console.log('stale=' + (days > staleDays ? 'true' : 'false'));
+          EOF
+          out=$(node "$RUNNER_TEMP/check.mjs")
+          echo "$out"
+          stale=$(printf '%s\n' "$out" | sed -n 's/^stale=//p' | head -n 1)
+          if [ "$stale" != "true" ] && [ "$stale" != "false" ]; then
+            echo "无法从检查脚本输出解析 stale 状态" >&2
+            exit 1
           fi
+          echo "stale=$stale" >> "$GITHUB_OUTPUT"
 
-      - name: Trigger deploy
-        if: steps.pool.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: gh workflow run deploy.yml --ref main
-
-      - name: Create auth-failure issue (dedup)
-        if: failure() && steps.sync.outputs.authfailed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh label create quark-auth-expired --force >/dev/null 2>&1 || true
-          n=$(gh issue list --label quark-auth-expired --state open --json number --jq 'length')
-          if [ "$n" = "0" ]; then
-            gh issue create --label quark-auth-expired \
-              --title "随机一图：夸克令牌失效，请更新 QUARK_AUTH_CONFIG" \
-              --body "CI 侧鉴权失败（错误码见 Actions 日志）。恢复（本机，已绑定夸克 CLI）：设 HTTPS_PROXY=http://127.0.0.1:7897 后运行 node tools/random-image-sync.mjs --upload-secret，再手动触发本 workflow 或等次日北京时间 10:00 自动跑。"
-          fi
-
-      - name: Create generic-failure issue (dedup)
-        if: failure() && steps.sync.outputs.authfailed != 'true'
+      - name: Remind when pool is stale (dedup)
+        if: steps.check.outputs.stale == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -85,6 +76,16 @@ jobs:
           n=$(gh issue list --label random-image-sync --state open --json number --jq 'length')
           if [ "$n" = "0" ]; then
             gh issue create --label random-image-sync \
-              --title "随机一图：每日同步失败（非鉴权）" \
-              --body "查看最新失败 run 的日志定位；恢复后关闭本 issue。"
+              --title "随机一图：图池已停更多日，请在本机跑一次同步" \
+              --body "夸克 open API 对 GitHub 海外 runner 不可达（2026-09-27 实测 run 36314590608 三夹全部 ETIMEDOUT），图池同步已改为本机执行。当前 manifest.updatedAt 距今已超过 ${STALE_DAYS} 天。恢复步骤（本机，仓库根目录）：node tools/random-image-sync.mjs（默认每日 4 张新图入池）→ git add source/random tools/ && git commit -m \"chore(random-image): pool refresh\" && git -c http.proxy=http://127.0.0.1:7897 push（push 会自动触发部署）。恢复后次日本 workflow 会自动关闭本 issue。"
           fi
+
+      - name: Close reminder when pool is fresh
+        if: steps.check.outputs.stale != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          for n in $(gh issue list --label random-image-sync --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "图池已恢复新鲜（manifest.updatedAt 为近期），自动关闭。"
+          done

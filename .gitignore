@@ -26,3 +26,6 @@ npm-debug.log*
 
 # Windows reserved name artifact from cmd redirection
 nul
+
+# 夸克 CLI/技能若在仓库内落盘的探测或配置目录（防误提交鉴权材料）
+.quarkclouddrive/

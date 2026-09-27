@@ -12,8 +12,14 @@
  *     --folder <slug>      只处理指定夹：xiaoyu|tuanzi|chengzi（调试用）
  *     --limit <n>          每夹最多枚举 n 张图（调试用，截断枚举，不用于正式跑）
  *     --upload-secret      把本机夸克 CLI 鉴权材料经 stdin 上传到 GitHub secret QUARK_AUTH_CONFIG
+ *                          （当前 CI 看门狗不使用该 secret；保留供未来 runner 侧同步恢复时复用）
  *     --auth-config <path> 覆盖本机夸克 CLI 鉴权配置路径
- * - 退出码：0 成功或无事可做；1 一般失败；42 鉴权失效（CI 据此建提醒 issue）。
+ * - 退出码：0 成功或无事可做；1 一般失败；42 鉴权失效。
+ * - 执行环境定论（2026-09-27 实测，Actions run 36314590608）：GitHub 海外 runner 访问
+ *   夸克 open API 全部 ETIMEDOUT（本机可跑通），夸克 API 对海外 IP 不可达——
+ *   图池同步只能在本机执行，push 后由 deploy.yml 自动发布（source/** 在其 paths 内）；
+ *   .github/workflows/random-image.yml 已改为图池新鲜度看门狗（不再调夸克 API、不使用 secret）。
+ * - 日志红线：只打印计数与输出文件名；绝不打印 accessToken / refreshToken / clientToken /
  * - 日志红线：只打印计数与输出文件名；绝不打印 accessToken / refreshToken / clientToken /
  *   配置原文 / download_url（含 auth_key 签名）。临时文件只写 os.tmpdir() 并 finally 清理。
  * - 写入范围仅三处：source/random/pool/**、source/random/manifest.json、tools/random-image-state.json。
@@ -673,7 +679,11 @@ async function runSync(opts) {
     perFolder.push({ folder: f, unseen });
   }
   if (resolveFailures === folders.length) {
-    throw new Error('所有夹的根目录均解析失败（设计 FID 失效且搜索无命中），视为本次同步失败');
+    throw new Error(
+      `所有夹的根目录均解析失败（${folders.length} 个），视为本次同步失败。` +
+      '若在本机运行：检查本地网络对夸克 open API 的连通性；' +
+      '海外网络/CI runner 访问夸克 API 不可达属已知限制（2026-09-27 实测），请在本机执行同步。'
+    );
   }
 
   // 2) 抽选（daily=三夹并集均匀随机即数量加权；seed=每夹配额）
@@ -776,6 +786,7 @@ async function runSync(opts) {
     }
     saveState(state);
     log(`入池 ${added.length} 张${failedCount ? `，失败跳过 ${failedCount} 张` : ''}，淘汰 ${evicted.length} 张；池内现存 ${images.length}/${cap} 张（manifest 与 state 已更新）`);
+    log('发布提示：git add source/random tools/ 后提交并推送（本机 push 自动触发 deploy.yml；直连超时时用一次性代理 git -c http.proxy=http://127.0.0.1:7897 push）');
   } else {
     log(`本次无入池${failedCount ? `（失败跳过 ${failedCount} 张）` : '（无事可做）'}：manifest 与 state 未改动`);
   }
