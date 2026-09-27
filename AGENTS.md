@@ -59,6 +59,7 @@
     - 读书
   ```
 - **`permalink` 用英文短 slug**（如 `permalink: some-slug/`），保证分享链接干净；一旦发布**绝不修改**，否则外链失效。
+- **生图随笔的标签约定**：AI 生图文章固定打 `AI` + `摄影`（有具体角色名才加 `Cosplay`）。命中 `摄影`/`Cosplay`（即 `_config.yml` 的 `ai_gallery.tags`）的文章会进 `/ai/` 生图页且**不出现在首页——这是预期行为，不是丢文章**；反过来普通文字随笔不要打 `摄影`，否则会被挤出首页。
 - 不写评论、不接统计、不做 CMS——这些是明确排除的非目标。
 
 ## 红线规则（踩坑沉淀，违反必出问题）
@@ -134,3 +135,9 @@ source/_posts/
 - 完整踩坑记录：`docs/superpowers/lessons/2026-06-23-hexo-next-setup-pitfalls.md`
 - 实施计划/设计文档：`docs/superpowers/plans/`、`docs/superpowers/specs/`（注意其中 `source/_data/` 是旧路径，现为 `source/_partials/`）
 - 日常使用：见 `README.md`
+
+## new-post 发随笔技能（用户级，不在仓库内运行）
+
+- 技能本体部署于用户目录 `~/.zcode/skills/new-post/SKILL.md`，**权威留档 = `docs/superpowers/deploy/new-post-SKILL.md`**（防止换机器丢技能——2026-09 就因此丢过一次）。
+- **每次修改技能文档后必须：同步三份（用户目录、仓库留档、工作草稿 `.zcode/workflow-drafts/new-post-skill/SKILL.md`）→ 校验 md5 一致 → 提交并推送留档**（docs/ 不触发 CI，随改随推不产生额外部署）。
+- 本机直连 GitHub 超时且 git 未配全局代理：push 一律用一次性代理参数 `git -c http.proxy=http://127.0.0.1:7897 push`，不改全局配置。
