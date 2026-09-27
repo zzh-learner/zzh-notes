@@ -8,7 +8,10 @@ date: 2026-09-27 10:00:00
 <div class="zzh-random-frame" id="zzh-random-frame" hidden>
 <img class="zzh-random-img" id="zzh-random-img" alt="随机一图">
 </div>
-<button type="button" class="zzh-random-refresh" id="zzh-random-refresh">换一张</button>
+<div class="zzh-random-nav">
+<button type="button" class="zzh-random-prev" id="zzh-random-prev">上一张</button>
+<button type="button" class="zzh-random-next" id="zzh-random-next">下一张</button>
+</div>
 </div>
 
 <style>
@@ -36,20 +39,25 @@ date: 2026-09-27 10:00:00
   object-fit: contain;
   border-radius: 8px;
 }
-.zzh-random-refresh {
+.zzh-random-nav {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+.zzh-random-nav button {
   background: rgba(255, 255, 255, .08);
   border: 1px solid rgba(255, 255, 255, .18);
   color: #e8e8e8;
   border-radius: 6px;
   padding: 6px 18px;
   font-size: 14px;
-  margin-top: 16px;
   cursor: pointer;
 }
-.zzh-random-refresh:hover {
+.zzh-random-nav button:hover:not(:disabled) {
   background: rgba(255, 255, 255, .16);
 }
-.zzh-random-refresh:disabled {
+.zzh-random-nav button:disabled {
   opacity: .5;
   cursor: default;
 }
@@ -65,12 +73,12 @@ date: 2026-09-27 10:00:00
   var stage = document.getElementById('zzh-random-stage');
   var frame = document.getElementById('zzh-random-frame');
   var img = document.getElementById('zzh-random-img');
-  var btn = document.getElementById('zzh-random-refresh');
+  var prevBtn = document.getElementById('zzh-random-prev');
+  var nextBtn = document.getElementById('zzh-random-next');
 
   var images = [];
-  var currentItem = null;
+  var current = -1;
   var retriedAfterError = false;
-  var pendingPreload = null;
 
   function notice(text) {
     stage.hidden = false;
@@ -82,7 +90,12 @@ date: 2026-09-27 10:00:00
     stage.textContent = '';
   }
 
-  // 拒绝采样的均匀随机 [0, n)：先把 2^32 截成 n 的整数倍，落在上界外就重抽
+  function setButtons(disabled) {
+    prevBtn.disabled = disabled;
+    nextBtn.disabled = disabled;
+  }
+
+  // 拒绝采样的均匀随机 [0, n)：先把 2^32 截成 n 的整数倍，落在上界外就重抽（仅用于进页时随机起点）
   function randInt(n) {
     if (n <= 0) return 0;
     var limit = Math.floor(4294967296 / n) * n;
@@ -93,17 +106,9 @@ date: 2026-09-27 10:00:00
     return buf[0] % n;
   }
 
-  // excludeSrc 非空时从排除它的剩余集合里抽；池仅 1 张时允许重复抽同一张
-  function pick(excludeSrc) {
-    var pool = images;
-    if (excludeSrc && pool.length > 1) {
-      pool = pool.filter(function(it) { return it.src !== excludeSrc; });
-    }
-    return pool[randInt(pool.length)] || null;
-  }
-
-  function showItem(item) {
-    currentItem = item;
+  function showIndex(i) {
+    current = i;
+    var item = images[i];
     frame.hidden = true;
     if (item.w > 0 && item.h > 0) {
       img.setAttribute('width', item.w);
@@ -123,11 +128,13 @@ date: 2026-09-27 10:00:00
     });
     if (!images.length) {
       notice('图池暂时是空的，明天再来看看');
-      btn.hidden = true;
-      btn.disabled = true;
+      prevBtn.hidden = true;
+      nextBtn.hidden = true;
+      setButtons(true);
       return false;
     }
-    btn.hidden = false;
+    prevBtn.hidden = false;
+    nextBtn.hidden = false;
     return true;
   }
 
@@ -138,70 +145,53 @@ date: 2026-09-27 10:00:00
     });
   }
 
+  // step 为 +1 / -1，按 manifest 顺序循环翻页
+  function go(step) {
+    if (!images.length || current < 0) return;
+    setButtons(true);
+    notice('正在加载…');
+    retriedAfterError = false;
+    showIndex((current + step + images.length) % images.length);
+  }
+
   img.addEventListener('load', function() {
     clearNotice();
     frame.hidden = false;
-    btn.disabled = false;
-    preloadAnother();
+    setButtons(false);
+    // 静默预载下一张，让「下一张」大概率秒切；失败无感
+    if (images.length > 1 && current >= 0) {
+      var holder = new Image();
+      holder.src = images[(current + 1) % images.length].src;
+    }
   });
 
   img.addEventListener('error', function() {
     if (!retriedAfterError) {
-      // 应对清单与文件短暂不一致（如 CDN 缓存差）：重取一次 manifest 再重抽
+      // 应对清单与文件短暂不一致（如 CDN 缓存差）：重取一次 manifest 后停在原序号重试
       retriedAfterError = true;
-      var bad = currentItem && currentItem.src;
+      var keep = current;
       fetchManifest().then(function(data) {
         if (!applyManifest(data)) return;
-        showItem(pick(bad));
+        showIndex(Math.min(Math.max(keep, 0), images.length - 1));
       }).catch(function() {
-        notice('这张图加载失败了，再抽一张试试');
-        btn.disabled = false;
+        notice('这张图加载失败了，换个方向试试');
+        setButtons(false);
       });
       return;
     }
-    notice('这张图加载失败了，再抽一张试试');
-    btn.disabled = false;
+    notice('这张图加载失败了，换个方向试试');
+    setButtons(false);
   });
 
-  btn.addEventListener('click', function() {
-    if (!images.length || !currentItem) return;
-    btn.disabled = true;
-    notice('正在抽取…');
-    retriedAfterError = false;
-    var next = null;
-    if (pendingPreload && pendingPreload.ok && pendingPreload.item.src !== currentItem.src) {
-      next = pendingPreload.item;
-    }
-    pendingPreload = null;
-    if (!next) next = pick(currentItem.src);
-    if (!next) {
-      notice('这张图加载失败了，再抽一张试试');
-      btn.disabled = false;
-      return;
-    }
-    showItem(next);
-  });
+  prevBtn.addEventListener('click', function() { go(-1); });
+  nextBtn.addEventListener('click', function() { go(1); });
 
-  // READY 后静默预载另一张，让「换一张」秒切；失败无感（置空即可）
-  function preloadAnother() {
-    if (images.length < 2 || !currentItem) return;
-    var item = pick(currentItem.src);
-    if (!item || item.src === currentItem.src) return;
-    var entry = { item: item, ok: false };
-    pendingPreload = entry;
-    var holder = new Image();
-    holder.onload = function() { entry.ok = true; };
-    holder.onerror = function() {
-      if (pendingPreload === entry) pendingPreload = null;
-    };
-    holder.src = item.src;
-  }
-
+  // 进页随机起点，「上一张 / 下一张」按顺序循环浏览
   fetchManifest().then(function(data) {
-    if (applyManifest(data)) showItem(pick(''));
+    if (applyManifest(data)) showIndex(randInt(images.length));
   }).catch(function() {
     notice('图池清单加载失败，请刷新重试');
-    btn.disabled = true;
+    setButtons(true);
   });
 })();
 </script>
