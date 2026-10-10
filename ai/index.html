@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#0891b2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#22d3ee" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/zzh-notes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/zzh-notes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/zzh-notes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/zzh-notes/images/logo.svg" color="#0891b2">
+
+<link rel="stylesheet" href="/zzh-notes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zzh-learner.github.io","root":"/zzh-notes/","images":"/zzh-notes/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null,"enable":false},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/zzh-notes/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/zzh-notes/js/config.js" defer></script>
+
+    <meta name="description" content="本篇内容已加密，登录后可读全文">
+<meta property="og:type" content="website">
+<meta property="og:title" content="生图">
+<meta property="og:url" content="https://zzh-learner.github.io/zzh-notes/ai/index.html">
+<meta property="og:site_name" content="ZZH 的随笔">
+<meta property="og:description" content="本篇内容已加密，登录后可读全文">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-22T08:00:00.000Z">
+<meta property="article:author" content="ZZH">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zzh-learner.github.io/zzh-notes/ai/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":true,"permalink":"https://zzh-learner.github.io/zzh-notes/ai/index.html","path":"ai/index.html","title":"生图"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>生图 | ZZH 的随笔
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer></script>
+<script src="/zzh-notes/js/utils.js" defer></script><script src="/zzh-notes/js/motion.js" defer></script><script src="/zzh-notes/js/sidebar.js" defer></script><script src="/zzh-notes/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/zzh-notes/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+  <script src="/zzh-notes/js/third-party/fancybox.js" defer></script>
+
+
+
+  
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&family=Noto+Sans+SC:wght@400;500&family=Playfair+Display:wght@600&family=Public+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+
+<script>
+  document.documentElement.setAttribute('data-theme', 'dark');
+</script>
+
+  <noscript>
+    <link rel="stylesheet" href="/zzh-notes/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/zzh-notes/atom.xml" title="ZZH 的随笔" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zzh-notes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZZH 的随笔</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录日常灵感与随想</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<header class="custom-header">
+  <div class="custom-header-inner">
+    <a href="/zzh-notes/" class="custom-header-brand">
+      ZZH 的随笔
+    </a>
+    <nav class="custom-header-nav">
+      
+        
+        <a href="/zzh-notes/">首页</a>
+      
+        
+        <a href="/zzh-notes/archives/">归档</a>
+      
+        
+        <a href="/zzh-notes/tags/">标签</a>
+      
+        
+        <a href="/zzh-notes/sites/">网站</a>
+      
+        
+        <a href="/zzh-notes/ai/">生图</a>
+      
+        
+        <a href="/zzh-notes/random/">随机一图</a>
+      
+        
+        <a href="/zzh-notes/cats/">元宝和躲猫猫</a>
+      
+        
+        <a href="/zzh-notes/login/">登录</a>
+      
+      
+      <a href="/zzh-notes/private/"
+         class="custom-header-private"
+         id="zzh-private-nav"
+         hidden>私密</a>
+      
+      <span class="zzh-auth-chip" id="zzh-auth-chip" hidden>
+        <a class="zzh-auth-chip-link" href="/zzh-notes/login/">
+          <span class="zzh-auth-chip-badge" aria-hidden="true">管</span><span class="zzh-auth-chip-name"></span>
+        </a>
+        <button type="button"
+                class="zzh-auth-chip-logout"
+                id="zzh-auth-chip-logout"
+                aria-label="登出"
+                title="登出">✕</button>
+      </span>
+      
+      <button type="button"
+              class="custom-header-bg popover-trigger"
+              id="bg-toggle"
+              aria-label="调节背景明暗"
+              title="背景明暗"
+              aria-haspopup="true"
+              aria-expanded="false">
+        <i class="fa fa-image" aria-hidden="true"></i>
+      </button>
+      
+      <button type="button"
+              class="custom-header-search popup-trigger"
+              aria-label="搜索"
+              title="搜索">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<div class="bg-popover"
+     id="bg-popover"
+     role="dialog"
+     aria-label="背景明暗调节"
+     hidden>
+  <span class="bg-popover-label">背景明暗</span>
+  <div class="bg-popover-row">
+    <span class="bg-popover-min">隐</span>
+    <input type="range"
+           min="0"
+           max="100"
+           value="50"
+           step="1"
+           class="bg-slider"
+           id="bg-slider"
+           aria-label="背景可见度">
+    <span class="bg-popover-max">显</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'zzh-auth';
+  window.ZzhAuth = {
+    read: function () {
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (!raw) return null;
+        var s = JSON.parse(raw);
+        if (!s || typeof s.u !== 'string' ||
+            (s.r !== 'admin' && s.r !== 'user') ||
+            typeof s.e !== 'number' || s.e <= Date.now()) {
+          localStorage.removeItem(KEY);
+          return null;
+        }
+        return s;
+      } catch (e) { return null; }
+    },
+    logout: function () {
+      // 登出三键同清：'zzh-cek'（内容密钥）、'zzh-pkey'（私密板块密钥，仅 admin）
+      // 与 'zzh-auth'（登录态）同生共死。
+      // 同步副本：scripts/login-page.js 的 logout() 与 scripts/zzh-post-cipher.js
+      // 注入脚本的 GCM 失败清理——三处改一处必须同步其余（会话双键 + 私钥约定）。
+      try {
+        localStorage.removeItem(KEY);
+        localStorage.removeItem('zzh-cek');
+        localStorage.removeItem('zzh-pkey');
+      } catch (e) {}
+      location.reload();
+    }
+  };
+  var s = window.ZzhAuth.read();
+  var chip = document.getElementById('zzh-auth-chip');
+  if (s && chip) {
+    chip.hidden = false;
+    var name = chip.querySelector('.zzh-auth-chip-name');
+    if (name) name.textContent = s.u;
+    if (s.r === 'admin') chip.classList.add('is-admin');
+  }
+  // 私密板块入口：仅 admin 会话显示（登出 logout() reload 后本脚本重跑即隐藏）
+  var priv = document.getElementById('zzh-private-nav');
+  if (priv) priv.hidden = !(s && s.r === 'admin');
+  var btn = document.getElementById('zzh-auth-chip-logout');
+  if (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.ZzhAuth.logout();
+    });
+  }
+})();
+</script>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZZH"
+      src="/zzh-notes/images/avatar.svg">
+  <p class="site-author-name" itemprop="name">ZZH</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zzh-notes/archives/">
+          <span class="site-state-item-count">112</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zzh-notes/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+<div class="zzh-clock-card" id="zzh-clock-card" aria-label="实时当地时间">
+  <div class="zzh-clock-info">
+    <div class="zzh-clock-time" data-clock-time>00:00</div>
+    <div class="zzh-clock-location" data-clock-location>Shanghai, China</div>
+    <div class="zzh-clock-date" data-clock-date>Today</div>
+  </div>
+  <div class="zzh-analog-clock" aria-hidden="true">
+    <div class="zzh-clock-number zzh-n12">12</div>
+    <div class="zzh-clock-number zzh-n1">1</div>
+    <div class="zzh-clock-number zzh-n2">2</div>
+    <div class="zzh-clock-number zzh-n3">3</div>
+    <div class="zzh-clock-number zzh-n4">4</div>
+    <div class="zzh-clock-number zzh-n5">5</div>
+    <div class="zzh-clock-number zzh-n6">6</div>
+    <div class="zzh-clock-number zzh-n7">7</div>
+    <div class="zzh-clock-number zzh-n8">8</div>
+    <div class="zzh-clock-number zzh-n9">9</div>
+    <div class="zzh-clock-number zzh-n10">10</div>
+    <div class="zzh-clock-number zzh-n11">11</div>
+    <div class="zzh-clock-hand zzh-hour-hand" data-hour-hand></div>
+    <div class="zzh-clock-hand zzh-minute-hand" data-minute-hand></div>
+    <div class="zzh-clock-hand zzh-second-hand" data-second-hand></div>
+    <div class="zzh-clock-center"></div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      
+      
+      
+      <div class="post-body">
+          <div class="zzh-gate" id="zzh-gate">
+<div class="zzh-gate-card">
+<span class="zzh-gate-icon" aria-hidden="true"><i class="fa fa-lock"></i></span>
+<p class="zzh-gate-title">本页内容已加密</p>
+<p class="zzh-gate-desc">登录后可阅读全文；已登录的浏览器会在打开本页时自动解密显示正文。</p>
+<a class="zzh-gate-btn" href="/zzh-notes/login/">前往登录</a>
+<p class="zzh-gate-err" id="zzh-gate-err" hidden></p>
+</div>
+</div>
+<script type="application/json" id="zzh-cipher-data">{"v":1,"alg":"AES-256-GCM","iv":"b49458ec569fd8f5ad6bbca1","ct":"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"}</script>
+<script>
+(function () {
+  'use strict';
+  var CEK_KEY = 'zzh-cek';
+  var AUTH_KEY = 'zzh-auth'; // 与 header.njk / scripts/login-page.js 同键（会话双键副本约定，注释互指）
+  var PKEY_KEY = 'zzh-pkey'; // 私密板块密钥：全局解密失败登出时随之清除（与 login-page.js / header.njk 清除点同步）
+  var dataEl = document.getElementById('zzh-cipher-data');
+  var gateEl = document.getElementById('zzh-gate');
+  var errEl = document.getElementById('zzh-gate-err');
+
+  function fail(msg) { if (errEl) { errEl.textContent = msg; errEl.hidden = false; } }
+
+  function whenReady(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { setTimeout(fn, 0); });
+    } else {
+      setTimeout(fn, 0);
+    }
+  }
+
+  function hexToBytes(hex) {
+    var out = new Uint8Array(hex.length / 2);
+    for (var i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+    return out;
+  }
+
+  function b64ToBytes(b64) {
+    var bin = atob(b64);
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  // 与 header.njk 的 ZzhAuth.read 同构的防御校验副本：形状损坏/过期即删
+  function readCek() {
+    try {
+      var raw = localStorage.getItem(CEK_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      if (!s || s.v !== 1 || typeof s.k !== 'string' || !/^[0-9a-f]{64}$/.test(s.k) ||
+          typeof s.e !== 'number' || s.e <= Date.now()) {
+        localStorage.removeItem(CEK_KEY);
+        return null;
+      }
+      return s;
+    } catch (e) { return null; }
+  }
+
+  var rebindDone = false;
+  function rebind() {
+    if (rebindDone) return;
+    rebindDone = true;
+    document.body.classList.add('zzh-decrypted'); // 隐藏详情页头部固定引导行（styles.styl）
+    try { document.dispatchEvent(new Event('page:loaded', { bubbles: true })); } catch (e) {}
+    var utils = window.NexT && window.NexT.utils;
+    if (utils) {
+      if (typeof utils.wrapTableWithBox === 'function') { try { utils.wrapTableWithBox(); } catch (e) {} }
+      if (typeof utils.registerCodeblock === 'function') { try { utils.registerCodeblock(); } catch (e) {} }
+      if (typeof utils.registerTabsTag === 'function') { try { utils.registerTabsTag(); } catch (e) {} }
+      if (typeof utils.registerVideoIframe === 'function') { try { utils.registerVideoIframe(); } catch (e) {} }
+    }
+    rebuildToc();
+    if (utils && typeof utils.registerSidebarTOC === 'function') { try { utils.registerSidebarTOC(); } catch (e) {} }
+    if (window.ScrollTrigger) { try { window.ScrollTrigger.refresh(); } catch (e) {} }
+  }
+
+  // 客户端重建侧栏 TOC（本站当前未开 toc，未来开启时此路径生效）
+  function rebuildToc() {
+    var wrap = document.querySelector('.post-toc-wrap');
+    if (!wrap) return;
+    var box = wrap.querySelector('.post-toc');
+    if (box && box.children.length) return;
+    var body = document.querySelector('.post-body');
+    if (!body) return;
+    var hs = body.querySelectorAll('h2, h3');
+    if (!hs.length) return;
+    var ol = document.createElement('ol');
+    ol.className = 'nav';
+    Array.prototype.forEach.call(hs, function (h) {
+      if (!h.id) return;
+      var li = document.createElement('li');
+      li.className = 'toc-item toc-level-' + h.tagName.toLowerCase().slice(1);
+      var a = document.createElement('a');
+      a.className = 'toc-link';
+      a.href = '#' + h.id;
+      var span = document.createElement('span');
+      span.className = 'toc-text';
+      span.textContent = h.textContent;
+      a.appendChild(span);
+      li.appendChild(a);
+      ol.appendChild(li);
+    });
+    if (!ol.children.length) return;
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'post-toc animated';
+      wrap.appendChild(box);
+    }
+    box.appendChild(ol);
+  }
+
+  function inject(plainHtml) {
+    if (!gateEl || !gateEl.parentNode) return;
+    var tpl = document.createElement('template');
+    tpl.innerHTML = plainHtml; // template 内容惰性，<script> 解析后不执行（spec：已置 already-started）
+    // 收集内容里的内联脚本，插入后逐个换新节点触发执行（随机一图页等内容带脚本；
+    // 直接搬旧节点不会执行——template 里的 script 移入文档也被跳过）。文档顺序执行。
+    var scripts = Array.prototype.slice.call(tpl.content.querySelectorAll('script'));
+    gateEl.parentNode.replaceChild(tpl.content, gateEl);
+    for (var i = 0; i < scripts.length; i++) {
+      var old = scripts[i];
+      var s = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        s.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      s.text = old.text; // 仅内联脚本（门禁内容页的 script 均为内联，无 src）
+      if (old.parentNode) old.parentNode.replaceChild(s, old);
+    }
+    if (dataEl && dataEl.parentNode) dataEl.parentNode.removeChild(dataEl);
+    rebind();
+  }
+
+  // 跨标签页：另一标签登录/登出（zzh-cek 变化）后本标签自动刷新出正文/引导卡
+  window.addEventListener('storage', function (ev) {
+    if (ev && ev.key === CEK_KEY) location.reload();
+  });
+
+  whenReady(function () {
+    var subtle = window.crypto && window.crypto.subtle;
+    if (!subtle) { fail('当前环境不支持解密（需 HTTPS 或 localhost 访问）'); return; }
+    var cek = readCek();
+    if (!cek) {
+      var logged = false;
+      try { logged = !!localStorage.getItem(AUTH_KEY); } catch (e) {}
+      if (logged) fail('已登录但本浏览器没有有效的内容密钥（可能密钥已轮换），请重新登录');
+      return;
+    }
+    var payload = null;
+    try { payload = JSON.parse(dataEl.textContent); } catch (e) { payload = null; }
+    if (!payload || payload.v !== 1 || typeof payload.iv !== 'string' || typeof payload.ct !== 'string') {
+      fail('密文数据损坏，请重新构建');
+      return;
+    }
+    subtle.importKey('raw', hexToBytes(cek.k), 'AES-GCM', false, ['decrypt']).then(function (key) {
+      return subtle.decrypt({ name: 'AES-GCM', iv: hexToBytes(payload.iv) }, key, b64ToBytes(payload.ct));
+    }).then(function (plain) {
+      inject(new TextDecoder().decode(plain));
+    }).catch(function () {
+      try { localStorage.removeItem(CEK_KEY); localStorage.removeItem(AUTH_KEY); localStorage.removeItem(PKEY_KEY); } catch (e) {}
+      fail('解密失败：内容密钥已轮换，已自动登出，请重新登录');
+    });
+  });
+})();
+</script>
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZZH</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+<div class="reading-progress-bar" aria-hidden="true"></div>
+
+
+
+
+<script>
+(function () {
+  var STORAGE_KEY = 'bg-opacity';
+  var DEFAULT = 50;   // 0=完全隐藏背景图，100=完全可见
+
+  // 滑块值（0-100）→ 遮罩 opacity（1-0）：值越大，遮罩越透明，背景图越清晰
+  function applyOpacity(sliderVal) {
+    var overlayOpacity = 1 - sliderVal / 100;
+    document.documentElement.style.setProperty('--bg-overlay-opacity', overlayOpacity);
+  }
+
+  // Layer 1: 初始化（首次读 localStorage）
+  var stored = null;
+  try { stored = parseInt(localStorage.getItem(STORAGE_KEY), 10); } catch (e) {}
+  var initial = (isNaN(stored) || stored < 0 || stored > 100) ? DEFAULT : stored;
+
+  var slider = document.getElementById('bg-slider');
+  var toggleBtn = document.getElementById('bg-toggle');
+  var popover = document.getElementById('bg-popover');
+  // 任一 DOM 缺失则静默退出，不阻塞其他脚本
+  if (!slider || !toggleBtn || !popover) return;
+
+  slider.value = initial;
+  applyOpacity(initial);
+
+  // Layer 2: 滑块拖动（实时更新 CSS 变量 + debounce 写 localStorage）
+  var saveTimer = null;
+  slider.addEventListener('input', function () {
+    var v = parseInt(slider.value, 10);
+    applyOpacity(v);
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try { localStorage.setItem(STORAGE_KEY, String(v)); } catch (e) {}
+    }, 200);
+  });
+
+  // Layer 3: popover 开关
+  function open() {
+    popover.hidden = false;
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    slider.focus();
+  }
+  function close() {
+    popover.hidden = true;
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  }
+  function isOpen() { return !popover.hidden; }
+
+  // 点按钮 toggle（stopPropagation 防触发下面的"点外部关闭"）
+  toggleBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (isOpen()) { close(); } else { open(); }
+  });
+  // 点 popover 外部关闭
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) return;
+    if (!popover.contains(e.target) && e.target !== toggleBtn) close();
+  });
+  // Esc 关闭，焦点回按钮
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) {
+      close();
+      toggleBtn.focus();
+    }
+  });
+})();
+</script>
+
+
+
+<script type="module">
+  (async function () {
+    var THREE;
+    // ① CDN 加载兜底
+    try {
+      THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+    } catch (e) {
+      console.warn('[ZZH] Three.js 加载失败，星空降级为纯色底');
+      return;
+    }
+
+    // ② WebGL 支持检测
+    var testCtx = document.createElement('canvas').getContext('webgl2') ||
+                 document.createElement('canvas').getContext('webgl');
+    if (!testCtx) {
+      console.warn('[ZZH] WebGL 不支持，星空降级为纯色底');
+      return;
+    }
+
+    try {
+      // === 创建 canvas 注入 body 首子节点（失败则无残留） ===
+      var canvas = document.createElement('canvas');
+      canvas.id = 'starfield';
+      document.body.insertBefore(canvas, document.body.firstChild);
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 1;
+
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // root Group：Task 4 的整体漂移挂这里
+      var group = new THREE.Group();
+      scene.add(group);
+
+      // === 确定性随机：种子 PRNG，让星点/星云布局每页相同（跨分页不"重置位置"） ===
+      // mulberry32：给定相同种子产生相同序列。固定种子 20260723 → 每页星空布局一致。
+      // 运行时流星生成仍用 Math.random()（流星本就该不可预测）。
+      var SEED = 20260723;
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = a + 0x6D2B79F5 | 0;
+          var t = a;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      var rnd = mulberry32(SEED);
+
+      // === Layer 1：星点（球面随机分布 + 逐星闪烁） ===
+      var STAR_COUNT = 1000;
+      var positions = new Float32Array(STAR_COUNT * 3);
+      var scales = new Float32Array(STAR_COUNT);
+      var phases = new Float32Array(STAR_COUNT);
+      var colors = new Float32Array(STAR_COUNT * 3);
+
+      var warmColor = new THREE.Color('#fff5e6');
+      var blueColor = new THREE.Color('#cce8ff');
+
+      for (var i = 0; i < STAR_COUNT; i++) {
+        // 球面均匀分布：半径 5-50
+        var r = 5 + rnd() * 45;
+        var theta = rnd() * Math.PI * 2;
+        var phi = Math.acos(2 * rnd() - 1);
+        positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+
+        scales[i] = 0.5 + rnd() * 1.5;
+        phases[i] = rnd() * Math.PI * 2;
+
+        var c = rnd() < 0.1 ? blueColor : warmColor;
+        colors[i * 3]     = c.r;
+        colors[i * 3 + 1] = c.g;
+        colors[i * 3 + 2] = c.b;
+      }
+
+      var starGeo = new THREE.BufferGeometry();
+      starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      starGeo.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
+      starGeo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+      starGeo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
+
+      var starMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }
+        },
+        vertexShader: [
+          'attribute float aScale;',
+          'attribute float aPhase;',
+          'attribute vec3 aColor;',
+          'varying vec3 vColor;',
+          'varying float vTwinkle;',
+          'uniform float uTime;',
+          'uniform float uPixelRatio;',
+          'void main() {',
+          '  vColor = aColor;',
+          '  vTwinkle = 0.6 + 0.4 * sin(uTime * 2.0 + aPhase);',  // ~3s 周期闪烁
+          '  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
+          '  gl_PointSize = aScale * 2.0 * uPixelRatio * (50.0 / -mvPosition.z);',
+          '  gl_Position = projectionMatrix * mvPosition;',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'varying vec3 vColor;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec2 uv = gl_PointCoord - vec2(0.5);',
+          '  float d = length(uv);',
+          '  if (d > 0.5) discard;',                  // 软边圆，非硬方块
+          '  float alpha = (1.0 - d * 2.0) * vTwinkle;',
+          '  gl_FragColor = vec4(vColor, alpha);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      var stars = new THREE.Points(starGeo, starMat);
+      group.add(stars);
+
+      // === Layer 2：星云（3-4 团软光晕，Canvas 程序生成径向渐变纹理） ===
+      var nebulaColors = ['#2a1a4a', '#0a3a4a', '#3a1a1a', '#1a2a4a'];
+      var nebulaCount = 3 + Math.floor(rnd() * 2);  // 3 或 4 团（种子决定，每页一致）
+
+      // 生成径向渐变纹理（128x128，中心有色→边缘渐变透明）
+      function makeNebulaTexture(hexColor) {
+        var size = 128;
+        var c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        var ctx = c.getContext('2d');
+        var grad = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+        grad.addColorStop(0, hexColor);
+        grad.addColorStop(0.5, hexColor);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, size, size);
+        var tex = new THREE.CanvasTexture(c);
+        return tex;
+      }
+
+      var nebulaGroup = new THREE.Group();
+      group.add(nebulaGroup);  // 挂在 group 下，随漂移一起转
+
+      for (var n = 0; n < nebulaCount; n++) {
+        var r = 10 + rnd() * 30;
+        var theta = rnd() * Math.PI * 2;
+        var phi = Math.acos(2 * rnd() - 1);
+        var geo = new THREE.PlaneGeometry(8 + rnd() * 7, 8 + rnd() * 7);
+        var mat = new THREE.MeshBasicMaterial({
+          map: makeNebulaTexture(nebulaColors[n % nebulaColors.length]),
+          transparent: true,
+          opacity: 0.15 + rnd() * 0.10,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+          r * Math.sin(phi) * Math.cos(theta),
+          r * Math.sin(phi) * Math.sin(theta),
+          r * Math.cos(phi)
+        );
+        mesh.userData.spinSpeed = (0.02 + rnd() * 0.03) * (rnd() < 0.5 ? -1 : 1);
+        nebulaGroup.add(mesh);
+      }
+
+      // === Layer 3：流星（偶发，JS 管生命周期） ===
+      // nextMeteorTime 在下方 RAF 段定义（含跨页时间偏移）。
+      var meteors = [];
+
+      function spawnMeteor() {
+        // 屏幕外随机起点（NDC ±1.5），随机方向
+        var startX = (Math.random() - 0.5) * 3;
+        var startY = (Math.random() - 0.5) * 3;
+        var startZ = -0.5;
+        var pts = [
+          new THREE.Vector3(startX, startY, startZ),
+          new THREE.Vector3(startX, startY, startZ)  // 尾部初始同点
+        ];
+        var geo = new THREE.BufferGeometry().setFromPoints(pts);
+        // 顶点颜色 alpha 渐变（头部亮，尾部透明）
+        var vertColors = new Float32Array([
+          1.0, 1.0, 1.0,  // 头部白
+          1.0, 1.0, 1.0   // 尾部白（alpha 由 LineBasicMaterial.transparent 管，此处用 opacity 整体）
+        ]);
+        geo.setAttribute('color', new THREE.BufferAttribute(vertColors, 3));
+        var mat = new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.9,
+          blending: THREE.AdditiveBlending
+        });
+        var line = new THREE.Line(geo, mat);
+        // 投影到星空球面（半径 8，在星点层前方）
+        var dir = new THREE.Vector3(
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          0
+        ).normalize();
+        line.userData = {
+          dir: dir,
+          speed: 0.08 + Math.random() * 0.05,
+          life: 0,
+          maxLife: 0.8 + Math.random() * 0.7,  // 0.8-1.5s
+          startWorld: new THREE.Vector3(startX * 8, startY * 8, startZ * 8)
+        };
+        group.add(line);
+        meteors.push(line);
+      }
+
+      // === RAF 循环（Task 3 只做星点；Task 4 加星云/流星/漂移） ===
+      var rafId = null;
+      var running = false;
+      var clock = new THREE.Clock();
+      var lastFrameTime = null;  // Task 4 手动算 dt 用（避免 getDelta/getElapsedTime 冲突）
+
+      // === 跨页面时间连续性：整页跳转（无 pjax）时 canvas 会重建，
+      // 用 sessionStorage 记录会话累计时间偏移，让漂移/闪烁/流星计时跨页接续，
+      // 视觉上星空"在同一位置继续转"而非"从零重新开始"。
+      var TIME_KEY = 'starfield-time-offset';
+      var DRIFT_RATE = 0.0013;  // 弧度/帧（原 80s/圈）
+      var FPS_BASE = 60;        // 漂移按 60fps 换算到时间（rotation = time * DRIFT_RATE * FPS_BASE）
+      var timeOffset = 0;
+      var nextMeteorTime = 0;   // 绝对动画时间（含 offset）
+      try {
+        var stored = parseFloat(sessionStorage.getItem(TIME_KEY));
+        if (!isNaN(stored) && stored > 0) {
+          timeOffset = stored;
+        }
+      } catch (e) {}
+      // 初始流星时间：首颗 3-8s 后（相对当前 offset）
+      nextMeteorTime = timeOffset + 3 + Math.random() * 5;
+      // 漂移角度按已累计时间预置，避免跳页后旋转"跳回 0"
+      group.rotation.y = timeOffset * DRIFT_RATE * FPS_BASE;
+
+      function animate() {
+        rafId = requestAnimationFrame(animate);
+        // 绝对动画时间 = 本页 clock 时间 + 跨页累计偏移（sessionStorage）
+        var t = clock.getElapsedTime() + timeOffset;
+        starMat.uniforms.uTime.value = t;
+        // Layer 4：整体漂移——改为时间驱动（从 t 直接算），跨页不跳。
+        // 原 += 0.0013/帧 换算：0.0013 * 60fps = 0.078 rad/s。
+        group.rotation.y = t * DRIFT_RATE * FPS_BASE;
+        // 星云缓慢自转（每团方向随机）+ 每帧重新朝相机（spec §6.4：
+        // 星云挂 group 随漂移，但每帧 lookAt(camera.position) 保证始终正面）
+        for (var ni = 0; ni < nebulaGroup.children.length; ni++) {
+          nebulaGroup.children[ni].rotation.z += nebulaGroup.children[ni].userData.spinSpeed * 0.01;
+          nebulaGroup.children[ni].lookAt(camera.position);
+        }
+
+        // 流星推进 + 生命周期回收
+        // 注意：不能混用 clock.getElapsedTime() 和 clock.getDelta()——
+        // getElapsedTime() 内部已更新 oldTime，同帧再调 getDelta() 会返回 ~0，
+        // 导致流星 dt 归零、不动也不消失。用手动算 dt：
+        var dt = lastFrameTime === null ? 0.016 : (t - lastFrameTime);
+        lastFrameTime = t;
+        if (t >= nextMeteorTime) {
+          spawnMeteor();
+          nextMeteorTime = t + 3 + Math.random() * 5;  // 下一颗 3-8s 后（运行时随机）
+        }
+        for (var mi = meteors.length - 1; mi >= 0; mi--) {
+          var m = meteors[mi];
+          m.userData.life += dt;
+          if (m.userData.life >= m.userData.maxLife) {
+            group.remove(m);
+            m.geometry.dispose();
+            m.material.dispose();
+            meteors.splice(mi, 1);
+          } else {
+            // 头部沿 dir 移动，尾部跟随（拖尾长度随速度）
+            var head = m.userData.startWorld.clone().add(
+              m.userData.dir.clone().multiplyScalar(m.userData.speed * m.userData.life * 60)
+            );
+            var tail = head.clone().sub(
+              m.userData.dir.clone().multiplyScalar(2.5)  // 拖尾长度
+            );
+            var posAttr = m.geometry.attributes.position;
+            posAttr.setXYZ(0, head.x, head.y, head.z);
+            posAttr.setXYZ(1, tail.x, tail.y, tail.z);
+            posAttr.needsUpdate = true;
+            // 淡出：生命后半 alpha 衰减
+            m.material.opacity = m.userData.life > m.userData.maxLife * 0.6
+              ? 0.9 * (1 - (m.userData.life - m.userData.maxLife * 0.6) / (m.userData.maxLife * 0.4))
+              : 0.9;
+          }
+        }
+        renderer.render(scene, camera);
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        lastFrameTime = null;  // 重置 dt 基准，避免长暂停后首帧 dt 过大导致流星跳变
+        animate();
+      }
+      function stop() {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      // === 跨页时间持久化：整页跳转前把累计动画时间写 sessionStorage，
+      // 下一页读取后接续，星空不"从零重置"。 ===
+      function saveTimeOffset() {
+        // 用当前 uTime（已含 offset）作为下一页起点
+        try { sessionStorage.setItem(TIME_KEY, String(starMat.uniforms.uTime.value)); } catch (e) {}
+      }
+      window.addEventListener('pagehide', saveTimeOffset);  // 整页导航触发
+
+      // === reduced-motion：渲染一帧静态星空后停 ===
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        starMat.uniforms.uTime.value = 0;
+        renderer.render(scene, camera);
+        console.warn('[ZZH] prefers-reduced-motion，星空渲染静态一帧后停止动画');
+      } else {
+        start();
+      }
+
+      // === tab 可见性：隐藏时停 RAF 省电 ===
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          saveTimeOffset();  // 后台/切走也存一下，防 pagehide 未触发
+          stop();
+        } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          start();
+        }
+      });
+
+      // === resize：debounce 150ms ===
+      var resizeTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }, 150);
+      });
+
+      // 暴露给调试/外部（start/stop + 场景对象）
+      window.__zzhStarfield = { start: start, stop: stop, scene: scene, camera: camera, renderer: renderer, group: group, THREE: THREE };
+
+    } catch (err) {
+      console.warn('[ZZH] 星空场景初始化异常，降级为纯色底：', err);
+      // 移除可能半创建的 canvas，零残留
+      var bad = document.getElementById('starfield');
+      if (bad) bad.remove();
+    }
+  })();
+</script>
+
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<script>
+window.addEventListener('load', function () {
+  // 工程兜底 1：尊重 prefers-reduced-motion，直接返回（内容保持可见）
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  // 工程兜底 2：检查 GSAP 是否加载成功
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.warn('[ZZH] GSAP 未加载，动效跳过，内容保持可见');
+    return;
+  }
+
+  // 工程兜底 3（新增）：恢复函数。任何动效代码抛异常时调用，
+  // 把所有 fade-up 元素的 opacity 强制设回 1，保证内容可见。
+  // 这是对 gsap-ready gate 的补充——原 gate 只防"GSAP 加载失败"，
+  // 但"GSAP 加载成功后我的代码崩了"会导致内容永久 opacity:0，需要额外兜底。
+  function revealAllFadeUp() {
+    document.querySelectorAll('.fade-up').forEach(function (el) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    document.querySelectorAll('.post-body img').forEach(function (img) {
+      img.style.opacity = '1';
+    });
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 工程兜底 4：加 gsap-ready 类，激活 .fade-up 的初始 opacity:0
+  // 这一步在 GSAP 确认可用后才做，保证加载失败时内容不消失
+  document.documentElement.classList.add('gsap-ready');
+
+  // 整个动效逻辑包进 try/catch：任何一段崩了都不能让内容永久隐藏
+  try {
+
+    // === 动效 1：阅读进度条 ===
+    var bar = document.querySelector('.reading-progress-bar');
+    if (bar) {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: function (self) {
+          bar.style.width = (self.progress * 100) + '%';
+        }
+      });
+    }
+
+    // === 动效 2：首页文章卡片 stagger fade-up ===
+    var cards = document.querySelectorAll('.posts-expand .post-block');
+    if (cards.length) {
+      cards.forEach(function (c) { c.classList.add('fade-up'); });
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.posts-expand',
+          start: 'top 85%'
+        }
+      });
+    }
+
+    // === 动效 3：文章页 H2/H3 fade-up ===
+    // 注意：批量 gsap.to 不能用 trigger 函数（之前 bug：trigger: h => h
+    // 会让 ScrollTrigger 调用 h.getBoundingClientRect()，但函数没有该方法，
+    // 抛 TypeError 让整个动效链条中断，导致卡片永远 opacity:0）。
+    // 正确做法：forEach 每个 heading 单独 gsap.to，trigger 直接传元素本身。
+    var headings = document.querySelectorAll('.post-body h2, .post-body h3');
+    if (headings.length) {
+      headings.forEach(function (h) {
+        h.classList.add('fade-up');
+        gsap.to(h, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: h,
+            start: 'top 90%'
+          }
+        });
+      });
+    }
+
+    // === 动效 4：文章图片 lazyload fade-in ===
+    // 这段不走 GSAP，纯 JS 设 inline style。初始 opacity:0 由 inline style 控制，
+    // 不依赖 gsap-ready class，所以 try/catch 不影响它。
+    // 但加 onError 兜底：图片加载失败也要恢复 opacity，否则永久不可见。
+    // ⚠ 门禁页（正文加密）的 .post-body 内容是解密后才注入的（注入脚本派发
+    // page:loaded），只在本 load 跑一次会漏掉它们——图留着 CSS 初始 opacity:0
+    // 永久不可见。所以封装成函数，load 与 page:loaded 各跑一遍（幂等）。
+    var revealImages = function () {
+      document.querySelectorAll('.post-body img').forEach(function (img) {
+        if (img.complete && img.naturalWidth > 0) {
+          img.style.opacity = 1;
+        } else {
+          img.style.opacity = 0;
+          img.style.transition = 'opacity 0.3s ease';
+          img.addEventListener('load', function () { img.style.opacity = 1; });
+          img.addEventListener('error', function () { img.style.opacity = 1; });
+        }
+      });
+    };
+    revealImages();
+    document.addEventListener('page:loaded', revealImages);
+
+    // === header 滚动收缩 ===
+    var header = document.querySelector('.custom-header');
+    if (header) {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top -80',
+        end: 99999,
+        toggleClass: { targets: header, className: 'scrolled' }
+      });
+    }
+
+  } catch (err) {
+    // 兜底：任何动效代码崩了，恢复所有 fade-up 和图片可见
+    console.error('[ZZH] 动效代码异常，已恢复内容可见：', err);
+    revealAllFadeUp();
+  }
+});
+</script>
+
+
+
+
+<script>
+(function () {
+  // ① 仅在标签页执行（避免污染全站）
+  var path = window.location.pathname.replace(/\/+$/, '');
+  if (!path.endsWith('/tags')) return;
+
+  // ② 读取构建期注入的标签数据（Nunjucks 渲染期内联成 JS 数组字面量）
+  var tags = ;
+  if (!tags || !tags.length) return;
+
+  // ③ 原 NexT 标签云容器（作为降级 fallback，JS 成功后隐藏）
+  var oldBox = document.querySelector('.tag-cloud-tags');
+  var parent = oldBox ? oldBox.parentElement : null;
+  if (!parent) return;
+
+  // ④ 能力检测：canvas 2d 上下文（不支持则静默降级）
+  var testCanvas = document.createElement('canvas');
+  if (!testCanvas.getContext || !testCanvas.getContext('2d')) return;
+
+  // ⑤ 动态加载 wordcloud2.js（UMD，挂到 window.WordCloud）
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('script load failed: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  // ⑥ 渲染配置（闭包内复用，供 resize 重绘）
+  var PALETTE = ['#7ee787', '#79c0ff', '#d2a8ff', '#ffa657', '#ff7b72', '#56d4dd'];
+  var maxC = Math.max.apply(null, tags.map(function (t) { return t.count; }));
+  var list = tags.map(function (t) {
+    return [t.name, Math.max(1, Math.round(t.count / maxC * 10))];
+  });
+
+  function buildOptions(canvas) {
+    return {
+      list: list,
+      fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+      fontWeight: function (w) { return w >= 7 ? '600' : '400'; },
+      color: function () {
+        return PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      },
+      backgroundColor: 'transparent',
+      rotateRatio: 0.3,
+      minRotation: -Math.PI / 6,
+      maxRotation: Math.PI / 6,
+      // 权重 w 范围 1-10。用 sqrt 压缩让低权重词不至于太小：
+      // w=10 → 68px（最大词，醒目），w=5 → 48px，w=1 → 22px（下限，保证可读）
+      weightFactor: function (w) { return Math.max(22, Math.sqrt(w / 10) * 68); },
+      click: function (item) {
+        if (!item) return;
+        var hit = null;
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].name === item[0]) { hit = tags[i]; break; }
+        }
+        if (hit) window.location.href = '/zzh-notes/' + hit.path;
+      }
+    };
+  }
+
+  // HiDPI 抗锯齿：把缓冲区按 devicePixelRatio 放大，再用 ctx.scale 校回 CSS 坐标系
+  // 这样 wordcloud2.js 拿到的仍是 CSS 像素尺寸，字号不会被 CSS 二次缩水
+  function setupCanvas(canvas, cssW, cssH) {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  loadScript('https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js')
+    .then(function () {
+      if (typeof window.WordCloud !== 'function') {
+        console.warn('[ZZH] wordcloud2.js 未正确加载，标签云降级为默认样式');
+        return;
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.className = 'wordcloud-canvas';
+      // CSS 显示宽 = 父容器宽；高度按标签数给足，至少 480px，最多 720px
+      var cssW = parent.clientWidth;
+      var cssH = Math.max(480, Math.min(720, tags.length * 22));
+      setupCanvas(canvas, cssW, cssH);
+      parent.insertBefore(canvas, oldBox);
+      oldBox.hidden = true;   // 隐藏原云，保留 DOM 作降级 fallback
+
+      try {
+        window.WordCloud(canvas, buildOptions(canvas));
+
+        // 暴露调试句柄（与 window.__zzhStarfield 风格一致）
+        window.__zzhWordcloud = { canvas: canvas, tags: tags };
+
+        // resize 重绘（debounce 150ms）
+        var rt;
+        window.addEventListener('resize', function () {
+          clearTimeout(rt);
+          rt = setTimeout(function () {
+            setupCanvas(canvas, parent.clientWidth, cssH);
+            window.WordCloud(canvas, buildOptions(canvas));
+          }, 150);
+        });
+      } catch (err) {
+        console.warn('[ZZH] 词云初始化异常，降级为默认标签云：', err);
+        if (canvas.parentNode) canvas.remove();
+        oldBox.hidden = false;   // 恢复原云
+      }
+    })
+    .catch(function () {
+      console.warn('[ZZH] wordcloud2.js 加载失败，标签云降级为默认样式');
+    });
+})();
+</script>
+
+
+
+
+<script>
+(() => {
+  'use strict';
+  const CONFIG = {
+    TIME_ZONE: 'Asia/Shanghai',
+    LOCALE: 'zh-CN',
+    LOCATION_TEXT: 'Shanghai, China'
+  };
+  let timerId = null;
+
+  function pad2(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  // 用 Intl 按指定时区拆出 year/month/day/hour/minute/second，避免本地时区干扰
+  function getParts(date) {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: CONFIG.TIME_ZONE,
+      hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(date);
+    const result = {};
+    for (const item of parts) {
+      if (item.type !== 'literal') {
+        result[item.type] = Number(item.value);
+      }
+    }
+    return result;
+  }
+
+  function getDateText(date) {
+    return new Intl.DateTimeFormat(CONFIG.LOCALE, {
+      timeZone: CONFIG.TIME_ZONE,
+      weekday: 'short', month: 'short', day: 'numeric'
+    }).format(date);
+  }
+
+  // 取 UTC 偏移文本（如 UTC+08:00），用 longOffset 再把 GMT 换成 UTC
+  function getUtcOffset(date) {
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: CONFIG.TIME_ZONE,
+      timeZoneName: 'longOffset',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    const part = dtf.formatToParts(date).find(item => item.type === 'timeZoneName');
+    return part ? part.value.replace('GMT', 'UTC') : 'UTC';
+  }
+
+  function updateCard() {
+    const card = document.getElementById('zzh-clock-card');
+    if (!card) return;   // 卡片未注入（如未配置 sidebar）则静默退出
+    const now = new Date();
+    const parts = getParts(now);
+    // en-GB hour12:false 在午夜可能返回 hour=24，规整为 0
+    const hour = parts.hour === 24 ? 0 : parts.hour;
+    const minute = parts.minute;
+    const second = parts.second;
+
+    const timeEl = card.querySelector('[data-clock-time]');
+    const locationEl = card.querySelector('[data-clock-location]');
+    const dateEl = card.querySelector('[data-clock-date]');
+    const hourHand = card.querySelector('[data-hour-hand]');
+    const minuteHand = card.querySelector('[data-minute-hand]');
+    const secondHand = card.querySelector('[data-second-hand]');
+
+    if (timeEl) timeEl.textContent = pad2(hour) + ':' + pad2(minute);
+    if (locationEl) locationEl.textContent = CONFIG.LOCATION_TEXT;
+    if (dateEl) dateEl.textContent = getDateText(now) + ' · ' + getUtcOffset(now);
+
+    // 模拟时钟指针角度：时针随分秒平滑、分针随秒平滑、秒针跳秒
+    if (hourHand) {
+      const angle = (hour % 12) * 30 + minute * 0.5 + second / 120;
+      hourHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+    if (minuteHand) {
+      const angle = minute * 6 + second * 0.1;
+      minuteHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+    if (secondHand) {
+      const angle = second * 6;
+      secondHand.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+    }
+  }
+
+  function initClockCard() {
+    // 防重复：多次调用先清旧定时器
+    if (timerId !== null) {
+      window.clearInterval(timerId);
+      timerId = null;
+    }
+    updateCard();
+    timerId = window.setInterval(updateCard, 1000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initClockCard, { once: true });
+  } else {
+    initClockCard();
+  }
+
+  // NexT 开启 PJAX 时，页面主体可能被替换，因此重新初始化组件
+  document.addEventListener('pjax:complete', initClockCard);
+})();
+</script>
+
+</body>
+</html>

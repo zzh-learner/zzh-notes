@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-11T02:05:32+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261011-0205/20261011-dca6d678.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "2020212「绫」光琉彩，一抹「莓」蓝/绫莓琉光吊带-14.jpg",
+      "addedAt": "2026-10-11T02:05:32+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/d9810efb4274"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261011-0205/20261011-7813f81e.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/4月/0412/0412/DSC02634.jpg",
+      "addedAt": "2026-10-11T02:05:32+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/9755f880bad5"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261011-0205/20261011-700e8220.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "251007十一图/DSC09008.jpg",
+      "addedAt": "2026-10-11T02:05:32+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/ae61e32d16af"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261011-0205/20261011-b260d62d.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-01 123221.livp",
+      "addedAt": "2026-10-11T02:05:32+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/50afd1ff2d77"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261011-0205/20261011-457416d2.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉壁第五期/DSC02854_260319_231354.jpg",
+      "addedAt": "2026-10-11T02:05:32+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/3d44c44d64e8"
+    }
+  ]
+}
