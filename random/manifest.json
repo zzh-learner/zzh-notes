@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-10T02:01:11+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261010-0201/20261010-97d0f94a.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20260815别着急选，还有第七双/不同单色袜合集-23.jpg",
+      "addedAt": "2026-10-10T02:01:11+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/cfd51b55e227"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261010-0201/20261010-585fd43f.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2025年/2025年8月/0803/d7fd7752f29d0a55439375764b46abaf.jpg",
+      "addedAt": "2026-10-10T02:01:11+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/805638dcd9e2"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261010-0201/20261010-316444e6.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2602/260206八张/DSC08242.jpg",
+      "addedAt": "2026-10-10T02:01:11+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/3faf62d3a20c"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261010-0201/20261010-2aa3fa0a.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-17 182139.jpg",
+      "addedAt": "2026-10-10T02:01:11+08:00",
+      "w": 1143,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/3454f796ffef"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261010-0201/20261010-73bf9317.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉壁第五期/DSC02864_260319_231640.jpg",
+      "addedAt": "2026-10-10T02:01:11+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/f6b4064a6c19"
+    }
+  ]
+}
