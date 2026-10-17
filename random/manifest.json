@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-16T13:11:08+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261016-1311/20261016-5eee37f2.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261013萌萌小雨滴/小语图包-黑色麦穗-18.jpg",
+      "addedAt": "2026-10-16T13:11:08+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/7a2180e450fb"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261016-1311/20261016-0d2c09b6.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/10月/1014/63ec7a9046ec35434ad48d349ba5cc67.jpg",
+      "addedAt": "2026-10-16T13:11:08+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/082d6e073b2f"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261016-1311/20261016-ed83bb02.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2610/261015九张/DSC07227.jpg",
+      "addedAt": "2026-10-16T13:11:08+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/b2474cb6aa66"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261016-1311/20261016-91bd8576.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-27 102647.livp",
+      "addedAt": "2026-10-16T13:11:08+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/4bf2f469d5fd"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261016-1311/20261016-2f9fbee5.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉壁第五期/DSC02890_260319_231556.jpg",
+      "addedAt": "2026-10-16T13:11:08+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/7a07484717fe"
+    }
+  ]
+}
