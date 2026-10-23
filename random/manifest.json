@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-22T13:03:55+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261022-1303/20261022-a533c11e.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261018浅蓝：我负责清爽；焦糖：我负责秋天/小语图包-好利来返场啦~-17.jpg",
+      "addedAt": "2026-10-22T13:03:55+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/384958dbddf7"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261022-1303/20261022-102089d8.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/10月/1021/DSC08700.jpg",
+      "addedAt": "2026-10-22T13:03:55+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/51ee74ad4418"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261022-1303/20261022-7a64bff8.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2610/261021九张/DSC07722.jpg",
+      "addedAt": "2026-10-22T13:03:55+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/d759e661f1eb"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261022-1303/20261022-d7b7ec72.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-26 085645.livp",
+      "addedAt": "2026-10-22T13:03:55+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/ef094f950501"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261022-1303/20261022-3c186172.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/_DSC9615.jpg",
+      "addedAt": "2026-10-22T13:03:55+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/f4fe28946b20"
+    }
+  ]
+}
