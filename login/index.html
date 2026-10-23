@@ -1,0 +1,1126 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="keywords" content="Hexo Theme Redefine"><meta name="author" content="ZZH"><script>(function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();</script><link rel="preconnect" href="https://registry.npmmirror.com" crossorigin><link rel="canonical" href="https://zzh-learner.github.io/zzh-notes/login/"><meta name="robots" content="index,follow"><meta name="googlebot" content="index,follow"><meta name="revisit-after" content="1 days"><meta name="description" content="ZZH 的随笔"><meta property="og:type" content="website"><meta property="og:title" content="登录"><meta property="og:url" content="https://zzh-learner.github.io/zzh-notes/login/index.html"><meta property="og:site_name" content="ZZH 的随笔"><meta property="og:description" content="ZZH 的随笔"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://zzh-learner.github.io/images/avatar.svg"><meta property="article:published_time" content="2026-10-10T04:00:00.000Z"><meta property="article:author" content="ZZH"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://zzh-learner.github.io/images/avatar.svg"><link rel="icon" type="image/png" href="/zzh-notes/images/avatar.svg" sizes="192x192"><link rel="apple-touch-icon" sizes="180x180" href="/zzh-notes/images/avatar.svg"><meta name="theme-color" content="#22d3ee"><link rel="shortcut icon" href="/zzh-notes/images/avatar.svg"><title>登录 | ZZH 的随笔</title><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/Chillax/chillax.css"><link rel="stylesheet" href="/zzh-notes/css/zzh.css"><script>(function () {
+  'use strict';
+  /* === 纯暗色钉死（站点无亮色模式） ===
+   * 1) 预置 Redefine 的主题状态存储：initModeStatus() 优先读 localStorage，
+   *    种下 isDark:true 后任何设备/偏好都进暗色。
+   * 2) 把 prefers-color-scheme 钉成 dark：主题的浅色偏好初始化与
+   *    initModeAutoTrigger（OS 切换监听）都不会把站点翻回亮色。
+   * 3) 主题自带的 head 判定脚本在本注入之前执行（inject.head 排在其后），
+   *    首次访问（localStorage 尚未种下）且系统偏好为亮色时它已给
+   *    html 挂 light / body 挂 light-mode——这里摘 light 类、补 dark，
+   *    并用 MutationObserver 在 body 出现时把 body 的 light-mode 换成
+   *    dark-mode（与主题脚本同款观察手法，注册在后、同一批变更里后跑）。
+   * 切换按钮本体由 zzh.css 隐藏（.tool-dark-light-toggle）。 */
+  try {
+    localStorage.setItem('REDEFINE-THEME-STATUS',
+      JSON.stringify({ isExpandPageWidth: false, isDark: true, fontSizeLevel: 0, isOpenPageAside: true }));
+  } catch (e) { /* localStorage 不可用时仍有 prefers-color-scheme 钉死兜底 */ }
+  var origMatchMedia = window.matchMedia;
+  window.matchMedia = function (q) {
+    var m = origMatchMedia.call(window, q);
+    if (typeof q === 'string' && q.indexOf('prefers-color-scheme') !== -1) {
+      var dark = /dark/i.test(q);
+      return {
+        matches: dark, media: q, onchange: null,
+        addEventListener: function () {}, removeEventListener: function () {},
+        addListener: function () {}, removeListener: function () {},
+        dispatchEvent: function () { return false; }
+      };
+    }
+    return m;
+  };
+  var root = document.documentElement;
+  root.classList.remove('light');
+  root.classList.add('dark');
+  root.style.colorScheme = 'dark';
+  function fixBody() {
+    if (!document.body) return false;
+    document.body.classList.remove('light-mode');
+    document.body.classList.add('dark-mode');
+    return true;
+  }
+  if (!fixBody()) {
+    new MutationObserver(function () {
+      if (fixBody()) this.disconnect();
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();</script><link rel="stylesheet" href="/zzh-notes/css/style.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/css/build/tailwind.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/GeistMono/geist-mono.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/Geist/geist.css"><script id="hexo-configurations">window.config = {"hostname":"zzh-learner.github.io","root":"/zzh-notes/","language":"zh-CN"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.7,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":false,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":false,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":false,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#22d3ee","secondary":null,"default_mode":"dark"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":false},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":false,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/avatar.svg","description":"ZZH 的随笔"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":false,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"Theme Redefine","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":[{"icon":"fa-brands fa-github","url":null},{"icon":"fa-brands fa-twitter","url":null},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":null},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"生图":{"path":"/ai/","icon":"fa-regular fa-image"},"随机一图":{"path":"/random/","icon":"fa-regular fa-shuffle"},"登录":{"path":"/login/","icon":"fa-regular fa-user"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":false,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"YYYY-MM-DD","excerpt_length":120,"categories":{"enable":false,"limit":3},"tags":{"enable":false,"limit":3}},"footer":{"runtime":false,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2022/8/17 11:45:14","statistics":false,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2022/8/17 11:45:14","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":false};</script><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/fontawesome.min.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/brands.min.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/solid.min.css"><link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/regular.min.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="progress-bar-container"></div><main class="page-container" id="swup"><div class="main-content-container flex flex-col justify-between min-h-dvh"><div class="main-content-header"><header class="navbar-container px-6 md:px-12"><div class="navbar-content transition-navbar"><div class="left"><a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/zzh-notes/"><img src="/zzh-notes/images/avatar.svg" class="w-full h-full rounded-xs"> </a><a class="logo-title" href="/zzh-notes/">ZZH 的随笔</a></div><div class="right"><div class="desktop"><ul class="navbar-list"><li class="navbar-item"><a href="/zzh-notes/"><i class="fa-regular fa-house fa-fw"></i> 首页</a></li><li class="navbar-item"><a href="/zzh-notes/ai/"><i class="fa-regular fa-image fa-fw"></i> 生图</a></li><li class="navbar-item"><a href="/zzh-notes/random/"><i class="fa-regular fa-shuffle fa-fw"></i> 随机一图</a></li><li class="navbar-item"><a class="active" href="/zzh-notes/login/"><i class="fa-regular fa-user fa-fw"></i> 登录</a></li></ul></div><div class="mobile"><div class="icon-item navbar-bar"><div class="navbar-bar-middle"></div></div></div></div></div><div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between"><ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start"><li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full"><a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full" href="/zzh-notes/"><span>首页 </span><i class="fa-regular fa-house fa-sm fa-fw"></i></a></li><li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full"><a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full" href="/zzh-notes/ai/"><span>生图 </span><i class="fa-regular fa-image fa-sm fa-fw"></i></a></li><li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full"><a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full" href="/zzh-notes/random/"><span>随机一图 </span><i class="fa-regular fa-shuffle fa-sm fa-fw"></i></a></li><li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full"><a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active" href="/zzh-notes/login/"><span>登录 </span><i class="fa-regular fa-user fa-sm fa-fw"></i></a></li></ul><div class="statistics flex justify-around my-2.5"><a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/zzh-notes/tags"><div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div><div class="label text-third-text-color text-sm">标签</div></a><a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/zzh-notes/categories"><div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div><div class="label text-third-text-color text-sm">分类</div></a><a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/zzh-notes/archives"><div class="number text-2xl sm:text-xl text-second-text-color font-semibold">129</div><div class="label text-third-text-color text-sm">文章</div></a></div></div><div class="window-mask"></div></header></div><div class="main-content-body transition-fade-up"><div class="main-content"><div class="page-template-container"><div class="page-template-content markdown-body"><h1>登录</h1><p><noscript>登录功能需要启用 JavaScript（本页校验在浏览器本地完成）。</noscript></p><div class="zzh-login-fallback"><p>这里通常会显示登录卡片。若上方空白、没有登录表单，说明登录组件在构建期注入失败<br>（构建日志会有 <code>login-page:</code> 前缀的警告），常见原因是 <code>source/_data/auth.yml</code><br>缺失或条目格式错误。可用 <code>node tools/auth-tool.mjs list</code> 检查账号数据，<br>修复后重新执行 <code>npx hexo generate</code> 即可恢复。</p></div><div class="zzh-login-wrap" id="zzh-login-app"><div class="zzh-login-card" id="zzh-login-form-card" hidden><h2 class="zzh-login-title">登录</h2><p class="zzh-login-desc">登录后本浏览器会自动解密并显示随笔正文；未登录只能看到标题与列表。</p><form id="zzh-login-form" class="zzh-login-form" autocomplete="off" novalidate><label class="zzh-login-label" for="zzh-login-username">用户名</label> <input class="zzh-login-input" id="zzh-login-username" type="text" autocomplete="username" spellcheck="false" maxlength="32"> <label class="zzh-login-label" for="zzh-login-password">密码</label> <input class="zzh-login-input" id="zzh-login-password" type="password" autocomplete="current-password"><p class="zzh-login-error" id="zzh-login-error" role="alert" hidden></p><button class="zzh-login-btn" id="zzh-login-submit" type="submit">登录</button></form></div><div class="zzh-login-card" id="zzh-login-account-card" hidden><h2 class="zzh-login-title">账户中心</h2><dl class="zzh-login-acct"><dt>用户名</dt><dd id="zzh-login-acct-user"></dd><dt>角色</dt><dd><span class="zzh-login-acct-role" id="zzh-login-acct-role"></span></dd><dt>内容密钥</dt><dd id="zzh-login-acct-cek"></dd><dt id="zzh-login-acct-pkey-label" hidden>私密权限</dt><dd id="zzh-login-acct-pkey" hidden></dd><dt>登录有效期至</dt><dd id="zzh-login-acct-expire"></dd></dl><button class="zzh-login-btn zzh-login-btn-logout" id="zzh-login-logout" type="button">登出</button></div><div class="zzh-login-card zzh-login-admin-card" id="zzh-login-admin-card" hidden><h2 class="zzh-login-title">站点管理</h2><p class="zzh-login-desc">仅超级管理员可见的快捷入口。</p><div class="zzh-login-links"><a href="https://github.com/zzh-learner/zzh-notes-src" target="_blank" rel="noopener noreferrer">GitHub 仓库</a> <a href="https://github.com/zzh-learner/zzh-notes-src/actions" target="_blank" rel="noopener noreferrer">Actions 记录</a> <a href="https://github.com/zzh-learner/zzh-notes-src/actions/workflows/deploy.yml" target="_blank" rel="noopener noreferrer">一键重新部署（Run workflow）</a></div></div><div class="zzh-login-card zzh-login-admin-card" id="zzh-desk-card" hidden><h2 class="zzh-login-title">私密写作台</h2><p class="zzh-login-desc">把照片直接提交到内容仓，提交后主仓 CI 自动构建发布（约 1–2 分钟）。仅超级管理员可见。</p><div class="zzh-desk-token"><div class="zzh-desk-token-row"><span class="zzh-desk-token-status" id="zzh-desk-token-status">访问令牌：未配置</span> <button class="zzh-desk-mini-btn" id="zzh-desk-token-btn" type="button">配置</button></div><div class="zzh-desk-token-box" id="zzh-desk-token-box" hidden><input class="zzh-login-input" id="zzh-desk-token-input" type="password" placeholder="细粒度 PAT（仅授 zzh-notes-src 仓库 Contents 读写）" autocomplete="off" spellcheck="false"><div class="zzh-desk-token-actions"><button class="zzh-desk-mini-btn" id="zzh-desk-token-save" type="button">保存并验证</button> <button class="zzh-desk-mini-btn" id="zzh-desk-token-clear" type="button">清除</button> <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener noreferrer">如何创建</a></div><p class="zzh-desk-hint" id="zzh-desk-token-msg" hidden></p><p class="zzh-desk-hint">令牌只存本浏览器，登出即清除，绝不写入站点任何文件；仅限个人设备使用，令牌未设过期（若怀疑泄漏请立即在 GitHub 吊销），只勾选 zzh-notes-src 一个仓库。</p></div></div><div class="zzh-desk-panel" id="zzh-desk-panel-wall"><label class="zzh-login-label" for="zzh-desk-wall-date">照片日期</label> <input class="zzh-login-input" id="zzh-desk-wall-date" type="date"> <label class="zzh-login-label" for="zzh-desk-wall-files">图片（可多选）</label> <input class="zzh-login-input" id="zzh-desk-wall-files" type="file" multiple accept=".jpg,.jpeg,.png,.webp,.gif"><div class="zzh-desk-files" id="zzh-desk-wall-filelist"></div><p class="zzh-login-error" id="zzh-desk-wall-err" role="alert" hidden></p><p class="zzh-desk-result" id="zzh-desk-wall-ok" hidden></p><button class="zzh-login-btn" id="zzh-desk-wall-submit" type="button">提交照片</button></div></div></div><script type="application/json" id="zzh-auth-data">[{"username":"zzh","role":"admin","salt":"ac33e74a466b38974186db7597b00e19","iter":100000,"hash":"bd37aa2f4c83d87ccbc832e432a42e976afc14ff8a1a9678e32e1f9629da1427","wrap_v":1,"wrap_iv":"0cfcb33b6ca024b72ecbfd4d","wrap_ct":"vVwVSu5c2+IiIOh9zi1n96QgocF/tZdr1RXYXq0zpZa3N4M/0BZPf+FLEgf3I7Gu","pwrap_v":1,"pwrap_iv":"8fb57116d8fb8492998418d2","pwrap_ct":"5aMF1Kjrv++HeiAWbgp62BlfAFVPe41ut5IPtNFYYDvND7J2DwlP2f4mXgO1BEv3"}]</script><script>(function () {
+  'use strict';
+  var KEY = 'zzh-auth';
+  var CEK_KEY = 'zzh-cek'; // 与 source/js/zzh-site.js / scripts/zzh-post-cipher.js 注入脚本同键（会话双键副本，注释互指）
+  var PKEY_KEY = 'zzh-pkey'; // 私密板块密钥（仅 admin）：与 CEK 同写同清；私密页解密脚本读它
+  var GH_KEY = 'zzh-gh-token'; // 私密写作台访问令牌（仅 admin）：多副本键名——source/js/zzh-site.js 的 ZzhAuth.logout / scripts/zzh-post-cipher.js 注入脚本 / 写作台脚本各持一份同值副本，改一处必须同步其余
+  var TTL_MS = 7 * 24 * 3600 * 1000; // 固定 7 天，不滑动续期（两键同 e 同寿命）
+  var DERIVE_TOTAL_BITS = 512; // 前半 hex 比对哈希，后半 32B 作解 wrap 的 KEK（与 tools/auth-tool.mjs 同值副本）
+  // 固定假盐：用户名不存在时也做一次同代价派生，均化耗时防时序探测
+  var FAKE_SALT = '00000000000000000000000000000000';
+  var FAKE_ITER = 100000;
+
+  function $(id) { return document.getElementById(id); }
+
+  var accounts = [];
+  try {
+    accounts = JSON.parse($('zzh-auth-data').textContent || '[]');
+  } catch (e) { accounts = []; }
+
+  function readSession() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      if (!s || typeof s.u !== 'string' ||
+          (s.r !== 'admin' && s.r !== 'user') ||
+          typeof s.e !== 'number' || s.e <= Date.now()) {
+        localStorage.removeItem(KEY); // 过期/损坏即删，视为未登录
+        localStorage.removeItem(GH_KEY); // 会话过期同刻清写作台令牌（登出/过期同清，与 source/js/zzh-site.js/写作台脚本同步）
+        return null;
+      }
+      return s;
+    } catch (e) { return null; }
+  }
+
+  // 读 zzh-cek（与 zzh-post-cipher.js 注入脚本的 readCek 同构副本）
+  function readCek() {
+    try {
+      var raw = localStorage.getItem(CEK_KEY);
+      if (!raw) return null;
+      var c = JSON.parse(raw);
+      if (!c || c.v !== 1 || typeof c.k !== 'string' || !/^[0-9a-f]{64}$/.test(c.k) ||
+          typeof c.e !== 'number' || c.e <= Date.now()) {
+        localStorage.removeItem(CEK_KEY);
+        return null;
+      }
+      return c;
+    } catch (e) { return null; }
+  }
+
+  // 读 zzh-pkey（与 readCek 同构；私密页解密脚本里有同款防御校验副本）
+  function readPkey() {
+    try {
+      var raw = localStorage.getItem(PKEY_KEY);
+      if (!raw) return null;
+      var c = JSON.parse(raw);
+      if (!c || c.v !== 1 || typeof c.k !== 'string' || !/^[0-9a-f]{64}$/.test(c.k) ||
+          typeof c.e !== 'number' || c.e <= Date.now()) {
+        localStorage.removeItem(PKEY_KEY);
+        return null;
+      }
+      return c;
+    } catch (e) { return null; }
+  }
+
+  // 登出/过期四键同清（source/js/zzh-site.js 的 ZzhAuth.logout 是另一份同步副本；
+  // zzh-post-cipher.js 全局解密失败的自动登出路径也清这四个——含写作台访问令牌）
+  function logout() {
+    try { localStorage.removeItem(KEY); localStorage.removeItem(CEK_KEY); localStorage.removeItem(PKEY_KEY); localStorage.removeItem(GH_KEY); } catch (e) {}
+    location.reload();
+  }
+
+  function fmtTime(ms) {
+    try {
+      return new Date(ms).toLocaleString('zh-CN', { hour12: false });
+    } catch (e) {
+      return new Date(ms).toISOString();
+    }
+  }
+
+  function showForm() {
+    $('zzh-login-form-card').hidden = false;
+    $('zzh-login-account-card').hidden = true;
+    $('zzh-login-admin-card').hidden = true;
+    // 写作台卡与访问令牌是 admin 专属：未登录态一律隐藏。空值守卫——deskHtml
+    // 降级返回空串（无此节点）时不得抛错拖垮登录卡。
+    var deskCard = $('zzh-desk-card');
+    if (deskCard) deskCard.hidden = true;
+    var app = $('zzh-login-app');
+    if (app) app.classList.remove('has-desk');
+  }
+
+  function showAccount(s) {
+    $('zzh-login-form-card').hidden = true;
+    $('zzh-login-account-card').hidden = false;
+    $('zzh-login-acct-user').textContent = s.u;
+    var role = $('zzh-login-acct-role');
+    role.textContent = s.r === 'admin' ? '超级管理员' : '普通账号';
+    role.className = 'zzh-login-acct-role' + (s.r === 'admin' ? ' is-admin' : '');
+    $('zzh-login-acct-expire').textContent = fmtTime(s.e);
+    $('zzh-login-acct-cek').textContent = readCek() ? '已配置（本浏览器可解密正文）' : '未配置（正文只见引导卡，重新登录可恢复）';
+    // 私密权限行仅 admin 显示：pkey 与会话同 e，过期/登出随会话消失
+    var pkeyLabel = $('zzh-login-acct-pkey-label');
+    var pkeyRow = $('zzh-login-acct-pkey');
+    if (s.r === 'admin') {
+      pkeyLabel.hidden = false;
+      pkeyRow.hidden = false;
+      pkeyRow.textContent = readPkey() ? '已配置（本浏览器可打开私密板块）' : '未配置（私密板块将显示无权访问，重新登录可恢复）';
+    } else {
+      pkeyLabel.hidden = true;
+      pkeyRow.hidden = true;
+    }
+    // admin 专属：站点管理卡（markup 常驻，仅在此处按角色显隐）
+    $('zzh-login-admin-card').hidden = (s.r !== 'admin');
+    // admin 专属：私密写作台卡（同款客户端门禁，查看源码可见属已声明局限）。
+    // 空值守卫：deskHtml 降级时无此节点；插在 admin 卡显隐之后，保证 admin 卡
+    // 不受任何 desk 异常影响。
+    var deskCard = $('zzh-desk-card');
+    if (deskCard) deskCard.hidden = (s.r !== 'admin');
+    var app = $('zzh-login-app');
+    if (app) app.classList.toggle('has-desk', s.r === 'admin');
+  }
+
+  function hexToBytes(hex) {
+    var out = new Uint8Array(hex.length / 2);
+    for (var i = 0; i < out.length; i++) {
+      out[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return out;
+  }
+
+  function b64ToBytes(b64) {
+    var bin = atob(b64);
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function bytesToHex(buf) {
+    var arr = new Uint8Array(buf);
+    var s = '';
+    for (var i = 0; i < arr.length; i++) {
+      s += (arr[i] < 16 ? '0' : '') + arr[i].toString(16);
+    }
+    return s;
+  }
+
+  function deriveBits512(password, saltHex, iter) {
+    var subtle = window.crypto && window.crypto.subtle;
+    if (!subtle) return Promise.reject(new Error('no-subtle'));
+    return subtle.importKey(
+      'raw',
+      new TextEncoder().encode(password),
+      'PBKDF2',
+      false,
+      ['deriveBits']
+    ).then(function (key) {
+      return subtle.deriveBits(
+        { name: 'PBKDF2', salt: hexToBytes(saltHex), iterations: iter, hash: 'SHA-256' },
+        key,
+        DERIVE_TOTAL_BITS
+      );
+    });
+  }
+
+  // 用 512bit 派生（hex 128 字符）解 wrap/pwrap：KEK = 后 32 字节（hex 第 64..127 位）。
+  // wrap 与 pwrap 同格式同 KEK（与 tools/auth-tool.mjs 同值副本），只是包裹的钥匙不同。
+  function unwrapWith(hex512, ivHex, ctHex) {
+    var subtle = window.crypto && window.crypto.subtle;
+    var kek = hexToBytes(hex512.slice(64, 128));
+    return subtle.importKey('raw', kek, 'AES-GCM', false, ['decrypt']).then(function (key) {
+      return subtle.decrypt(
+        { name: 'AES-GCM', iv: hexToBytes(ivHex) },
+        key,
+        b64ToBytes(ctHex)
+      );
+    }).then(bytesToHex);
+  }
+
+  function unwrapCek(hex512, acct) {
+    return unwrapWith(hex512, acct.wrap_iv, acct.wrap_ct);
+  }
+
+  function unwrapPkey(hex512, acct) {
+    return unwrapWith(hex512, acct.pwrap_iv, acct.pwrap_ct);
+  }
+
+  // 常数时间比对：不因第几位不同提前返回
+  function timingSafeEqual(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) {
+      diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return diff === 0;
+  }
+
+  function setError(msg) {
+    var el = $('zzh-login-error');
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+
+  function onSubmit(e) {
+    e.preventDefault();
+    setError('');
+    var username = $('zzh-login-username').value.trim();
+    var password = $('zzh-login-password').value;
+    if (!username || !password) {
+      setError('请输入用户名和密码');
+      return;
+    }
+    var btn = $('zzh-login-submit');
+    btn.disabled = true;
+
+    var acct = null;
+    for (var i = 0; i < accounts.length; i++) {
+      if (accounts[i].username === username) { acct = accounts[i]; break; }
+    }
+    // 命中与否都走一次同代价派生（假盐 iter 与初始账号一致）
+    var salt = acct ? acct.salt : FAKE_SALT;
+    var iter = acct ? acct.iter : FAKE_ITER;
+
+    deriveBits512(password, salt, iter).then(function (bits) {
+      var hex = bytesToHex(bits); // 128 字符：前 64 = 哈希，后 64 = KEK hex
+      btn.disabled = false;
+      if (acct && timingSafeEqual(hex.slice(0, 64), acct.hash)) {
+        var expire = Date.now() + TTL_MS;
+        var afterCek = Promise.resolve();
+        if (acct.wrap_ct) {
+          afterCek = unwrapCek(hex, acct).then(function (cekHex) {
+            try {
+              localStorage.setItem(CEK_KEY, JSON.stringify({ v: 1, k: cekHex, e: expire }));
+            } catch (err) {}
+          }).catch(function () {
+            // wrap 解不开（GCM 验签失败）：登录本身仍成功，正文解密页会提示重新登录
+            try { localStorage.removeItem(CEK_KEY); } catch (err) {}
+          });
+        } else {
+          try { localStorage.removeItem(CEK_KEY); } catch (err) {}
+        }
+        // 私密板块密钥（仅 admin 账号会带 pwrap）：同一 KEK 解包写 'zzh-pkey'，与
+        // 会话同 e 同寿命；无 pwrap = 普通账号/未配置，清掉残留的旧值
+        var afterPkey = Promise.resolve();
+        if (acct.pwrap_ct) {
+          afterPkey = unwrapPkey(hex, acct).then(function (pkeyHex) {
+            try {
+              localStorage.setItem(PKEY_KEY, JSON.stringify({ v: 1, k: pkeyHex, e: expire }));
+            } catch (err) {}
+          }).catch(function () {
+            try { localStorage.removeItem(PKEY_KEY); } catch (err) {}
+          });
+        } else {
+          // 无 pwrap = 普通账号/未配置：清掉残留的旧值；写作台访问令牌是 admin
+          // 专属，普通账号登录不应继承，同步清（ghflow 的非 admin 登录清残留点）
+          try { localStorage.removeItem(PKEY_KEY); localStorage.removeItem(GH_KEY); } catch (err) {}
+        }
+        afterCek.then(afterPkey).then(function () {
+          try {
+            localStorage.setItem(KEY, JSON.stringify({
+              u: acct.username, r: acct.role, e: expire
+            }));
+          } catch (err) {}
+          location.reload(); // 刷新让 header 登录态 chip 与文章页解密同步
+        });
+        return;
+      }
+      setError('用户名或密码错误'); // 统一文案，不泄露账号是否存在
+      $('zzh-login-password').value = '';
+      $('zzh-login-password').focus();
+    }).catch(function () {
+      btn.disabled = false;
+      setError('当前环境不支持安全登录（需 HTTPS 或 localhost 访问）');
+    });
+  }
+
+  var form = $('zzh-login-form');
+  if (form) form.addEventListener('submit', onSubmit);
+  var logoutBtn = $('zzh-login-logout');
+  if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+  // 组件注入正常（有账号数据、有表单卡）时隐藏降级说明；注入失败（accounts 空/无卡）时它保留可见
+  var fallback = document.querySelector('.zzh-login-fallback');
+  if (fallback && accounts.length && form) fallback.hidden = true;
+
+  var s = readSession();
+  if (s) showAccount(s); else showForm();
+})();</script><script>(function () {
+  'use strict';
+  var GH_KEY = 'zzh-gh-token'; // ⚠ 多副本键名：scripts/login-page.js 登录 IIFE / source/js/zzh-site.js（账户坞脚本，_config.redefine.yml inject.footer 加载） / scripts/zzh-post-cipher.js 解密脚本 / 本脚本各持一份同值副本，改一处必须同步其余
+  var AUTH_KEY = 'zzh-auth'; // 会话键：读取防御校验与登录 IIFE 同构（独立作用域内的副本）
+  var API = 'https://api.github.com';
+  var REPO = 'zzh-learner/zzh-notes-src'; // 写作台提交目标（2026-10-20 并仓：唯一源码仓，push 即触发发布 CI）
+  var ACTIONS_URL = 'https://github.com/zzh-learner/zzh-notes-src/actions';
+  // 令牌本地保存不过期（2026-10-14 owner 拍板：仅个人设备使用，GitHub 侧 PAT 同设 No Expiration；
+  // 信封 e 字段 0 = 不过期哨兵，兼容旧信封的真实过期时刻——清退路径只剩登出/会话过期/非 admin 登录/GCM 失败）
+  var TARGET_BYTES = 400 * 1024;
+  var HARD_LIMIT_BYTES = 30 * 1024 * 1024;
+  var MAX_ENCODINGS = 12; // 压缩编码总次数硬上限（防长循环）
+  var WALL_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif']; // 照片墙渲染扩展名白名单（构建侧 private-hub.js 同值副本）
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+  var wallItems = [];
+
+  function $(id) { return document.getElementById(id); }
+  function on(id, ev, fn) { var el = $(id); if (el) el.addEventListener(ev, fn); }
+  function val(id) { var el = $(id); return el ? String(el.value || '') : ''; }
+  function p2(n) { return n < 10 ? '0' + n : String(n); } // 两位零填充，>99 自然三位
+
+  // 会话读取防御副本（与登录 IIFE 同构：形状损坏/过期即删视为未登录）
+  function readSession() {
+    try {
+      var raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      if (!s || typeof s.u !== 'string' ||
+          (s.r !== 'admin' && s.r !== 'user') ||
+          typeof s.e !== 'number' || s.e <= Date.now()) {
+        localStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem(GH_KEY); // 会话过期同刻清写作台令牌（与登录 IIFE/source/js/zzh-site.js 的过期清除同步）
+        return null;
+      }
+      return s;
+    } catch (e) { return null; }
+  }
+
+  // 令牌读取点防御（非登出动作）：形状损坏/过期即删视为未配置（同 readSession 模式）
+  function readGhToken() {
+    try {
+      var raw = localStorage.getItem(GH_KEY);
+      if (!raw) return null;
+      var t = JSON.parse(raw);
+      if (!t || t.v !== 1 || typeof t.t !== 'string' ||
+          t.t.length < 40 || t.t.length > 200 ||
+          typeof t.e !== 'number' ||
+          (t.e !== 0 && t.e <= Date.now())) {
+        localStorage.removeItem(GH_KEY);
+        return null;
+      }
+      return t;
+    } catch (e) { return null; }
+  }
+
+  function saveGhToken(pat) {
+    try {
+      localStorage.setItem(GH_KEY, JSON.stringify({ v: 1, t: pat, e: 0 }));
+    } catch (e) {}
+  }
+
+  // —— GitHub REST 客户端：token 可传裸 PAT（验证未落存的输入值时用），缺省现读
+  // 已存令牌（每次调用现读现用，令牌被清后无过期令牌可用窗口） ——
+  function ghRequest(method, path, body, token) {
+    var t = token || readGhToken();
+    if (!t) {
+      var noTok = new Error('no-token');
+      noTok.ghNoToken = true;
+      return Promise.reject(noTok);
+    }
+    var headers = {
+      'Authorization': 'Bearer ' + (typeof t === 'string' ? t : t.t),
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    var opt = { method: method, headers: headers };
+    if (body !== undefined && body !== null) {
+      headers['Content-Type'] = 'application/json';
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(API + path, opt).catch(function () {
+      var off = new Error('offline');
+      off.ghOffline = true;
+      throw off;
+    }).then(function (res) {
+      return res.text().then(function (txt) {
+        var json = null;
+        if (txt) { try { json = JSON.parse(txt); } catch (e) {} }
+        if (!res.ok) {
+          var err = new Error(json && json.message ? String(json.message) : ('HTTP ' + res.status));
+          err.status = res.status;
+          throw err;
+        }
+        return json;
+      });
+    });
+  }
+
+  // 错误反馈映射（401 自动清除已存令牌回未配置态；错误行独立于结果行）
+  function ghErrMsg(err) {
+    if (err && err.ghNoToken) return '令牌未配置：请先在上方「访问令牌」处保存并验证';
+    if (err && err.ghOffline) return '无法连接 GitHub（网络错误或被拦截）';
+    if (err && err.ghConflict) return '远端有新提交，请重试';
+    if (err && err.status === 401) {
+      try { localStorage.removeItem(GH_KEY); } catch (e) {}
+      syncTokenUi();
+      return '令牌无效或已过期（已清除，请重新配置）';
+    }
+    if (err && err.status === 403) return '无权限或触发限流：检查令牌是否授予该仓库 Contents 读写';
+    if (err && err.status === 404) return '令牌访问不到该仓库：细粒度 PAT 未在令牌设置勾选目标仓库';
+    if (err && err.message) return 'GitHub ' + (err.status || '') + '：' + err.message;
+    return '请求失败，请重试';
+  }
+
+  // —— Git Data API 提交链：ref → commit(root tree) → 逐级 trees 定向取目录 →
+  // blobs（仅二进制图片）→ trees(base_tree) → commits → PATCH ref。多文件单
+  // commit 原子；PATCH 422（读树后远端有新提交，not a fast-forward）从步骤一
+  // 整体重跑（buildEntries 重新查重/编号/重取 yml），最多 3 次 ——
+  function runCommit(buildEntries, message) {
+    var attempts = 0;
+    function once() {
+      attempts++;
+      var headSha = '';
+      var rootTreeSha = '';
+      return ghRequest('GET', '/repos/' + REPO + '/git/ref/heads/main').then(function (ref) {
+        headSha = ref.object.sha;
+        return ghRequest('GET', '/repos/' + REPO + '/git/commits/' + headSha);
+      }).then(function (commit) {
+        rootTreeSha = commit.tree.sha;
+        return buildEntries(rootTreeSha);
+      }).then(function (entries) {
+        return ghRequest('POST', '/repos/' + REPO + '/git/trees', { base_tree: rootTreeSha, tree: entries });
+      }).then(function (tree) {
+        return ghRequest('POST', '/repos/' + REPO + '/git/commits', { message: message, tree: tree.sha, parents: [headSha] });
+      }).then(function (created) {
+        return ghRequest('PATCH', '/repos/' + REPO + '/git/refs/heads/main', { sha: created.sha, force: false }).catch(function (err) {
+          if (err && err.status === 422) err.ghConflict = true;
+          throw err;
+        }).then(function () {
+          return created.sha;
+        });
+      }).catch(function (err) {
+        if (err && err.ghConflict && attempts < 3) return once();
+        if (err && err.ghConflict) {
+          var c = new Error('conflict');
+          c.ghConflict = true;
+          throw c;
+        }
+        throw err;
+      });
+    }
+    return once();
+  }
+
+  function treeEntries(treeSha) {
+    if (!treeSha) return Promise.resolve([]);
+    return ghRequest('GET', '/repos/' + REPO + '/git/trees/' + treeSha).then(function (j) {
+      return (j && j.tree) ? j.tree : [];
+    });
+  }
+
+  // 定向逐级下钻（不用 recursive=1 规避 truncated）：子树缺失按空目录处理，兼容首次使用
+  function subtreeSha(treeSha, names) {
+    var p = Promise.resolve(treeSha);
+    names.forEach(function (name) {
+      p = p.then(function (cur) {
+        if (!cur) return null;
+        return treeEntries(cur).then(function (items) {
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].path === name && items[i].type === 'tree') return items[i].sha;
+          }
+          return null;
+        });
+      });
+    });
+    return p;
+  }
+
+  function blobShaOf(treeSha, name) {
+    if (!treeSha) return Promise.resolve(null);
+    return treeEntries(treeSha).then(function (items) {
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].path === name && items[i].type === 'blob') return items[i].sha;
+      }
+      return null;
+    });
+  }
+
+  // 私密 yml 走 _data 树条目 blob → base64 → TextDecoder 解 UTF-8
+  function readTextBlob(sha) {
+    return ghRequest('GET', '/repos/' + REPO + '/git/blobs/' + sha).then(function (j) {
+      var b64 = String((j && j.content) || '').replace(/[^A-Za-z0-9+/=]/g, '');
+      var bin = atob(b64);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder('utf-8').decode(bytes);
+    });
+  }
+
+  function makeBlob(base64) {
+    return ghRequest('POST', '/repos/' + REPO + '/git/blobs', { content: base64, encoding: 'base64' }).then(function (j) {
+      return j.sha;
+    });
+  }
+
+  function fetchHeadRoot() {
+    return ghRequest('GET', '/repos/' + REPO + '/git/ref/heads/main').then(function (ref) {
+      return ghRequest('GET', '/repos/' + REPO + '/git/commits/' + ref.object.sha).then(function (c) {
+        return c.tree.sha;
+      });
+    });
+  }
+
+  function readDataYmlFromRoot(rootTreeSha, name) {
+    return subtreeSha(rootTreeSha, ['source', '_data']).then(function (dataSha) {
+      return blobShaOf(dataSha, name);
+    }).then(function (bsha) {
+      if (!bsha) return '';
+      return readTextBlob(bsha);
+    });
+  }
+
+  // —— 图片压缩管线（照片墙专用）：
+  // ≤400KB 且扩展名合法 → 原样保留（零重编码损耗，扩展名小写化）；GIF 一律
+  // 原样（canvas 重编码杀动图）；其余 WebP 阶梯——全尺寸质量 0.9→0.5 逐级，
+  // 仍超限再按 0.85/0.7 缩放（质量从 0.9 重来），编码总次数硬上限 12；仍超限
+  // 取全程最小产物（比原文件小才采用）；浏览器不支持 WebP 编码则原样。解码
+  // 失败：拒绝该文件 ——
+  function fmtSize(bytes) {
+    if (bytes >= 1048576) return (Math.round(bytes / 1048576 * 10) / 10) + ' MB';
+    return Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+
+  function readFileDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      var fr = new FileReader();
+      fr.onload = function () { resolve(String(fr.result)); };
+      fr.onerror = function () { reject(new Error('read-fail')); };
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function dataUrlBase64(url) {
+    var i = url.indexOf(',');
+    return i >= 0 ? url.slice(i + 1) : '';
+  }
+
+  function decodeViaImg(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var out = { el: img, w: img.naturalWidth || img.width, h: img.naturalHeight || img.height };
+        try { URL.revokeObjectURL(url); } catch (e) {}
+        resolve(out);
+      };
+      img.onerror = function () {
+        try { URL.revokeObjectURL(url); } catch (e) {}
+        reject(new Error('decode-fail'));
+      };
+      img.src = url;
+    });
+  }
+
+  // 解码优先 createImageBitmap + from-image（修 EXIF 旋转），选项不支持/解码失败
+  // 回退无选项，再回退 img + objectURL（FileReader.readAsDataURL 剥前缀在别处）
+  function decodeImage(file) {
+    if (typeof createImageBitmap === 'function') {
+      try {
+        return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(function () {
+          return createImageBitmap(file);
+        }).then(function (bm) {
+          return { el: bm, w: bm.width, h: bm.height };
+        }, function () {
+          return decodeViaImg(file);
+        });
+      } catch (e) { /* fall through */ }
+    }
+    return decodeViaImg(file);
+  }
+
+  function drawToCanvas(source, w, h) {
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w));
+    canvas.height = Math.max(1, Math.round(h));
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  }
+
+  function canvasToBlob(canvas, quality) {
+    return new Promise(function (resolve) {
+      canvas.toBlob(function (b) { resolve(b); }, 'image/webp', quality);
+    });
+  }
+
+  function compressImage(file) {
+    var lowerName = String(file.name || 'image');
+    var dot = lowerName.lastIndexOf('.');
+    var stem = dot > 0 ? lowerName.slice(0, dot) : lowerName;
+    var ext = dot > 0 ? lowerName.slice(dot + 1).toLowerCase() : '';
+
+    function keepOriginal(note) {
+      return readFileDataUrl(file).then(function (url) {
+        return { name: stem + (ext ? '.' + ext : ''), base64: dataUrlBase64(url), size: file.size, note: note };
+      });
+    }
+
+    if (file.size > HARD_LIMIT_BYTES) {
+      return Promise.reject(new Error('文件过大（超过 30MB）：' + lowerName));
+    }
+    if (ext === 'gif') {
+      return readFileDataUrl(file).then(function (url) {
+        return { name: stem + '.gif', base64: dataUrlBase64(url), size: file.size, note: 'GIF 不重编码，' + fmtSize(file.size) + ' 原样提交' };
+      });
+    }
+    if (file.size <= TARGET_BYTES && WALL_EXTS.indexOf(ext) >= 0) {
+      return readFileDataUrl(file).then(function (url) {
+        return { name: stem + '.' + ext, base64: dataUrlBase64(url), size: file.size, note: null };
+      });
+    }
+
+    var best = null; // 全程最小 WebP 产物
+    var encodes = 0;
+
+    function ladder(canvas) {
+      var qs = [0.9, 0.8, 0.7, 0.6, 0.5];
+      var i = 0;
+      function step() {
+        if (i >= qs.length || encodes >= MAX_ENCODINGS) return Promise.resolve('exhausted');
+        var q = qs[i++];
+        encodes++;
+        return canvasToBlob(canvas, q).then(function (blob) {
+          if (!blob) return step();
+          if (blob.type !== 'image/webp') return 'noWebp';
+          if (!best || blob.size < best.size) best = blob;
+          if (blob.size <= TARGET_BYTES) return { ok: blob };
+          return step();
+        });
+      }
+      return step();
+    }
+
+    return decodeImage(file).then(function (src) {
+      var w = src.w || 0;
+      var h = src.h || 0;
+      if (!w || !h) return { undecodable: true };
+      var scales = [1, 0.85, 0.7];
+      var si = 0;
+      function runScale() {
+        if (si >= scales.length || encodes >= MAX_ENCODINGS) return Promise.resolve(null);
+        var sc = scales[si++];
+        return ladder(drawToCanvas(src.el, w * sc, h * sc)).then(function (r) {
+          if (r && r.ok) return r;
+          if (r === 'noWebp') return 'noWebp';
+          return runScale();
+        });
+      }
+      return runScale();
+    }, function () {
+      return { undecodable: true };
+    }).then(function (r) {
+      if (r && r.undecodable) {
+        return Promise.reject(new Error('浏览器无法解码该格式（照片墙仅支持 jpg/jpeg/png/webp/gif）：' + lowerName));
+      }
+      if (r === 'noWebp') return keepOriginal('浏览器不支持 WebP 编码，保持原文件');
+      if (r && r.ok) {
+        var blob = r.ok;
+        return readFileDataUrl(blob).then(function (url) {
+          return { name: stem + '.webp', base64: dataUrlBase64(url), size: blob.size, note: null };
+        });
+      }
+      if (best && best.size < file.size) {
+        return readFileDataUrl(best).then(function (url) {
+          return { name: stem + '.webp', base64: dataUrlBase64(url), size: best.size, note: '已压至 ' + fmtSize(best.size) + '（WebP，仍略超 400KB）' };
+        });
+      }
+      return keepOriginal('压缩无收益，保持原文件');
+    });
+  }
+
+  // —— 文件行 UI（全部 createElement/textContent，不用 innerHTML 拼接） ——
+  function makeRow(listEl, file, withCaption) {
+    var row = document.createElement('div');
+    row.className = 'zzh-desk-file-row';
+    var name = document.createElement('span');
+    name.className = 'zzh-desk-file-name';
+    name.textContent = file.name + '（' + fmtSize(file.size) + '）';
+    row.appendChild(name);
+    var cap = null;
+    if (withCaption) {
+      cap = document.createElement('input');
+      cap.type = 'text';
+      cap.className = 'zzh-desk-caption';
+      cap.placeholder = '配文（可选）';
+      cap.maxLength = 100;
+      row.appendChild(cap);
+    }
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'zzh-desk-file-del';
+    del.textContent = '移除';
+    del.title = '移除该文件';
+    row.appendChild(del);
+    var state = document.createElement('span');
+    state.className = 'zzh-desk-file-state';
+    state.textContent = '处理中…';
+    row.appendChild(state);
+    listEl.appendChild(row);
+    return { row: row, name: name, cap: cap, del: del, state: state };
+  }
+
+  function dropRow(item) {
+    item.removed = true;
+    if (item.ui && item.ui.row && item.ui.row.parentNode) {
+      item.ui.row.parentNode.removeChild(item.ui.row);
+    }
+  }
+
+  function setErr(el, msg) {
+    if (!el) return;
+    el.textContent = msg || '';
+    el.hidden = !msg;
+  }
+
+  function bindLabel(id) {
+    var b = $(id);
+    if (b) b.setAttribute('data-label', b.textContent || '');
+  }
+
+  function busy(btn, onFlag) {
+    if (!btn) return;
+    if (onFlag) {
+      btn.disabled = true;
+      btn.textContent = '提交中…';
+    } else {
+      btn.disabled = false;
+      var lb = btn.getAttribute('data-label');
+      if (lb) btn.textContent = lb;
+    }
+  }
+
+  function showCommitOk(el, sha) {
+    if (!el) return;
+    el.textContent = '';
+    el.hidden = false;
+    el.appendChild(document.createTextNode('已提交 ' + String(sha).slice(0, 7) + ' —— 主仓 CI 构建中，约 1–2 分钟后发布 '));
+    var a = document.createElement('a');
+    a.href = ACTIONS_URL;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = '查看构建';
+    el.appendChild(a);
+  }
+
+  function extOf(name) {
+    var d = String(name).lastIndexOf('.');
+    return d > 0 ? String(name).slice(d + 1).toLowerCase() : 'jpg';
+  }
+
+  // YAML 双引号值（键值统一双引号，规避 YAML 1.1 裸日期陷阱；引号与反斜杠转义）
+  function yq(s) {
+    return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+  }
+
+  // 照片墙 yml：确保末尾换行后逐条追加 "文件名": "caption"（只写非空 caption；
+  // 文件不存在则新建含一行通用头注释，不引用任何真实内容）
+  function appendWallCaptions(text, pairs) {
+    var t = String(text || '');
+    if (!t) t = '# 照片墙配文（文件名 → caption，由写作台追加维护）\n';
+    if (t.charAt(t.length - 1) !== '\n') t += '\n';
+    for (var i = 0; i < pairs.length; i++) {
+      t += yq(pairs[i][0]) + ': ' + yq(pairs[i][1]) + '\n';
+    }
+    return t;
+  }
+
+  // —— 令牌条 ——
+  function fmtTokenExpire(ms) {
+    var d = new Date(ms);
+    return (d.getMonth() + 1) + '-' + d.getDate() + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  }
+
+  function syncTokenUi() {
+    var el = $('zzh-desk-token-status');
+    if (!el) return;
+    var t = readGhToken();
+    el.textContent = t
+      ? (t.e === 0 ? '访问令牌：已配置（不过期）' : '访问令牌：已配置 · 有效期至 ' + fmtTokenExpire(t.e))
+      : '访问令牌：未配置';
+  }
+
+  function onTokenToggle() {
+    var box = $('zzh-desk-token-box');
+    if (!box) return;
+    box.hidden = !box.hidden;
+    if (!box.hidden) {
+      var input = $('zzh-desk-token-input');
+      if (input) input.focus();
+    }
+  }
+
+  function onTokenClear() {
+    try { localStorage.removeItem(GH_KEY); } catch (e) {}
+    syncTokenUi();
+    var input = $('zzh-desk-token-input');
+    if (input) input.value = '';
+    var msg = $('zzh-desk-token-msg');
+    if (msg) { msg.hidden = true; msg.textContent = ''; }
+  }
+
+  // 「保存并验证」= GET /repos/<R>：200 才落存并刷新状态（验证通过前不落存）
+  function onTokenSave() {
+    var input = $('zzh-desk-token-input');
+    var msg = $('zzh-desk-token-msg');
+    if (!input || !msg) return;
+    var pat = input.value.trim();
+    msg.hidden = false;
+    if (pat.length < 40 || pat.length > 200) {
+      msg.textContent = '令牌长度异常（细粒度 PAT 一般 40 字符以上）';
+      return;
+    }
+    var btn = $('zzh-desk-token-save');
+    if (btn) { btn.disabled = true; btn.textContent = '验证中…'; }
+    ghRequest('GET', '/repos/' + REPO, null, pat).then(function () {
+      saveGhToken(pat);
+      input.value = '';
+      msg.textContent = '令牌有效，已保存到本浏览器。';
+      syncTokenUi();
+    }).catch(function (err) {
+      // 这里 401 的是「输入框里的新令牌」，绝不能顺带清除已存的可能仍有效的
+      // 令牌（ghErrMsg 的 401 分支只用于提交链路——那里失败的就是已存令牌本身）
+      if (err && err.status === 401) {
+        msg.textContent = '令牌无效或已过期';
+      } else if (err && err.ghOffline) {
+        msg.textContent = '无法连接 GitHub（网络错误或被拦截）';
+      } else if (err && err.ghNoToken) {
+        msg.textContent = '令牌未配置';
+      } else {
+        msg.textContent = ghErrMsg(err);
+      }
+    }).then(function () {
+      if (btn) { btn.disabled = false; btn.textContent = '保存并验证'; }
+    });
+  }
+
+  // —— 照片墙 ——
+  // 本地日期时间值（照片墙日期初始化用，取日期前 10 位）
+  function localDtValue(d) {
+    return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  }
+
+  // —— 照片墙 tab ——
+  function onWallFiles(e) {
+    var list = $('zzh-desk-wall-filelist');
+    if (!list) return;
+    var files = (e.target && e.target.files) ? Array.prototype.slice.call(e.target.files) : [];
+    var date = val('zzh-desk-wall-date');
+    var seq = 0;
+    for (var k = 0; k < wallItems.length; k++) {
+      if (!wallItems[k].removed) seq++;
+    }
+    for (var i = 0; i < files.length; i++) {
+      (function (file) {
+        var extOk = WALL_EXTS.indexOf(extOf(file.name)) >= 0;
+        var item = { file: file, result: null, err: null, removed: false, seq: 0, ui: makeRow(list, file, true) };
+        item.ui.del.addEventListener('click', function () { dropRow(item); });
+        wallItems.push(item);
+        if (!extOk) {
+          item.err = new Error('不支持的扩展名（照片墙仅支持 jpg/jpeg/png/webp/gif）');
+          item.ui.state.className = 'zzh-desk-file-state is-err';
+          item.ui.state.textContent = item.err.message;
+          return;
+        }
+        item.seq = ++seq;
+        item.ui.name.textContent = date + '-' + p2(item.seq) + '.' + extOf(file.name);
+        item.promise = compressImage(file).then(function (res) {
+          item.result = res;
+          // 压缩回调可能晚于 refreshWallNumbers：读当前日期并重跑校正，不能用选图时捕获的 date/seq 覆写
+          item.ui.name.textContent = val('zzh-desk-wall-date') + '-' + p2(item.seq) + '.' + extOf(res.name);
+          item.ui.state.textContent = fmtSize(file.size) + ' → ' + fmtSize(res.size) + (res.note ? '（' + res.note + '）' : '');
+          refreshWallNumbers();
+        }, function (err) {
+          item.err = err;
+          item.ui.state.className = 'zzh-desk-file-state is-err';
+          item.ui.state.textContent = (err && err.message) ? err.message : '处理失败';
+        });
+      })(files[i]);
+    }
+    if (e.target) e.target.value = '';
+    refreshWallNumbers();
+  }
+
+  // 有令牌时后台取远端照片墙序号，把临时编号校正为真实下一个序号（提交时仍会
+  // 权威重算；失败静默保留临时编号）
+  function refreshWallNumbers() {
+    var date = val('zzh-desk-wall-date');
+    if (!DATE_RE.test(date)) return;
+    var ready = 0;
+    for (var i = 0; i < wallItems.length; i++) {
+      if (!wallItems[i].removed && !wallItems[i].err) ready++;
+    }
+    if (!ready || !readGhToken()) return;
+    fetchWallMaxSeq(date).then(function (max) {
+      var n = max;
+      for (var j = 0; j < wallItems.length; j++) {
+        var it = wallItems[j];
+        if (it.removed || it.err) continue;
+        n++;
+        var ext = it.result ? extOf(it.result.name) : extOf(it.file.name);
+        it.ui.name.textContent = date + '-' + p2(n) + '.' + ext;
+      }
+    }).catch(function () { /* 提交时会权威重算，这里失败无所谓 */ });
+  }
+
+  function fetchWallMaxSeq(date) {
+    return fetchHeadRoot().then(function (root) {
+      return subtreeSha(root, ['source', 'private', 'wall']).then(function (sha) {
+        return treeEntries(sha);
+      });
+    }).then(function (entries) {
+      var re = new RegExp('^' + date + '[-_.](\\d+)\\.');
+      var max = 0;
+      entries.forEach(function (en) {
+        var m = String(en.path || '').match(re);
+        if (m) {
+          var n2 = parseInt(m[1], 10);
+          if (n2 > max) max = n2;
+        }
+      });
+      return max;
+    });
+  }
+
+  function clearWallFiles() {
+    wallItems = [];
+    var list = $('zzh-desk-wall-filelist');
+    if (list) list.textContent = '';
+  }
+
+  function onWallSubmit() {
+    var errEl = $('zzh-desk-wall-err');
+    var okEl = $('zzh-desk-wall-ok');
+    setErr(errEl, '');
+    if (okEl) okEl.hidden = true;
+    var date = val('zzh-desk-wall-date');
+    if (!DATE_RE.test(date)) return setErr(errEl, '请选择照片日期');
+    var pending = 0;
+    var failed = 0;
+    var rows = [];
+    for (var i = 0; i < wallItems.length; i++) {
+      var it = wallItems[i];
+      if (it.removed) continue;
+      if (it.err) failed++;
+      else if (!it.result) pending++;
+      else rows.push(it);
+    }
+    if (failed) return setErr(errEl, '有 ' + failed + ' 张图片处理失败，请点行内「移除」后重选再提交');
+    if (pending) return setErr(errEl, '还有 ' + pending + ' 张图片在处理中，稍候再提交');
+    if (!rows.length) return setErr(errEl, '请先选择图片');
+    var btn = $('zzh-desk-wall-submit');
+    busy(btn, true);
+    runCommit(function (rootTreeSha) {
+      // 从 wall 树条目取该日期最大序号 +1（两位零填充；冲突重试时整体重算）
+      return subtreeSha(rootTreeSha, ['source', 'private', 'wall']).then(function (sha) {
+        return treeEntries(sha);
+      }).then(function (entries) {
+        var re = new RegExp('^' + date + '[-_.](\\d+)\\.');
+        var max = 0;
+        entries.forEach(function (en) {
+          var m = String(en.path || '').match(re);
+          if (m) {
+            var n2 = parseInt(m[1], 10);
+            if (n2 > max) max = n2;
+          }
+        });
+        var chain = Promise.resolve();
+        var treeItems = [];
+        var pairs = [];
+        rows.forEach(function (it) {
+          chain = chain.then(function () {
+            return makeBlob(it.result.base64).then(function (bsha) {
+              max++;
+              var fname = date + '-' + p2(max) + '.' + extOf(it.result.name);
+              it.ui.name.textContent = fname; // 行内回显最终文件名
+              treeItems.push({ path: 'source/private/wall/' + fname, mode: '100644', type: 'blob', sha: bsha });
+              var cap = (it.ui.cap && it.ui.cap.value) ? String(it.ui.cap.value).trim() : '';
+              if (cap) pairs.push([fname, cap]);
+            });
+          });
+        });
+        var ymlChain = chain.then(function () {
+          if (!pairs.length) return null;
+          return readDataYmlFromRoot(rootTreeSha, 'private-wall.yml').then(function (text) {
+            return { path: 'source/_data/private-wall.yml', mode: '100644', type: 'blob', content: appendWallCaptions(text, pairs) };
+          });
+        });
+        return ymlChain.then(function (ymlEntry) {
+          if (ymlEntry) treeItems.push(ymlEntry);
+          return treeItems;
+        });
+      });
+    }, 'desk: 照片墙 +' + rows.length + ' 张').then(function (sha) {
+      showCommitOk(okEl, sha);
+      clearWallFiles();
+    }).catch(function (err) {
+      setErr(errEl, ghErrMsg(err));
+    }).then(function () { busy(btn, false); });
+  }
+
+  // —— 初始化（整体 try/catch：写作台初始化失败不影响登录卡） ——
+  function init() {
+    var dW = $('zzh-desk-wall-date');
+    if (dW && !dW.value) dW.value = localDtValue(new Date()).slice(0, 10);
+
+    bindLabel('zzh-desk-wall-submit');
+
+    on('zzh-desk-token-btn', 'click', onTokenToggle);
+    on('zzh-desk-token-save', 'click', onTokenSave);
+    on('zzh-desk-token-clear', 'click', onTokenClear);
+
+    on('zzh-desk-wall-date', 'change', refreshWallNumbers);
+    on('zzh-desk-wall-files', 'change', onWallFiles);
+    on('zzh-desk-wall-submit', 'click', onWallSubmit);
+
+    syncTokenUi();
+  }
+
+  try { init(); } catch (e) { /* 静默：不拖垮登录卡 */ }
+})();</script></div><div class="page-template-comments"></div></div><div class="paginator"></div></div></div><div class="main-content-footer"><footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color"><div class="info-container py-3 text-center"><div class="text-center">&copy; <span>2022</span> - 2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/zzh-notes/">ZZH</a></div><div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left"><span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span> <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span></div><div class="zzh-account-dock" id="zzh-account-dock"><a href="/zzh-notes/login/">登录</a> <a href="/zzh-notes/private/" id="zzh-private-nav" hidden>私密</a> <span class="zzh-auth-chip" id="zzh-auth-chip" hidden><a class="zzh-auth-chip-link" href="/zzh-notes/login/"><span class="zzh-auth-chip-badge" aria-hidden="true">管</span><span class="zzh-auth-chip-name"></span> </a><button type="button" class="zzh-auth-chip-logout" id="zzh-auth-chip-logout" aria-label="登出" title="登出">✕</button></span></div><script src="/zzh-notes/js/zzh-site.js"></script></div></footer></div></div><div class="right-side-tools-container"><div class="side-tools-container"><ul class="hidden-tools-list"><li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center"><i class="fa-regular fa-magnifying-glass-plus"></i></li><li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center"><i class="fa-regular fa-magnifying-glass-minus"></i></li><li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center"><i class="fa-regular fa-moon"></i></li><li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center"><i class="fa-regular fa-arrow-up"></i></li><li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center"><i class="fa-regular fa-arrow-down"></i></li></ul><ul class="visible-tools-list"><li class="right-bottom-tools toggle-tools-list flex justify-center items-center"><i class="fa-regular fa-cog fa-spin"></i></li></ul></div></div><div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器"><button class="image-viewer-close" type="button" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button> <button class="image-viewer-prev" type="button" aria-label="上一页"><i class="fa-solid fa-chevron-left"></i></button><div class="image-viewer-frame"><img src="" alt=""></div><div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true"><div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-first-text-color">EXIF</span> <button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭"><i class="fa-solid fa-xmark text-[0.65rem]"></i></button></div><div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div><template class="image-viewer-exif-card-template"><div class="rounded-lg bg-background-color-transparent-40 px-3 py-2"><div class="image-viewer-exif-card-header flex items-center gap-2 mb-1"><i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i><div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div></div><div class="image-viewer-exif-card-items flex flex-col gap-1"></div></div></template></div><button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false"><i class="fa-solid fa-circle-info text-xs"></i> <span class="text-xs font-semibold uppercase tracking-wider">EXIF</span></button> <button class="image-viewer-next" type="button" aria-label="下一页"><i class="fa-solid fa-chevron-right"></i></button></div></main><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/main.js"></script></body></html>
