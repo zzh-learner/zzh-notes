@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-25T13:01:40+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261025-1301/20261025-1b71e4aa.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261023看起来像BUG，上脚以后居然像设计/小语很懒的图包-夹趾袜穿搭-26.jpg",
+      "addedAt": "2026-10-25T13:01:40+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/f46b3cbcd4c2"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261025-1301/20261025-5436ec4a.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/10月/1023/DSC08704.jpg",
+      "addedAt": "2026-10-25T13:01:40+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/e5e0d83cf905"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261025-1301/20261025-aeb5c101.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2610/261022八张/DSC09965.jpg",
+      "addedAt": "2026-10-25T13:01:40+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/c97d916cee89"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261025-1301/20261025-ebacaef6.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-26 080747.livp",
+      "addedAt": "2026-10-25T13:01:40+08:00",
+      "w": 1600,
+      "h": 1200,
+      "share": "https://pan.quark.cn/s/5213b86c0f16"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261025-1301/20261025-9d3ef5f2.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/_DSC9611.jpg",
+      "addedAt": "2026-10-25T13:01:40+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/cf3ee385f506"
+    }
+  ]
+}
