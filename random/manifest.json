@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-27T13:09:03+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261027-1309/20261027-2421b865.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261025被低估的绝对都市感/小语图包-华伦天奴穿搭-27.jpg",
+      "addedAt": "2026-10-27T13:09:03+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/021f167425f0"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261027-1309/20261027-8e214edc.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/10月/1026/a1964f2c8d0cd38020e4461796c370c3.jpg",
+      "addedAt": "2026-10-27T13:09:03+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/7d5465c959e8"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261027-1309/20261027-80abdcd1.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2610/261026九张/DSC08569.jpg",
+      "addedAt": "2026-10-27T13:09:03+08:00",
+      "w": 1066,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/276394f0a8c5"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261027-1309/20261027-0c2a2eac.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-26 080739.livp",
+      "addedAt": "2026-10-27T13:09:03+08:00",
+      "w": 1600,
+      "h": 1200,
+      "share": "https://pan.quark.cn/s/e4ef69c7665c"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261027-1309/20261027-a978677f.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/_DSC9610.jpg",
+      "addedAt": "2026-10-27T13:09:03+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/940fcffcd1a5"
+    }
+  ]
+}
