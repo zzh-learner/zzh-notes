@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-07T18:55:47+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261107-1855/20261107-8734b285.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261101痛包算什么，这次直接把二次元穿身上了/人物动漫袜-2.jpg",
+      "addedAt": "2026-11-07T18:55:47+08:00",
+      "w": 899,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/ba1f7b75bbd8"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261107-1855/20261107-d33d7293.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/11月/1106/b274b1fe06a25dd7833e1239e5111082.jpg",
+      "addedAt": "2026-11-07T18:55:47+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/54307d27fe0b"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261107-1855/20261107-74a3fd14.jpg",
+      "folder": "橙子的照片",
+      "slug": "chengzi",
+      "path": "2611/261103九张/DSC00102.jpg",
+      "addedAt": "2026-11-07T18:55:47+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/5d4d7e9c429c"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261107-1855/20261107-c6fecd39.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-25 133836.livp",
+      "addedAt": "2026-11-07T18:55:47+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/a55f034bc448"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261107-1855/20261107-a618bb7e.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/_DSC9600.jpg",
+      "addedAt": "2026-11-07T18:55:47+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/8daaa109cb62"
+    }
+  ]
+}
