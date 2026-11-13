@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-13T13:00:30+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261113-1300/20261113-0d1201dd.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261111最简单的配色，往往只需要一种颜色/小语很懒图包：白色系穿搭-32.jpg",
+      "addedAt": "2026-11-13T13:00:30+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/fbaf559a8c7e"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261113-1300/20261113-7273d72a.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/11月/1112/e9acbd595c5f47e8f5ef6c3d0c74b8e9.jpg",
+      "addedAt": "2026-11-13T13:00:30+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/f61dca1fc669"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261113-1300/20261113-0b61fa70.jpg",
+      "folder": "橙子的照片(1)",
+      "slug": "chengzi",
+      "path": "2611/261112/DSC01483.jpg",
+      "addedAt": "2026-11-13T13:00:30+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/23626868cb04"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261113-1300/20261113-1c25e882.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-27 204726.jpg",
+      "addedAt": "2026-11-13T13:00:30+08:00",
+      "w": 1600,
+      "h": 1200,
+      "share": "https://pan.quark.cn/s/60dad2292365"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261113-1300/20261113-3a65b4bd.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/_DSC9577.jpg",
+      "addedAt": "2026-11-13T13:00:30+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/06e5041339e5"
+    }
+  ]
+}
