@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-16T13:01:29+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261116-1301/20261116-4ecbe397.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261112阁下，这一套又该如何应对？/白纱上衣黑短裙花纹袜银色玛丽珍-5.jpg",
+      "addedAt": "2026-11-16T13:01:29+08:00",
+      "w": 900,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/206031414a7e"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261116-1301/20261116-e1814f11.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/11月/1115/9775c2fbf5cf39793c75a990c2152150.jpg",
+      "addedAt": "2026-11-16T13:01:29+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/42f726c1e4db"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261116-1301/20261116-d1fa8edb.jpg",
+      "folder": "橙子的照片(1)",
+      "slug": "chengzi",
+      "path": "2611/261115图/DSC01949.jpg",
+      "addedAt": "2026-11-16T13:01:29+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/e9964f5390f9"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261116-1301/20261116-37cb0e96.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-26 092854.livp",
+      "addedAt": "2026-11-16T13:01:29+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/787a2a2f1ba2"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261116-1301/20261116-6c8d8383.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/DSC08958.jpg",
+      "addedAt": "2026-11-16T13:01:29+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/7a22719319b4"
+    }
+  ]
+}

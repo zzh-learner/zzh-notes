@@ -1,0 +1,791 @@
+/* zzh.css —— 站点保留链样式（2026-10-19 主题迁移：NexT 时代 source/_partials/styles.styl 的存续段）
+ * 经 _config.redefine.yml 的 inject.head 全站加载（对应 NexT custom_file_path.style 的替代机制）。
+ * 只保留仍在渲染的组件：加密引导卡（zzh-post-cipher 注入）、登录页/写作台（login-page 注入）、
+ * 私密板块（private-hub 注入）、生图聚合卡（ai-gallery 注入）、账户坞（inject.footer DOM）。
+ * NexT 布局壳/动效/词云/sites/首页卡样式已随主题与对应插件一并删除。
+ * 本文件是纯 CSS（非 stylus）——hexo 原样拷贝 source/css/ 到产物。 */
+
+/* === 暗色变量（沿用 NexT 时代变量名，让上方各组件段的 var() 继续解析） === */
+:root {
+  --body-bg-color: #0f0f11;
+  --content-bg-color: #18181b;
+  --card-bg-color: #27272a;
+  --text-color: #f4f4f5;
+  --selection-bg: #22d3ee;
+  --selection-color: #09090b;
+  --blockquote-color: #a1a1aa;
+  --link-color: #f4f4f5;
+  --link-hover-color: #22d3ee;
+  --theme-color: #22d3ee;
+  --border-color: #3f3f46;
+  color-scheme: dark;
+}
+
+/* === 纯暗色钉死（配合 _config.redefine.yml inject.head 的内联脚本） ===
+ * 1) 提前给 html.dark 上暗底，防主题 JS 接管前的闪白；
+ * 2) 隐藏 Redefine 右下工具组里的明暗切换按钮（站点无亮色模式）。 */
+html.dark {
+  background-color: var(--body-bg-color);
+}
+.tool-dark-light-toggle {
+  display: none !important;
+}
+
+/* 整列隐藏 Redefine 右下角 side-tools（字号加减/上下滚动/设置齿轮）：
+ * 2026-10-20 账户坞从左下角移到右下角（落地页上左下角与页脚「由 Hexo 驱动」
+ * 叠字），右下角让给账户坞——工具列容器 bottom:45px 固定、最底齿轮与坞顶仅
+ * ~1px 间隙，登录态坞更高/窄屏换行必撞；且这列装饰性 chrome 与站点极简方向
+ * 一贯相斥（暗亮切换按钮本就单删过）。移动端主题本就隐藏该列。 */
+.right-side-tools-container {
+  display: none !important;
+}
+
+/* === 页头 logo 图标化（2026-10-22：defaults.logo 挂 Z+H 字标，隐藏原文字标题） ===
+ * 图标与 favicon 同款 avatar.svg，纯黑字标在暗色页头上必须反相成浅色才可见；
+ * 反相只作用于页头 .logo-image，favicon 与其他引用不受影响。 */
+.navbar-container .logo-title {
+  display: none;
+}
+.navbar-container .logo-image img {
+  filter: invert(1);
+}
+
+/* === 账户坞（inject.footer 注入 DOM：登录链接/私密入口/admin chip） ===
+ * 右下角固定悬浮。右下角原是主题 side-tools 的地盘，整列已隐藏（见下条规则）、
+ * 让位给本坞——否则两悬浮体在短页（落地页）贴脸争角。 */
+.zzh-account-dock {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: rgba(24, 24, 27, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 0.8125em;
+}
+.zzh-account-dock > a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.zzh-account-dock > a:hover {
+  color: var(--theme-color);
+}
+.zzh-account-dock > a[hidden] {
+  display: none;
+}
+@media (max-width: 767px) {
+  .zzh-account-dock {
+    right: 10px;
+    bottom: 10px;
+    gap: 10px;
+    padding: 5px 10px;
+  }
+}
+
+/* === header 登录态 chip（账户坞内，zzh-site.js 按会话显隐） ===
+ * admin 额外琥珀描边 + 「管」徽标（#f59e0b，与登录页 admin 卡同色系）。 */
+.zzh-auth-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px 2px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--card-bg-color);
+  font-size: 1em;
+  line-height: 1.6;
+  max-width: 160px;
+}
+.zzh-auth-chip[hidden] {
+  display: none;
+}
+.zzh-auth-chip.is-admin {
+  border-color: rgba(245, 158, 11, 0.65);
+}
+.zzh-auth-chip-link {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--text-color);
+  text-decoration: none;
+}
+.zzh-auth-chip-link:hover {
+  color: var(--theme-color);
+}
+.zzh-auth-chip-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.zzh-auth-chip-badge {
+  display: none;
+  margin-right: 5px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #0f0f11;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.zzh-auth-chip.is-admin .zzh-auth-chip-badge {
+  display: inline-block;
+}
+.zzh-auth-chip-logout {
+  border: none;
+  background: transparent;
+  padding: 0 4px;
+  color: var(--blockquote-color);
+  font-size: 0.85em;
+  line-height: 1;
+  cursor: pointer;
+}
+.zzh-auth-chip-logout:hover {
+  color: #f87171;
+}
+@media (max-width: 767px) {
+  .zzh-auth-chip {
+    max-width: 120px;
+  }
+}
+
+/* === AI 生图聚合页卡片（/ai/，HTML 由 scripts/ai-gallery.js 构建期注入） === */
+.ai-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 24px 0 8px;
+}
+.ai-gallery-item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--card-bg-color);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.ai-gallery-item:hover {
+  border-color: var(--theme-color);
+  color: var(--text-color);
+  transform: translateY(-2px);
+}
+/* 封面：人像写真以竖图为主，固定 3:4 裁切保证网格整齐；无图文章用空态占位 */
+.ai-gallery-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--body-bg-color);
+}
+.ai-gallery-cover-empty {
+  position: relative;
+}
+.ai-gallery-cover-empty::after {
+  content: '无封面';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8em;
+  color: var(--blockquote-color);
+}
+.ai-gallery-info {
+  padding: 10px 12px 12px;
+}
+.ai-gallery-title {
+  font-size: 0.9375em;
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.ai-gallery-meta {
+  margin-top: 6px;
+  font-size: 0.75em;
+  color: var(--blockquote-color);
+}
+@media (max-width: 767px) {
+  .ai-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-gallery-item {
+    transform: none;
+  }
+}
+
+/* === 登录页卡片（/login/，HTML+JS 由 scripts/login-page.js 构建期注入） === */
+.zzh-login-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 360px;
+  margin: 24px auto 40px;
+}
+/* 登录页降级说明：组件正常时由 login-page.js 置 hidden，注入失败时保留可见 */
+.zzh-login-fallback[hidden] {
+  display: none;
+}
+.zzh-login-card {
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--card-bg-color);
+}
+.zzh-login-title {
+  margin: 0 0 8px;
+  font-size: 1.125em;
+  color: var(--text-color);
+}
+.zzh-login-desc {
+  margin: 0 0 16px;
+  font-size: 0.8125em;
+  line-height: 1.6;
+  color: var(--blockquote-color);
+}
+.zzh-login-form {
+  display: flex;
+  flex-direction: column;
+}
+.zzh-login-label {
+  margin: 12px 0 6px;
+  font-size: 0.8125em;
+  color: var(--text-color);
+}
+.zzh-login-label:first-child {
+  margin-top: 0;
+}
+.zzh-login-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--body-bg-color);
+  color: var(--text-color);
+  font-size: 0.9375em;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.zzh-login-input:focus {
+  border-color: var(--theme-color);
+}
+.zzh-login-error {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: 6px;
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  font-size: 0.8125em;
+  line-height: 1.6;
+}
+.zzh-login-error[hidden] {
+  display: none;
+}
+.zzh-login-btn {
+  margin-top: 18px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--theme-color);
+  color: #09090b;
+  font-size: 0.9375em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.zzh-login-btn:hover {
+  filter: brightness(1.1);
+}
+.zzh-login-btn-logout {
+  background: transparent;
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+.zzh-login-btn-logout:hover {
+  border-color: var(--theme-color);
+  color: var(--theme-color);
+  filter: none;
+}
+/* 账户中心：键值两列 */
+.zzh-login-acct {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 16px;
+  margin: 0 0 4px;
+  font-size: 0.875em;
+}
+.zzh-login-acct dt {
+  color: var(--blockquote-color);
+}
+.zzh-login-acct dd {
+  margin: 0;
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+}
+.zzh-login-acct-role {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.85em;
+  color: var(--blockquote-color);
+}
+.zzh-login-acct-role.is-admin {
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #fbbf24;
+}
+/* admin 专属「站点管理」卡：琥珀描边点出权限差异 */
+.zzh-login-admin-card {
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.zzh-login-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.zzh-login-links a {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--theme-color);
+  text-decoration: none;
+  font-size: 0.875em;
+  transition: border-color 0.2s ease;
+}
+.zzh-login-links a:hover {
+  border-color: var(--theme-color);
+}
+
+/* === 私密写作台（登录页第四张卡，admin 专属，DOM/JS 由 login-page.js 注入；
+      2026-10-22 私密随笔 tab 下线后仅剩照片墙单面板） === */
+.zzh-login-wrap.has-desk {
+  max-width: 560px;
+}
+.zzh-desk-token-box[hidden],
+.zzh-desk-result[hidden],
+.zzh-desk-hint[hidden] {
+  display: none;
+}
+/* 面板内 label 块化：保持末行自然字距（防 CJK justify 撑开） */
+.zzh-desk-panel .zzh-login-label,
+.zzh-desk-token-box .zzh-login-label {
+  display: block;
+}
+.zzh-desk-hint {
+  margin: 8px 0 0;
+  font-size: 0.75em;
+  line-height: 1.6;
+  color: var(--blockquote-color);
+}
+.zzh-desk-mini-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--theme-color);
+  font-size: 0.8125em;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.zzh-desk-mini-btn:hover {
+  border-color: var(--theme-color);
+}
+.zzh-desk-mini-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.zzh-desk-token {
+  margin-bottom: 14px;
+}
+.zzh-desk-token-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.zzh-desk-token-row .zzh-login-label {
+  margin: 0;
+}
+.zzh-desk-token-status {
+  font-size: 0.8125em;
+  color: var(--blockquote-color);
+}
+.zzh-desk-token-box {
+  margin-top: 10px;
+}
+.zzh-desk-token-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.zzh-desk-token-actions a {
+  color: var(--theme-color);
+  font-size: 0.8125em;
+}
+.zzh-desk-files {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.zzh-desk-file-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--body-bg-color);
+  font-size: 0.8125em;
+}
+.zzh-desk-file-name {
+  flex: 1 1 auto;
+  min-width: 120px;
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+}
+.zzh-desk-caption {
+  box-sizing: border-box;
+  flex: 1 1 140px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--card-bg-color);
+  color: var(--text-color);
+  font-size: 1em;
+  outline: none;
+}
+.zzh-desk-caption:focus {
+  border-color: var(--theme-color);
+}
+.zzh-desk-file-del {
+  padding: 3px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--blockquote-color);
+  font-size: 0.75em;
+  cursor: pointer;
+}
+.zzh-desk-file-del:hover {
+  color: #fda4af;
+  border-color: rgba(244, 63, 94, 0.4);
+}
+.zzh-desk-file-state {
+  flex: 1 1 100%;
+  color: var(--blockquote-color);
+}
+.zzh-desk-file-state.is-err {
+  color: #fda4af;
+}
+.zzh-desk-result {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  border-radius: 6px;
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  font-size: 0.8125em;
+  line-height: 1.6;
+}
+.zzh-desk-result a {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+/* === 正文加密引导卡（scripts/zzh-post-cipher.js 构建期注入每个加密页的 page.content） ===
+ * 未登录访客只见这张卡（纯暗色、锁图标 + 登录按钮）；已登录浏览器解密后整个节点
+ * 被正文替换。视觉语言对齐 .zzh-login-card。
+ * ⚠ 类名刻意避开全局密文标记的连写子串：密文标记唯一来源是文章页里的密文容器
+ *   id；本文件同样不得出现该连写子串——zzh-post-cipher.js 的 after_generate 探针
+ *   逐字节断言（外链形态下无害，一旦被内联进页面会撞私页反向 marker 断言）。 */
+.zzh-gate {
+  display: flex;
+  justify-content: center;
+  margin: 32px auto 8px;
+}
+.zzh-gate-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--card-bg-color);
+  text-align: center;
+}
+.zzh-gate-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  border-radius: 999px;
+  color: #fbbf24;
+  font-size: 1.0625em;
+}
+.zzh-gate-title {
+  margin: 14px 0 6px;
+  font-size: 1.0625em;
+  color: var(--text-color);
+}
+.zzh-gate-desc {
+  margin: 0 0 18px;
+  font-size: 0.8125em;
+  line-height: 1.6;
+  color: var(--blockquote-color);
+}
+.zzh-gate-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--theme-color);
+  color: #09090b;
+  font-size: 0.9375em;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.zzh-gate-btn:hover {
+  filter: brightness(1.1);
+}
+.zzh-gate-err {
+  margin: 14px 0 0;
+  font-size: 0.8125em;
+  line-height: 1.6;
+  color: #fda4af;
+  overflow-wrap: anywhere;
+}
+.zzh-gate-err[hidden] {
+  display: none;
+}
+
+/* === 解密加载态（解密脚本确认钥匙有效后给 .zzh-gate 加 is-loading） === */
+.zzh-gate-load {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 6px 0 4px;
+  font-size: 0.8125em;
+  color: var(--blockquote-color);
+}
+.zzh-gate.is-loading .zzh-gate-icon,
+.zzh-gate.is-loading .zzh-gate-title,
+.zzh-gate.is-loading .zzh-gate-desc,
+.zzh-gate.is-loading .zzh-gate-btn {
+  display: none;
+}
+.zzh-gate.is-loading .zzh-gate-load {
+  display: flex;
+}
+.zzh-gate-spin {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(34, 211, 238, 0.25);
+  border-top-color: var(--theme-color);
+  border-radius: 50%;
+  animation: zzh-gate-spin 0.8s linear infinite;
+}
+@keyframes zzh-gate-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === 解密内容整体淡入 ===
+ * 注入的顶层元素带 data-zzh-injected（解密脚本标记）：一次 0.25s 淡入替代逐元素入场。 */
+[data-zzh-injected] {
+  animation: zzh-injected-fade 0.25s ease;
+}
+@keyframes zzh-injected-fade {
+  from { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zzh-gate-spin,
+  [data-zzh-injected] {
+    animation: none;
+  }
+}
+
+/* 已解密（body.zzh-decrypted，解密脚本成功注入正文后添加）：
+ * Redefine 无 NexT motion 那种「先把元素藏起来等动效显示」的机制，解密内容注入
+ * 即可见，无需可见性恢复规则——旧 NexT 时代的 .post-* 恢复段已随主题迁移删除。
+ * 类名保留作解密态样式钩子（未来需要按登录态区分样式时挂这里）。 */
+
+/* === 工具页标题头隐藏（Redefine page-template 的 <h1>） ===
+ * pages/page-template.ejs 对未知 type 页面（login/random/ai）会在 .page-template-
+ * content 顶部直出 <h1>标题，旧 NexT 时代这三页 header: false 从不显示页头；
+ * :has() 按内容特征隐藏对齐旧观感（h1 与特征类同在 .page-template-content 内，
+ * 用后代选择器匹配）。登录页 .zzh-login-wrap 是明文 DOM（登录页不加密）恒命中；
+ * 随机一图/生图页的特征类在密文内，解密前 h1 可见（标题本就是公开元数据）、
+ * 解密后隐藏。 */
+.page-template-container:has(.zzh-login-wrap) h1,
+.page-template-container:has(.zzh-random) h1,
+.page-template-container:has(.ai-gallery) h1 {
+  display: none;
+}
+
+/* === 首页落地页（source/index.md，type: landing，明文门厅——与登录页同级） ===
+ * 2026-10-20 列表路由下线后的极简首页：一句话简介 + 入口卡网格（生图/随机一图/
+ * 登录三卡常显；私密卡仅 admin 会话显示，显隐脚本内联在页面里——与账户坞
+ * #zzh-private-nav 同款模式）。纯暗色无动效口径：卡片不带 transition。
+ * ⚠ 本段不得出现全局密文标记的连写子串（after_generate 探针逐字节断言）。 */
+.zzh-landing {
+  max-width: 640px;
+  margin: 8px auto 48px;
+  padding: 0 4px;
+  text-align: center;
+}
+.zzh-landing-tagline {
+  margin: 0 0 28px;
+  font-size: 0.9375em;
+  line-height: 1.8;
+  color: var(--blockquote-color);
+}
+.zzh-landing-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.zzh-landing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 26px 16px 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px; /* 对齐主题 image_border_radius */
+  background: var(--card-bg-color);
+  color: var(--text-color);
+  text-decoration: none;
+}
+.zzh-landing-card:hover {
+  border-color: var(--theme-color);
+}
+.zzh-landing-card > i {
+  font-size: 1.5em;
+  color: var(--theme-color);
+}
+.zzh-landing-card-name {
+  margin-top: 8px;
+  font-size: 1em;
+  font-weight: 600;
+}
+.zzh-landing-card-desc {
+  font-size: 0.75em;
+  line-height: 1.6;
+  color: var(--blockquote-color);
+}
+/* 生图卡统计行（scripts/ai-gallery.js 构建期填数；填充失败时 span 为空不占位） */
+.zzh-landing-card-stat {
+  margin-top: 6px;
+  font-size: 0.72em;
+  color: var(--theme-color);
+}
+/* ⚠ 卡片用了非 none 的 display，UA 对 [hidden] 的默认隐藏会被作者样式覆盖——
+ * 私密卡的默认隐藏必须显式写死（漏写 = 私密卡对所有人漏显） */
+.zzh-landing-card[hidden] {
+  display: none;
+}
+/* admin 专属私密卡：琥珀描边 + 锁图标同色（与登录页 admin 卡同色系） */
+.zzh-landing-card--private {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+.zzh-landing-card--private:hover {
+  border-color: rgba(245, 158, 11, 0.85);
+}
+.zzh-landing-card--private > i {
+  color: #fbbf24;
+}
+/* 本页 h1 保留为站名大标题（列表路由下线后 navbar 的 is_home() h1 包裹不再出现，
+ * 页面唯一 h1 由 page-template 直出），重塑为门厅主视觉。选择器刻意高于主题
+ * markdown-body h1:not() 的特异性（inject.head 的本文件先于主题样式加载，
+ * 同特异性会输给主题的 border-bottom / 字号） */
+.page-template-container .page-template-content.markdown-body:has(.zzh-landing) > h1 {
+  margin: 36px 0 4px;
+  border-bottom: none;
+  font-size: 2.25em;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 767px) {
+  .zzh-landing {
+    margin-bottom: 36px;
+  }
+  .zzh-landing-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .zzh-landing-card {
+    padding: 20px 14px 18px;
+  }
+  .page-template-container .page-template-content.markdown-body:has(.zzh-landing) > h1 {
+    margin-top: 24px;
+    font-size: 1.75em;
+  }
+}
+
+/* === 私密板块（/private/ 纯图片瀑布流相册，HTML+JS 由 scripts/private-hub.js 构建期注入） ===
+ * 整页 PKEY 加密，仅 admin 解密可见。2026-10-20 照片墙从时间线分组改为瀑布流：
+ * DOM 复刻主题官方 masonry 模板（#masonry-container / .masonry-item /
+ * .image-container.has-ratio），绝对定位、圆角、阴影、hover、zoom 光标等布局与
+ * 观感规则全部来自主题全局 style.css（本站产物 public/css/style.css 的 masonry
+ * 段），本文件只补两件事——
+ * 1) 布局引擎就绪前的 CSS columns 兜底：private-hub.js 的内联脚本动态加载主题
+ *    自带的 minimasonry 库，挂上 .is-live 之前（库在途 / 加载失败 / 脚本被拦）
+ *    卡片保持文档流多列排布（fail-open，页面照看）；.is-live 一挂即交给主题的
+ *    绝对定位布局。主题每页都会跑 initMasonry，命中本容器时 fetch 容器上钉好
+ *    的空 JSON data: URL 即静默早退，与自驱实例不冲突。
+ * 2) 观感微调：外距 + 盖掉主题给空壳模板的 min-height:20vh 占位（本相册构建期
+ *    直出真实卡片，不需要空壳占位）。
+ * ⚠ 类名与注释不得含全局密文标记的连写子串（私页反向 marker 断言 + 本文件的
+ * after_generate 逐字节探针，指称时写「全局密文标记」）。 */
+#masonry-container.zzh-pwall {
+  margin: 20px 0 8px;
+  min-height: 0;
+}
+#masonry-container.zzh-pwall:not(.is-live) {
+  column-count: 3;
+  column-gap: 10px;
+}
+#masonry-container.zzh-pwall:not(.is-live) .masonry-item {
+  position: static !important;
+  break-inside: avoid;
+  margin-bottom: 10px;
+}
+.zzh-pempty {
+  font-size: 0.875em;
+  color: var(--blockquote-color);
+}
+/* 照片墙统计行（scripts/private-hub.js 构建期写入，随整页 PKEY 加密） */
+.zzh-pstat {
+  margin: 0;
+  font-size: 0.875em;
+  color: var(--blockquote-color);
+}
+@media (max-width: 767px) {
+  #masonry-container.zzh-pwall:not(.is-live) {
+    column-count: 2;
+  }
+}
