@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-21T13:00:42+08:00",
+  "poolCap": 5,
+  "images": [
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261121-1300/20261121-ba24debb.jpg",
+      "folder": "小语会员图包",
+      "slug": "xiaoyu",
+      "path": "小语常更档/20261120人有五名，袜有五双！【星穹铁道cos袜实穿对比】/崩铁cos袜-43.jpg",
+      "addedAt": "2026-11-21T13:00:42+08:00",
+      "w": 899,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/5d9863fac28c"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261121-1300/20261121-0b96b3a3.jpg",
+      "folder": "团子朋友圈原图",
+      "slug": "tuanzi",
+      "path": "2026年/11月/1120/598a224d0c458e6f4632691af6b31910.jpg",
+      "addedAt": "2026-11-21T13:00:42+08:00",
+      "w": 1067,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/9b5b05fb3676"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261121-1300/20261121-422c1157.jpg",
+      "folder": "橙子的照片(1)",
+      "slug": "chengzi",
+      "path": "2611/261120九张/DSC02362.jpg",
+      "addedAt": "2026-11-21T13:00:42+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/3e6b0f5801bc"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261121-1300/20261121-d777e6a4.jpg",
+      "folder": "一汁老板娘",
+      "slug": "yizhi",
+      "path": "9月周年庆/2026-09-25 112132.livp",
+      "addedAt": "2026-11-21T13:00:42+08:00",
+      "w": 1200,
+      "h": 1600,
+      "share": "https://pan.quark.cn/s/2c75536973af"
+    },
+    {
+      "src": "https://github.com/zzh-learner/zzh-notes/releases/download/pool-20261121-1300/20261121-e1cfc1df.jpg",
+      "folder": "迟了个迟",
+      "slug": "chilechi",
+      "path": "玉璧第一期/DSC08956.jpg",
+      "addedAt": "2026-11-21T13:00:42+08:00",
+      "w": 1600,
+      "h": 1067,
+      "share": "https://pan.quark.cn/s/0e5186d5e58b"
+    }
+  ]
+}
